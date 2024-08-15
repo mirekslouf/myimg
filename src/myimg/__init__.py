@@ -10,4 +10,4 @@ Tools for processing of microscopic images.
 See myimg.api for simple user interface.
 '''
 
-__version__ = '0.2.2'
+__version__ = '0.2.3'

@@ -4,7 +4,7 @@ Module: myimg.objects
 
 Key classes/objects for myimg package:
 
-1. *MyImg* class
+1. *MyImage* class
    defines the basic MyImg object,
    which is used in most image manipulations.
 2. *Montage* class
@@ -16,10 +16,10 @@ Key classes/objects for myimg package:
 How does it work?
 -----------------
 
-*MyImg* class creates the very basic object,
+*MyImage* class creates the basic object,
 which is used in most image manipulations within myimg.api module.
 
->>> # MyImg class :: simple example (short but real)
+>>> # MyImage class :: simple example (short but real)
 >>> import myimage.api as mi      # import API, which provides simple UI
 >>> img = mi.MyImage('some.bmp')  # open image: some.bmp
 >>> img.label('a')                # insert label in upper left corner
@@ -47,7 +47,8 @@ when creating scalebars (as a scalebar contains *number with units*).
 >>> img.scalebar('rwi,100um')     # scalebar (employs Units, NumberWithUnits... 
 >>> img.save_with_ext('_s.png')   # save modified image: to some_s.png
    
->>> # NumberWithUnits class :: direct use (non-typical, but possible)
+>>> # NumberWithUnits class :: NON-typical/direct use
+>>> # (the NumberWithUnits class can be used/tested for various conversions
 >>> from myimg.objects import NumberWithUnits
 >>> n =NumberWithUnits('0.1mm')
 >>> print('Initial number_with_units:', n)  # prints 0.1 mm
@@ -186,6 +187,37 @@ class MyImage:
         bbox = draw_object.textbbox((20, 20), 'M', font=font_object)
         text_height = bbox[3] - bbox[1]
         return(text_height)
+    
+    
+    def to_gray(self, itype='8bit'):
+        '''
+        Convert image to grayscale.
+
+        Parameters
+        ----------
+        itype : str, optional, '8bit' or '16bit', default is '8bit'
+            The image is converted either to 8bit or 16bit grayscale.
+
+        Returns
+        -------
+        None
+            The output is saved in self.img.
+            
+        Technical notes
+        ---------------
+        * Conversion to 16-bit grayscale can be tricky.
+        * RGB -> 16-bit grayscale conversion is not supported now.
+        * 8-bit-gray -> 16-bit-gray changes dtype to 16bit, but not values.
+        '''
+        if itype == '8bit':
+            # Conversion to 8-bit grayscale (the default) should be fine.
+            self.img = self.img.convert('L')
+        elif itype == '16bit':
+            # Conversion to 16-bit grayscale can be tricky - see the docstring.
+            self.img = self.img.convert('I;16')
+        else:
+            print('Unknown image type when converting to grayscale!')
+            print('The original image was not changed.')
     
     
     def cut(self, height_of_bar):
