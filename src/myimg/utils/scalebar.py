@@ -33,7 +33,7 @@ import sys, os, glob, re
 import numpy as np
 from PIL import ImageFont, ImageDraw
 import myimg.settings as Settings
-from myimg.nwu import NumberWithUnits, ScaleWithUnits
+from myimg.objects import NumberWithUnits, ScaleWithUnits
  
            
 def insert_scalebar(my_img, pixsize, F, **kwargs):

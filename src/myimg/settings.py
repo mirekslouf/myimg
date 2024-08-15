@@ -1,7 +1,18 @@
 '''
 Module: myimg.settings
 ----------------------
-Data module with default settings for package myimg.
+Data module with default settings and calibrations for package myimg.
+
+The module contains several dataclasess:
+
+* myimg.settings.Scalebar
+  = default parameters for drawing of scalebars
+* myimg.settings.Label
+  = default parameters for drawing of image labels
+* myimg.settings.MicCalibrations
+  = class contaning the microscope calibrations
+* myimg.settings.MicDescriptionFiles
+  = class describing the microscope description files
 '''
 from dataclasses import dataclass
 from typing import Any
@@ -88,23 +99,55 @@ class MicCalibrations:
     class TecnaiVeleta:
         '''
         Calibration of Tecnai microscope with Veleta camera.
+        
+        * Typical image size = [1024x1024]pix
+        * Alternative image sizes = integer multiples possible due to binning.
+        * Binning does not influence real-width-of-image and calibration const.
         '''
-        description : str = 'TEM Tecnai, camera Veleta, image [1024x1024]pix'
+        description : str = 'TEM Tecnai, Veleta3G camera'
         const       : float = 110.440  # const = rwi * mag (rwi = const/mag)
-        units       : str = 'mm'       # const units (mm, like the rwi above)
+        units       : str = 'mm'       # const units
    
     @dataclass
-    class LM_Nikon:
+    class LM_Nikon1:
         '''
         Calibration of Nikon microscope with ProgRes camera.
+        
+        * Typical image size = [1024x768]pix
+        * Alternative image sizes = integer multiples possible due to binning.
+        * Binning does not influence real-width-of-image and calibration const.
         '''
-        description : str = 'LM Nikon, camera ProgRes, image [1024x768]pix'
+        description : str = 'LM Nikon, ProgRes camera'
         const       : float = 6.55300   # const = rwi * mag (rwi = const/mag)
-        units       : str = 'mm'        # const units (mm, like the rwi above)
-   
-    
+        units       : str = 'mm'        # const units
+
+    @dataclass
+    class LM_Nikon2:
+        '''
+        Calibration of Nikon microscope with Basler camera.
+        
+        * Typical image sizes = [2464x2056]pix, [1232x1028]pix ...
+        * Alternative image sizes = integer multiples possible due to binning.
+        * Binning does not influence real-width-of-image and calibration const.
+ 
+        '''
+        description : str = 'LM Nikon, Basler camera'
+        const       : float = 8.50000   # const = rwi * mag (rwi = const/mag)
+        units       : str = 'mm'        # const units
+
+     
 @dataclass
 class MicDescriptionFiles:
+    '''
+    Microscope description files.
+    
+    * Some microscopes yield micrographs *with* text description files.
+    * The description file contains additional info about the micrograph.
+        - the filename is usually similar to the micrograph/image file
+        - the description file contains information about the pixel size
+        - therefore, a description file can be used
+          for the micrograph calibration
+    '''
     
     # MicroscopeDescrFiles = microscopes with description files
     # (description file is a text file containing pixelsize
@@ -120,24 +163,24 @@ class MicDescriptionFiles:
         '''
         Desription files produced by an SEM microscope MAIA.
         '''
-        filename     : str = '*-???.hdr'
-        pixsize_line : str = '^PixelSizeX=(.*)'
-        pixsize_units: str = 'm'
+        filename     : str = r'*-???.hdr'
+        pixsize_line : str = r'^PixelSizeX=(.*)'
+        pixsize_units: str = r'm'
     
     @dataclass
     class VEGA:
         '''
         Description files produced by an SEM microscope VEGA.
         '''
-        filename     : str = '*.bhd'
-        pixsize_line : str = '^Pix=(.*)'
-        pixsize_units: str = 'um'
+        filename     : str = r'*.bhd'
+        pixsize_line : str = r'^Pix=(.*)'
+        pixsize_units: str = r'um'
 
     @dataclass
     class JEOL:
         '''
-        Description files produced by an SEM microscope VEGA.
+        Description files produced by an SEM microscope JEOL.
         '''
-        filename     : str = '*.hdr'
-        pixsize_line : str = '^Pix: (\S+)'
-        pixsize_units: str = 'um'
+        filename     : str = r'*.hdr'
+        pixsize_line : str = r'^Pix: (\S+)'
+        pixsize_units: str = r'um'
