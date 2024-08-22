@@ -13,24 +13,24 @@ Key classes/objects for myimg package:
 3. *Units, NumberWithUnits and ScaleWithUnits* classes
    defines allowed units, number-with-units and scale-with-units, respectively.
 
-How does it work?
------------------
+Examples = how does it work?
+----------------------------
 
 *MyImage* class creates the basic object,
 which is used in most image manipulations within myimg.api module.
 
 >>> # MyImage class :: simple example (short but real)
->>> import myimage.api as mi      # import API, which provides simple UI
+>>> import myimage.api as mi      # import API, which provides a simple UI
 >>> img = mi.MyImage('some.bmp')  # open image: some.bmp
->>> img.label('a')                # insert label in upper left corner
->>> img.scalebar('rwi,100um')     # insert scalebar to lower right corner
->>> img.save_with_ext('_s.png')   # save modified image: to some_ls.png
+>>> img.label('a')                # insert a label in the upper left corner
+>>> img.scalebar('rwi,100um')     # insert a scalebar to the lower right corner
+>>> img.save_with_ext('_s.png')   # save the modified image to: some_ls.png
 
 *Montage* class creates the multi-image object,
 which contains several images arranged in a rectangular grid.
 
 >>> # Montage class :: simple example (short but real)
->>> import myimage.api as mi      # import API, which provides simple UI
+>>> import myimage.api as mi      # import API, which provides a simple UI
 >>> images = ['s1.png','s2.png']  # define input images
 >>> montage = mi.Montage(images,  # create montage image
 >>>     itype='gray', grid=(1,2), # ...grayscale, just two images in a row
@@ -72,6 +72,7 @@ class MyImage:
     
     * MyImage object = image name + PIL image object + extra props/methods.
     * See __init__ for more information about initial object parameters.
+    * More help: https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg.html
     '''
         
     def __init__(self, filename):
@@ -332,37 +333,13 @@ class MyImage:
         kwargs : list of keyword arguments
             Allowed keyword arguments are:
             color, bcolor, position, stripes, messages.
-            See section *List of allowed kwargs* for detailed descriptions. 
+            See section *List of allowed kwargs* below for more info. 
             
         Returns
         -------
         None
             The scalebar is drawn directly to *self.img*.
             
-        List of allowed kwargs
-        ----------------------
-        * color : PIL color specification, default is 'black'.
-            Text color = color of the scalebar text and line.
-        * bcolor : PIL color specification, default is 'white'.
-            Background color = color of the scalebar background/box.
-        * length : str, default is None.
-            If length is given (using a string such as '100um','1.2nm')
-            then the lenght fixed at given value and not calculated by the
-            program (calculation would yield some reasonable lenght of
-            scalebar around 1/6 of the image width; this default is saved
-            in myimg.settings.Scalebar.length property - which can be changed).
-        * position : list or tuple or None, default is None.
-            If position = None, the scalebar is drawn
-            at the default position in the lower-right corner of the image.
-            If position = (X,Y) = list or tuple of two integers,
-            the scalebar is drawn at position X,Y of the image.
-        * stripes : bool or int, default is False.
-            If stripes = False, draw standard scalebar.
-            If stripes = True or 1, draw scalebar with 5 stripes.
-            If stripes = N, where N>=2, draw striped scalebar with N stripes.
-        * messages : bool, default is False.
-            If messages=True, print info about program run.
-        
         Example
         -------
         >>> # Four basic ways how to insert a scalebar in an image
@@ -396,6 +373,30 @@ class MyImage:
         >>> img.scalebar('txt,MAIA3')
         >>> 
 
+        List of allowed kwargs
+        ----------------------
+        * color : PIL color specification, default is 'black'.
+            Text color = color of the scalebar text and line.
+        * bcolor : PIL color specification, default is 'white'.
+            Background color = color of the scalebar background/box.
+        * length : str, default is None.
+            If length is given (using a string such as '100um','1.2nm')
+            then the lenght fixed at given value and not calculated by the
+            program (calculation would yield some reasonable lenght of
+            scalebar around 1/6 of the image width; this default is saved
+            in myimg.settings.Scalebar.length property - which can be changed).
+        * position : list or tuple or None, default is None.
+            If position = None, the scalebar is drawn
+            at the default position in the lower-right corner of the image.
+            If position = (X,Y) = list or tuple of two integers,
+            the scalebar is drawn at position X,Y of the image.
+        * stripes : bool or int, default is False.
+            If stripes = False, draw standard scalebar.
+            If stripes = True or 1, draw scalebar with 5 stripes.
+            If stripes = N, where N>=2, draw striped scalebar with N stripes.
+        * messages : bool, default is False.
+            If messages=True, print info about program run.
+        
         Technical notes
         ---------------
         * Transparent background:
@@ -499,6 +500,7 @@ class Montage:
     
     * Montage object = a rectangular multi-image. 
     * See __init__ for more information about initial object parameters.
+    * More help: https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg.html
     '''
     
     def __init__(self, images, itype,
@@ -571,7 +573,7 @@ class Montage:
         match itype:
             case 'gray' :
                 image_black = 0
-                image_white = 1
+                image_white = 255
                 self.montage_channel_axis = None
             case 'rgb':
                 image_black = (0,0,0)
@@ -623,38 +625,33 @@ class Montage:
         for image in self.images:
             # Case 1: NumPy array => just append
             if type(image) == np.ndarray:
-                arr_in.append(image)
+                arr_to_append = image
             # Case 2: MyImage object => convert to array and append 
-            elif type(image) == MyImage:
-                arr_in.append(np.array(image.img))
+            elif 'MyImage' in str(type(image)):
+                arr_to_append = np.array(image.img)
             # Case 3: None object => append None
             # TODO: Later, None should be exchanged for suitable empty array.
             elif type(image) == None:
-                arr_in.append(None)
+                arr_to_append = None
             # Case 4: Nothing of the above => we suppose it is a filename.
             # TODO: Consider exceptions etc...
             else:
                 if 'rgb' in self.itype:
-                    arr_in.append(ski.io.imread(image, as_gray=False))
-                else:
-                    arr_in.append(ski.io.imread(image, as_gray=True))
-                    # We have to differentiate three cases
-                    # according to maximal intensity in the image.
-                    # (a) Get the maximal intensity of the last array.
-                    max_intensity = np.max(arr_in[-1])
-                    # MaxIntensity = 1 => RGB image or 3-value grayscale
-                    # (the most common => skimage rescales intensities to (0,1)
-                    # (=> white color is 1
-                    if max_intensity == 1:
-                        self.fill = 1
-                    # MaxIntensity <= 255 => True/1-value/8-bit grayscale
-                    # (not so frequent => skimage does not rescale intensities
-                    elif max_intensity <= 255:
-                        self.fill = 255
-                    # MaxIntensity <= 65535 => True/1-value/16-bit grayscale
-                    # (not so frequent => skimage does not rescale intensities
-                    elif max_intensity <= 65535:
-                        self.fill = 65535
+                    # Read image in the default way (as_gray=False)
+                    arr_to_append = ski.io.imread(image, as_gray=False)
+                elif 'gray' in self.itype:
+                    # Read image as grayscale (as_grayscale=True)
+                    arr_to_append = ski.io.imread(image, as_gray=True)
+            # If itype = 'gray', then normalize image to 8bit grayscale.
+            # (3-value gray-imgs normalized to 1, 8bit to 255, 16bit to 65535
+            # (moreover,  we can have a combination of various grayscales
+            # (to get reproducible results, we ALWA&S normalize to 8-bit gray
+            if 'gray' in self.itype:
+                arr_max = np.max(arr_to_append)
+                arr_to_append = np.round(
+                    arr_to_append/arr_max * 255).astype(np.uint8)
+            # Append the final, processed array to the input array for montage
+            arr_in.append(arr_to_append)
                         
         # (2) Resize all input images/arrays if requested.
         if self.rescale is not None:

@@ -17,6 +17,20 @@ A simple interface to package myimg.
 >>>
 >>> # (3) Save the modified image 
 >>> img.save_with_ext('_clm.png')  # output: somefile_clm.png
+
+More examples are spread all over the documentation.
+    
+1. How to use myimg.objects:
+    - myimg.objects.MyImage = single image = the basic object with many methods
+    - myimg.objects.Montage = multi-image = a rectangular grid of images
+2. Specific frequent tasks:
+    - myimg.objects.MyImage.scalebar = a method to insert scalebar
+    - myimg.objects.MyImage.label = a method to insert label in the corner
+3. Additional utilities:
+    - myimg.utils = sub-package with special/more complex utilities
+    - myimg.utils.scalebar = the code for myimg.objects.MyImg.scalebar method
+    - myimg.utils.label = the code for myimg.objects.MyImg.label method
+    - myimg.utils.fft = additional utilities, Fourier transforms
 '''
 
 
