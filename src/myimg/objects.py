@@ -66,6 +66,7 @@ from dataclasses import dataclass
 import skimage as ski
 
 
+
 class MyImage:
     '''
     Class defining MyImage objects.
@@ -74,6 +75,7 @@ class MyImage:
     * See __init__ for more information about initial object parameters.
     * More help: https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg.html
     '''
+
         
     def __init__(self, filename):
         '''
@@ -92,9 +94,11 @@ class MyImage:
             (ii) corresponding PIL image object  (MyImage.img), and
             (iii) further properties and methods (MyImage.cut, crop, ...).
         '''
-        self.name = filename
-        self.img  = MyImage.open_image(filename)
-        self.width, self.height = self.img.size
+        self.name   = filename
+        self.img    = MyImage.open_image(filename)
+        self.width  = self.img.size[0]
+        self.height = self.img.size[1]
+        self.peaks  = Peaks(img_name=self.name, img_object=self.img)
         
     
     @staticmethod
@@ -219,8 +223,39 @@ class MyImage:
         else:
             print('Unknown image type when converting to grayscale!')
             print('The original image was not changed.')
+            
     
-    
+    def to_rgb(self, itype='24bit'):
+        '''
+        Convert image to RGB.
+
+        Parameters
+        ----------
+        itype : str, optional, default is '24bit'.
+            The image is converted to standard RGB image = 24bit = 3*8bit.
+            Only the tandard 24bit RGB images are supported at the moment.
+
+        Returns
+        -------
+        None
+            Te output is saved in self.img.
+            
+        Technical notes
+        ---------------
+        * Standard RGB format = 24bit RGB = 8 bits for each of (R,G,B) values.
+        * Other (non-standard) RGB formats are not supported at the moment.
+        * RGB formats: https://en.wikipedia.org -> RGB color formats
+        * Pillow: https://pillow.readthedocs.io -> Handbook - Concepts - Modes
+        '''
+        if itype == '24bit':
+            # Conversion to 24-bit RGB.
+            self.img = self.img.convert('RGB')
+        else:
+            # Non-standard RGB formats are not supported at the moment.
+            print('Unknown image type when converting to grayscale!')
+            print('The original image was not changed.')
+
+
     def cut(self, height_of_bar):
         '''
         Cut off lower bar with given height.
@@ -492,8 +527,64 @@ class MyImage:
         (file,ext) = os.path.splitext(self.name)
         output_image = file + my_extension
         self.img.save(output_image)
+        
+        
+        
+class Peaks:
+    '''
+    Class defining Peaks objects.
+    
+    * Peaks object = source image + list-of-its-peaks.
+    * See __init__ for more information about initial object parameters.
+    * More help: https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg.html
+    '''
+    
+    def __init__(self, img_name, img_object=None):
+        '''
+        Initialize Peaks object.
+
+        Parameters
+        ----------
+        image : filename or pillow object
+            DESCRIPTION.
+
+        Returns
+        -------
+        Peaks object.
+        '''
+        self.img_name = img_name
+        if img_object is not None:
+            self.img = img_object
+        else:
+            self.img = MyImage.open_image(img_name)
+        self.data = None
+
+    
+    def show_as_text():
+        pass
+
+    
+    def show_in_image():
+        pass
+
+        
+    def read(file):
+        pass
+
+    
+    def find(method='manual'):
+        pass
+
+    
+    def correct(method='manual'):
+        pass
+
+    
+    def classify(method='gauss_fit'):
+        pass
 
 
+    
 class Montage:
     '''
     Class defining Montage objects.
