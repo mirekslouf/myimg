@@ -660,33 +660,47 @@ class Montage:
         self.crop    = crop
         self.rescale = rescale
         
-        # Analyze itype = image_type and define additional parameters
-        match itype:
-            case 'gray' :
-                image_black = 0
-                image_white = 255
-                self.montage_channel_axis = None
-            case 'rgb':
-                image_black = (0,0,0)
-                image_white = (255,255,255)
-                self.montage_channel_axis = 3
-            case _:
-                print('Unknown image type!')
-                sys.exit()
+        # Process self.images
+        # 1) Convert all images to np.arrays.
+        # 2) Check if the np.arrays have the same size,
+        #    i.e. the same dimensions, including the number of channels.
+        #    (channels ~ colors + transparency; usually the last dim/axis
+        # 3) Rescale images/arrays if requested.
+        #    (the images/arrays are rescaled if self.rescale != None
+        self.process_images()
         
+        # Process self.itypes
+        # 1) Check image tepes
+        #    (the only allowed image types are 'rgb' and 'gray'.
+        # 2) Define additiona parameters for montage:
+        #    (the additional parameters will be saved within self object
+        self.check_image_types()
+        
+        # Rescale images if requested
+        # (rescaleing can be performed AFTER...
+        # (...self.process_images => because images are converted to arrays
+        # (...self.check_image_types => because we have additional parameters,
+        # (   namely self.
+        if self.rescale is not None: self.rescale_images()
+        
+        # Adjust white/black colors according to image type and no-of-channels
+        if self.itype == 'rgb':
+            image_black = (0,)   * self.montage_number_of_channels
+            image_white = (255,) * self.montage_number_of_channels 
+        elif self.itype == 'gray':
+            image_black = 0
+            image_white = 255
+                
         # Analyze fill = fill_color and adjust acc.to image_type
         match fill:
             case 'white':
                 self.fill = image_white
             case 'black':
                 self.fill = image_black
-        
-        # Go through the images and prepare the montage image/array.
-        montage_array = self.prepare_montage_array()
-                    
+    
         # Create final montage
         self.montage = ski.util.montage(
-            arr_in=montage_array,
+            arr_in=self.images,
             grid_shape=self.grid, fill=self.fill,
             padding_width=self.padding, channel_axis=self.montage_channel_axis)
         
@@ -695,79 +709,159 @@ class Montage:
             my_crop = round(self.padding / 2)
             self.montage = self.montage[my_crop:-my_crop, my_crop:-my_crop]
 
-
-    def prepare_montage_array(self):
+    
+    def process_images(self):
         '''
-        Prepare array for montage.
+        Check and prepare images before creating montage.
         
-        * This function is usually not used directly.
-        * It is called during the initialization of Montage object. 
-
+       * The images used for montage
+         should be convertible to arrays with the same type and size.
+       * This method goes through all images in self.images
+         and converts them to arrays.
+       * If the converted images/arrays have the same dimensions(=type),
+         then everything is Ok
+         and we cen proceed.
+       * If the conerted images/arrays do not have the same dimension(=type),
+         then this methods ends with an error
+         and the user has to adjust images BEFORE calling the montage method.
+       
         Returns
         -------
-        arr_in : NumPy array
-            An input array of images/arrays for creating the final montage.
+        None
+            If everything is Ok,
+            the checked images are read and saved as arrays in the self.images.
+            If the images are not of the same type
+            this method prints an error and the program quits.
         '''
         
-        # (0) Prepare empty array for montage = montage array.
-        arr_in = []
+        # (0) Prepare variables
+        img_sizes = []
         
         # (1) Go through the images (self.images) to create montage array.
-        for image in self.images:
-            # Case 1: NumPy array => just append
+        for i,image in enumerate(self.images):
+            # Case 1: NumPy array => just 
             if type(image) == np.ndarray:
-                arr_to_append = image
+                # self.images is not changed = we already have an array
+                # just save image size
+                img_sizes.append(image.shape)
             # Case 2: MyImage object => convert to array and append 
             elif 'MyImage' in str(type(image)):
-                arr_to_append = np.array(image.img)
+                # self.images[i] is changed => np.array instead of MyImg object
+                self.images[i] = np.array(image.img)
+                # save image size
+                img_sizes.append(self.images[i].shape)
             # Case 3: None object => append None
             # TODO: Later, None should be exchanged for suitable empty array.
             elif type(image) == None:
-                arr_to_append = None
+                pass
             # Case 4: Nothing of the above => we suppose it is a filename.
             # TODO: Consider exceptions etc...
             else:
+                # self.images[i] is changed => we read a file to an array
                 if 'rgb' in self.itype:
                     # Read image in the default way (as_gray=False)
-                    arr_to_append = ski.io.imread(image, as_gray=False)
+                    self.images[i] = ski.io.imread(image, as_gray=False)
                 elif 'gray' in self.itype:
                     # Read image as grayscale (as_grayscale=True)
-                    arr_to_append = ski.io.imread(image, as_gray=True)
-            # If itype = 'gray', then normalize image to 8bit grayscale.
-            # (3-value gray-imgs normalized to 1, 8bit to 255, 16bit to 65535
-            # (moreover,  we can have a combination of various grayscales
-            # (to get reproducible results, we ALWA&S normalize to 8-bit gray
+                    self.images[i] = ski.io.imread(image, as_gray=True)
+                # Save image size
+                img_sizes.append(self.images[i].shape)
+                
+        # (2) Additional adjustment for all grayscale images
+        # => if itype = 'gray', then normalize image to 8bit grayscale.
+        # (3-value gray-imgs normalized to 1, 8bit to 255, 16bit to 65535
+        # (moreover, we can have a combination of various grayscales
+        # (to get reproducible results, we ALWA&S normalize to 8-bit gray
+        for i,image in enumerate(self.images):
             if 'gray' in self.itype:
-                arr_max = np.max(arr_to_append)
-                arr_to_append = np.round(
-                    arr_to_append/arr_max * 255).astype(np.uint8)
-            # Append the final, processed array to the input array for montage
-            arr_in.append(arr_to_append)
-                        
-        # (2) Resize all input images/arrays if requested.
+                arr_max = np.max(self.images[i])
+                self.images[i] = np.round(
+                    self.images[i]/arr_max * 255).astype(np.uint8)
+        
+        # (3) Final check if all images are of the same size
+        # Trick: All-list-elements-are-the-same
+        # if the number of the occurrences of the first elements
+        # equals to the total number of elements in the list.
+        all_the_same = img_sizes.count(img_sizes[0]) == len(img_sizes)
+        # Now the final check
+        if all_the_same:
+            return(self.images)
+        
+    
+    def check_image_types(self):
+        '''
+        Check image/array types and prepare additional parametrs for montage.
+        
+        * The only allowed image types are 'rgb' and 'gray'.
+        * Other image types => print error message and exit program.
+        * For each image type we have to set two additional montage params:
+            - self.montage_channel_axis => the last axis of the array
+            - self.montage_number_of_channels => gray ~ 1, rgb ~ 3, rgba ~ 4
+        
+        Returns
+        -------
+        None
+            The additional montage parameters are are saved in
+            self.montage_channel_axes and self.montage_number_of_channels.
+            These parameters are needed
+            for correct treatement of rgb/gray images/arrays.
+        '''
+        
+        if self.itype == 'rgb':
+            # RGB images = 3D-arrays
+            # the last axis = channel axis = color channels = axis 4 => index 3
+            # the number of channels = either 3 (RGB) or 4 (RGBA)
+            self.montage_channel_axis = 3
+            self.montage_number_of_channels = self.images[0].shape[-1]
+        elif self.itype == 'gray':
+            # Grayscale images = 2D-arrays
+            # (no channel axis = just one channel, grayscale value
+            # (all grayscale images are read by ski.io.imread as 1-value gray
+            self.montage_channel_axis = None
+            self.montage_number_of_channels = 1
+        else:
+            # Other image formats are not supported at the moment.
+            print(f'Unknown image type: [{self.itype}]!')
+            print("Allowed image types are 'rgb' or 'gray'.")
+            sys.exit()
+            
+    
+    def rescale_images(self):
+        '''
+        Rescale input images/arrays if requested.
+        
+        * The images are rescaled if self.rescale != None.
+        * This rescaling should be applied to each of self.images
+          AFTER the images have been checked and converted to arrays.
+       
+        Returns
+        -------
+        None
+            The rescaled images/arrays are saved in self.images.
+        '''
+        
+        # Rescale all input images/arrays if requested.
         if self.rescale is not None:
             # Go through the images/arrays in arr_in
-            # and rescale theym one-by-one,
+            # and rescale them one-by-one,
             # preserving the range and data type.
-            for i in range(len(arr_in)):
+            for i,image in enumerate(self.images):
                 # Save the original data type.
-                original_data_type = arr_in[i].dtype
+                original_data_type = image.dtype
                 # Prepare channel axis
                 if self.montage_channel_axis is not None:
                     channel_axis = self.montage_channel_axis - 1
                 else:
                     channel_axis = None
                 # Rescale the array, preserving the range and data type.
-                arr_in[i] = ski.transform.rescale(
-                    arr_in[i],                    # input montage array
+                self.images[i] = ski.transform.rescale(
+                    image,                        # input montage array
                     self.rescale,                 # rescaling coefficient
                     anti_aliasing=True,           # anti-aliasing
                     preserve_range=True,          # preserve intensities
                     channel_axis=channel_axis     # channel axis for RGB images
                     ).astype(original_data_type)  # preserve original data type
-        
-        # (3) Return the montage array
-        return(arr_in)
+
 
     def show(self, cmap=None, axes=False):
         '''
