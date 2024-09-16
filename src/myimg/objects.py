@@ -252,7 +252,38 @@ class MyImage:
             self.img = self.img.convert('RGB')
         else:
             # Non-standard RGB formats are not supported at the moment.
-            print('Unknown image type when converting to grayscale!')
+            print('Unknown image type when converting to RGB!')
+            print('The original image was not changed.')
+
+
+    def to_rgba(self, itype='32bit'):
+        '''
+        Convert image to RGBA.
+
+        Parameters
+        ----------
+        itype : str, optional, default is '32bit'.
+            The image is converted to standard RGBA image = 32bit = 3*8+8bit.
+            Only the tandard 32bit RGBA images are supported at the moment.
+
+        Returns
+        -------
+        None
+            Te output is saved in self.img.
+            
+        Technical notes
+        ---------------
+        * Standard RGBA format = 32bit RGBA = 8bits (R,G,B) + 8bit alpha.
+        * Other (non-standard) RGB formats are not supported at the moment.
+        * RGB formats: https://en.wikipedia.org -> RGB color formats
+        * Pillow: https://pillow.readthedocs.io -> Handbook - Concepts - Modes
+        '''
+        if itype == '32bit':
+            # Conversion to 24-bit RGB.
+            self.img = self.img.convert('RGB')
+        else:
+            # Non-standard RGBA formats are not supported at the moment.
+            print('Unknown image type when converting to RGBA!')
             print('The original image was not changed.')
 
 
@@ -527,61 +558,6 @@ class MyImage:
         (file,ext) = os.path.splitext(self.name)
         output_image = file + my_extension
         self.img.save(output_image)
-        
-        
-        
-class Peaks:
-    '''
-    Class defining Peaks objects.
-    
-    * Peaks object = source image + list-of-its-peaks.
-    * See __init__ for more information about initial object parameters.
-    * More help: https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg.html
-    '''
-    
-    def __init__(self, img_name, img_object=None):
-        '''
-        Initialize Peaks object.
-
-        Parameters
-        ----------
-        image : filename or pillow object
-            DESCRIPTION.
-
-        Returns
-        -------
-        Peaks object.
-        '''
-        self.img_name = img_name
-        if img_object is not None:
-            self.img = img_object
-        else:
-            self.img = MyImage.open_image(img_name)
-        self.data = None
-
-    
-    def show_as_text():
-        pass
-
-    
-    def show_in_image():
-        pass
-
-        
-    def read(file):
-        pass
-
-    
-    def find(method='manual'):
-        pass
-
-    
-    def correct(method='manual'):
-        pass
-
-    
-    def classify(method='gauss_fit'):
-        pass
 
 
     
@@ -601,20 +577,22 @@ class Montage:
 
         Parameters
         ----------
-        images : list of images (str or path-like objects or arrays)
+        images : list of images (arrays or str or path-like or MyImage objects)
             The list of images from which the montage will be created.
-            If {images} list consists of strings or path-like objects,
+            If {images} list consists of arrays,
+            we assume that these arrays are the direct input to montage
+            (more precisely: the direct input to skimage.util.montage method).
+            If {images} list contains of strings or path-like objects,
             we assume that these are filenames of images
             that should be read as arrays.
-            If {images} list consists of arrays,
-            we assume that these are the direct input to montage
-            (more precisely: the direct input to skimage.util.montage method).
-        itype : type of images/arrays ('gray' or 'rgb')
+            If {images} lists contains MyImage objecs,
+            we use MyImage objects to create the final montage.
+        itype : type of images/arrays ('gray' or 'rgb' or 'rgba')
             The type of input/output images/arrays.
             If itype='gray',
             then the input/output are converted to grayscale.
-            If itype='rgb',
-            then the input/output are treated as RGB images/arrays.
+            If itype='rgb' or 'rgba'
+            then the input/output are treated as RGB or RGBA images/arrays.
         grid : tuple of two integers (number-of-rows, number-of-cols)
             This argument is an equivalent of
             *grid_shape* argument in skimage.util.montage function.
@@ -644,11 +622,18 @@ class Montage:
             
         Returns
         -------
-        MyImage object
-            MyImage object contains:
-            (i) name of the original image (MyImage.name),
-            (ii) corresponding PIL image object  (MyImage.img), and
-            (iii) further properties and methods (MyImage.cut, crop, ...).
+        Montage object = multi-image/montage of *images*.
+        The montage object can be shown (Montage.show) or saved (Montage.save).
+        
+        Technical notes
+        ---------------
+        * Only 'gray', 'rgb', and 'rgba' standard formats are supported.
+          If an image has some non-standard format,
+          it can be read and converted using a sister MyImage class
+          (methods MyImage.to_gray, MyImage.to_rgb, MyImage.to_rgba).
+        * The user does not have to differentiate 'rgb' and 'rgba' images.
+          It is enough to specify 'rgb' for color images
+          and if the images are 'rgba', the program can work with them.
         '''
         
         # Get basic arguments/properties
@@ -679,12 +664,13 @@ class Montage:
         # Rescale images if requested
         # (rescaleing can be performed AFTER...
         # (...self.process_images => because images are converted to arrays
-        # (...self.check_image_types => because we have additional parameters,
-        # (   namely self.
+        # (...self.check_image_types => because this sets additional params:
+        # (   self.montage_channel_axis
+        # (   self.montage_number_of_channels
         if self.rescale is not None: self.rescale_images()
         
         # Adjust white/black colors according to image type and no-of-channels
-        if self.itype == 'rgb':
+        if (self.itype == 'rgb') or (self.itype == 'rgba'): 
             image_black = (0,)   * self.montage_number_of_channels
             image_white = (255,) * self.montage_number_of_channels 
         elif self.itype == 'gray':
@@ -807,8 +793,8 @@ class Montage:
             for correct treatement of rgb/gray images/arrays.
         '''
         
-        if self.itype == 'rgb':
-            # RGB images = 3D-arrays
+        if (self.itype == 'rgb') or (self.itype == 'rgba'):
+            # RGB and RGBA images = 3D-arrays
             # the last axis = channel axis = color channels = axis 4 => index 3
             # the number of channels = either 3 (RGB) or 4 (RGBA)
             self.montage_channel_axis = 3
@@ -822,7 +808,7 @@ class Montage:
         else:
             # Other image formats are not supported at the moment.
             print(f'Unknown image type: [{self.itype}]!')
-            print("Allowed image types are 'rgb' or 'gray'.")
+            print("Allowed image types are 'gray', 'rgb' or 'rgba'.")
             sys.exit()
             
     
@@ -906,6 +892,63 @@ class Montage:
                 self.montage/np.max(self.montage) * 255).astype(np.uint8)
         # Save the output image montage.
         ski.io.imsave(output_image, self.montage)
+        
+        
+        
+class Peaks:
+    '''
+    Class defining Peaks objects.
+    
+    * Peaks object = source image + list-of-its-peaks.
+    * See __init__ for more information about initial object parameters.
+    * More help: https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg.html
+    '''
+    
+    def __init__(self, img_name, img_object=None):
+        '''
+        Initialize Peaks object.
+
+        Parameters
+        ----------
+        image : filename or pillow object
+            DESCRIPTION.
+
+        Returns
+        -------
+        Peaks object.
+        '''
+        self.img_name = img_name
+        if img_object is not None:
+            self.img = img_object
+        else:
+            self.img = MyImage.open_image(img_name)
+        self.data = None
+
+    
+    def show_as_text():
+        pass
+
+    
+    def show_in_image():
+        pass
+
+        
+    def read(file):
+        pass
+
+    
+    def find(method='manual'):
+        pass
+
+    
+    def correct(method='manual'):
+        pass
+
+    
+    def classify(method='gauss_fit'):
+        pass
+
+
 
 @dataclass
 class Units:
