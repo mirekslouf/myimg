@@ -364,7 +364,7 @@ class MyImage:
         
         # (1) Calculate new dimensions while keeping aspect_ratio
         if width is not None:     # New dimensions if the width is given
-            new_width  = round(width)
+            new_width = round(width)
             new_height = round(width * aspect_ratio)
         elif height is not None:  # New dimensions if the height is given
             new_height = round(height)
@@ -372,6 +372,10 @@ class MyImage:
         else:
             print('Image resize: width or height was not given - no action!')
             return
+        
+        # (2) Update image dimensions
+        self.width  = new_width
+        self.height = new_height 
         
         # (2) Resize the image
         self.img = self.img.resize(
