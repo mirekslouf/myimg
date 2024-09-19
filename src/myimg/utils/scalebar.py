@@ -177,7 +177,7 @@ def insert_scalebar(my_img, pixsize, F, **kwargs):
     # Draw line
     draw.rectangle([x2,y2,x2+bar_x,y2+bar_y], fill=color)
     # Draw text
-    draw.text((x3,y3),swu.text(), font=font_object, fill=color, anchor='mb')
+    draw.text((x3,y3), swu.text(), font=font_object, fill=color, anchor='mb')
     # Print final info if requested
     if messages:
         print('End of function, the scalebar drawn in the image object.')

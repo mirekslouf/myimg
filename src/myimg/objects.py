@@ -196,12 +196,13 @@ class MyImage:
     
     def to_gray(self, itype='8bit'):
         '''
-        Convert image to grayscale.
+        Convert image to 8-bit grayscale.
 
         Parameters
         ----------
-        itype : str, optional, '8bit' or '16bit', default is '8bit'
-            The image is converted either to 8bit or 16bit grayscale.
+        itype : str, optional, default is '8bit'
+            The image is converted to 8bit grayscale.
+            Only the standard 8bit grayscale images are supported now.
 
         Returns
         -------
@@ -210,18 +211,38 @@ class MyImage:
             
         Technical notes
         ---------------
-        * Conversion to 16-bit grayscale can be tricky.
-        * RGB -> 16-bit grayscale conversion is not supported now.
-        * 8-bit-gray -> 16-bit-gray changes dtype to 16bit, but not values.
+        * We fully support only 8-bit grayscale images;
+          the same situation is in Pillow (full support only for 8-bit gray).
+        * Working with 16-bit grayscale images is surprisingly tricky.
+          You *can* read and work with 16-bit images,
+          but before using some methods of this package
+          (such as label, scalebar, montage),
+          they *should* be converted to 8-bit grayscale
+          in order to avoid errors or strange results.
+        * This method can convert
+          the standard 16-bit grayscale to the 8-bit grayscale,
+          but it does not support other, less common grayscale formats.
+        * The less common grayscale formats can be normalized and converted
+          to 8-bit grayscale manually, in an analogous way as in this method.
         '''
         if itype == '8bit':
-            # Conversion to 8-bit grayscale (the default) should be fine.
-            self.img = self.img.convert('L')
-        elif itype == '16bit':
-            # Conversion to 16-bit grayscale can be tricky - see the docstring.
-            self.img = self.img.convert('I;16')
+            # Conversion to 8-bit grayscale
+            if self.img.mode in ('RGB','RGBA'):
+                # Conversion of RGB and RGBA images should be fine.
+                self.img = self.img.convert('L')
+            elif self.img.mode == 'L':
+                # The image is 8-bit grayscale - just pass.
+                pass
+            elif self.img.mode == 'I;16':
+                # Conversion of 16-bit grayscale to 8-bit grayscale
+                # (requires special treatment, not supported by Pillow.
+                arr = np.array(self.img)
+                normalized = (arr - arr.min()) / (arr.max() - arr.min()) * 255
+                normalized = normalized.astype(np.uint8)
+                self.img = Image.fromarray(normalized)
         else:
-            print('Unknown image type when converting to grayscale!')
+            # Conversion to non-standard grayscale formats not supported.
+            print('Only standard 8-bit grayscale images are supported.')
             print('The original image was not changed.')
             
     
@@ -251,8 +272,8 @@ class MyImage:
             # Conversion to 24-bit RGB.
             self.img = self.img.convert('RGB')
         else:
-            # Non-standard RGB formats are not supported at the moment.
-            print('Unknown image type when converting to RGB!')
+            # Conversion to non-standard RGB formats not supported.
+            print('Only standard 24-bit RGB images are supported.')
             print('The original image was not changed.')
 
 
@@ -282,7 +303,7 @@ class MyImage:
             # Conversion to 24-bit RGB.
             self.img = self.img.convert('RGB')
         else:
-            # Non-standard RGBA formats are not supported at the moment.
+            # Conversion to non-standard RGBA formats not supported.
             print('Unknown image type when converting to RGBA!')
             print('The original image was not changed.')
 
@@ -706,8 +727,8 @@ class Montage:
         # Process self.itypes
         # 1) Check image tepes
         #    (the only allowed image types are 'rgb' and 'gray'.
-        # 2) Define additiona parameters for montage:
-        #    (the additional parameters will be saved within self object
+        # 2) Define additional parameters for montage:
+        #    (the additional parameters will be saved within the self object
         self.check_image_types()
         
         # Rescale images if requested
