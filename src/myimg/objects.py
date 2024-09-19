@@ -352,8 +352,7 @@ class MyImage:
             It is also possible to define a specific resampling filter.
             For sharp images or plots we may prefer no resampling and 
             we can use *resampling = 0 = Image.Resampling.NEAREST*.
-            More info resampling filters at https://pillow.readthedocs.io
-            - Reference - Image module - Image.resize.
+            More: https://pillow.readthedocs.io -> Reference -> Image -> resize
             
         Returns
         -------
