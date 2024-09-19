@@ -231,7 +231,7 @@ class MyImage:
 
         Parameters
         ----------
-        itype : str, optional, default is '24bit'.
+        itype : str, optional, default is '24bit'
             The image is converted to standard RGB image = 24bit = 3*8bit.
             Only the tandard 24bit RGB images are supported at the moment.
 
@@ -262,7 +262,7 @@ class MyImage:
 
         Parameters
         ----------
-        itype : str, optional, default is '32bit'.
+        itype : str, optional, default is '32bit'
             The image is converted to standard RGBA image = 32bit = 3*8+8bit.
             Only the tandard 32bit RGBA images are supported at the moment.
 
@@ -332,7 +332,53 @@ class MyImage:
         # Update image size
         self.width, self.height = self.img.size
     
-                
+    
+    def resize(self, width=None, height=None, resample=None):
+        '''
+        Resize image to new width or height, keeping the aspect ratio.
+    
+        Parameters
+        ----------
+        width : int, optional, default is None
+            The required width of the resized image.
+            The height will be calculated
+            so that the aspect ratio was preserved.
+        height : int, optional, default is None
+            The required height of the resized image.
+            The width will be calculated
+            so that the aspect ratio was preserved.
+        resample : int or None
+            If None, default resampling filter is used (usually Ok).
+            It is also possible to define a specific resampling filter.
+            For sharp images or plots we may prefer no resampling and 
+            we can use *resampling = 0 = Image.Resampling.NEAREST*.
+            More info resampling filters at https://pillow.readthedocs.io
+            - Reference - Image module - Image.resize.
+            
+        Returns
+        -------
+        None
+            The output is saved in *self.img*
+        '''
+        # (0) Calculate AR = aspect_ratio
+        aspect_ratio = self.height/self.width
+        
+        # (1) Calculate new dimensions while keeping aspect_ratio
+        if width is not None:     # New dimensions if the width is given
+            new_width  = round(width)
+            new_height = round(width * aspect_ratio)
+        elif height is not None:  # New dimensions if the height is given
+            new_height = round(height)
+            new_width  = round(height * 1/aspect_ratio)
+        else:
+            print('Image resize: width or height was not given - no action!')
+            return
+        
+        # (2) Resize the image
+        self.img = self.img.resize(
+            (new_width, new_height), resample=resample)
+
+             
     def label(self, label, F=None, **kwargs):
         '''
         Insert a one-letter label in the upper left corner of an image. 
