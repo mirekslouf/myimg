@@ -990,6 +990,7 @@ class Peaks:
     * See __init__ for more information about initial object parameters.
     * More help: https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg.html
     '''
+
     
     def __init__(self, df=None):
         '''
@@ -1016,18 +1017,33 @@ class Peaks:
             sys.exit()
     
     
-    def show_as_text():
-        pass
+    def read(self, filename):
+        """
+        Load the peak data from a .pkl file.
+        """
+        try:
+            self.df = pd.read_pickle(filename)
+            print(f"Data loaded successfully from {filename}")
+        except FileNotFoundError:
+            print(f"File {filename} not found.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
+    
+    def show_as_text(self):
+        """
+        Display the peak data as text.
+        """
+        if self.df is not None:
+            print(self.df.to_string(index=False))
+        else:
+            print("No data to display. Please read data from a file first.")
+    
     
     def show_in_image():
         pass
 
-        
-    def read(file):
-        pass
-
-    
+   
     def find(method='manual'):
         pass
 
