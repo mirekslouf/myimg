@@ -47,6 +47,7 @@ class MyImage(myimg.objects.MyImage):
     '''
     pass
 
+
 class Montage(myimg.objects.Montage):
     '''
     Class defining Montage objects.
