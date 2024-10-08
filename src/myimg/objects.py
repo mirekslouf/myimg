@@ -60,6 +60,7 @@ when creating scalebars (as a scalebar contains *number with units*).
 
 import os, sys, re
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from PIL import Image, ImageFont, ImageDraw
 from dataclasses import dataclass
@@ -77,7 +78,7 @@ class MyImage:
     '''
 
         
-    def __init__(self, filename):
+    def __init__(self, filename, peaks=False):
         '''
         Initialize MyImage object.
 
@@ -94,12 +95,28 @@ class MyImage:
             (ii) corresponding PIL image object  (MyImage.img), and
             (iii) further properties and methods (MyImage.cut, crop, ...).
         '''
-        self.name   = filename
+        
+        # The obligatory myimg property = name of the image
+        self.name = filename
+        
+        # Additional myimg properties
         self.img    = MyImage.open_image(filename)
         self.width  = self.img.size[0]
         self.height = self.img.size[1]
-        self.peaks  = Peaks(img_name=self.name, img_object=self.img)
         
+        # Optional myimg property = peaks
+        if peaks == False:
+            self.peaks = None
+        elif peaks == True:
+            self.peaks = Peaks()
+        elif type(peaks) == pd.DataFrame:
+            self.peaks = Peaks(peaks)
+        else:
+            print('Error initializing {myimg.objects.MyImage}!')
+            print('Wrong type of {peaks} argument!')
+            print('Empty {peaks} object created.')            
+            self.peaks = Peaks()
+    
     
     @staticmethod
     def open_image(filename):
@@ -974,26 +991,30 @@ class Peaks:
     * More help: https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg.html
     '''
     
-    def __init__(self, img_name, img_object=None):
+    def __init__(self, df=None):
         '''
         Initialize Peaks object.
 
         Parameters
         ----------
-        image : filename or pillow object
-            DESCRIPTION.
+        df : pandas.DataFrame object
+            DataFrame containing peak coordinates and types.
 
         Returns
         -------
-        Peaks object.
+        Peaks object
         '''
-        self.img_name = img_name
-        if img_object is not None:
-            self.img = img_object
+        
+        if type(df) == pd.DataFrame:
+            self.df = df
+        elif df is None:
+            self.df = pd.DataFrame()
         else:
-            self.img = MyImage.open_image(img_name)
-        self.data = None
-
+            print('Error when initializing {myimg.objects.peaks} object.')
+            print('The data variable was not in pandas.DataFrame format.')
+            print('WARNING: Empty dataframe created instead.')
+            sys.exit()
+    
     
     def show_as_text():
         pass
