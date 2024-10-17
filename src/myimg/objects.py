@@ -86,36 +86,30 @@ class MyImage:
         ----------
         filename : str or path-like object
             Name of the image file to work with.
+        peaks : bool or pd.DataFrame, optional
+            If True, initializes an empty Peaks object.
+            If DataFrame is passed, initializes Peaks with data.
 
         Returns
         -------
         MyImage object
-            MyImage object contains:
-            (i) name of the original image (MyImage.name),
-            (ii) corresponding PIL image object  (MyImage.img), and
-            (iii) further properties and methods (MyImage.cut, crop, ...).
         '''
-        
-        # The obligatory myimg property = name of the image
+        # Store image name and open the image
         self.name = filename
-        
-        # Additional myimg properties
-        self.img    = MyImage.open_image(filename)
-        self.width  = self.img.size[0]
-        self.height = self.img.size[1]
-        
-        # Optional myimg property = peaks
-        if peaks == False:
+        self.img = MyImage.open_image(filename)
+        self.width, self.height = self.img.size
+
+        # Initialize Peaks with the image and its name
+        if peaks is False:
             self.peaks = None
-        elif peaks == True:
-            self.peaks = Peaks()
-        elif type(peaks) == pd.DataFrame:
-            self.peaks = Peaks(peaks)
+        elif peaks is True:
+            self.peaks = Peaks(img=self.img, img_name=self.name)
+        elif isinstance(peaks, pd.DataFrame):
+            self.peaks = Peaks(df=peaks, img=self.img, img_name=self.name)
         else:
-            print('Error initializing {myimg.objects.MyImage}!')
-            print('Wrong type of {peaks} argument!')
-            print('Empty {peaks} object created.')            
-            self.peaks = Peaks()
+            print('Error initializing MyImage! Wrong type of {peaks} argument!')
+            print('Empty {peaks} object created.')
+            self.peaks = Peaks(img=self.img, img_name=self.name)
     
     
     @staticmethod
@@ -992,7 +986,7 @@ class Peaks:
     '''
 
     
-    def __init__(self, df=None):
+    def __init__(self, df=None, img=None, img_name=""):
         '''
         Initialize Peaks object.
 
@@ -1000,13 +994,17 @@ class Peaks:
         ----------
         df : pandas.DataFrame object
             DataFrame containing peak coordinates and types.
+        img : PIL Image object, optional
+            The image associated with the peaks.
+        img_name : str, optional
+            Name of the image file.
 
         Returns
         -------
         Peaks object
         '''
-        
-        if type(df) == pd.DataFrame:
+
+        if isinstance(df, pd.DataFrame):
             self.df = df
         elif df is None:
             self.df = pd.DataFrame()
@@ -1015,39 +1013,144 @@ class Peaks:
             print('The data variable was not in pandas.DataFrame format.')
             print('WARNING: Empty dataframe created instead.')
             sys.exit()
+
+        # Initialize the image and image name
+        self.img = img
+        self.img_name = img_name
+            
     
     
     def read(self, filename):
-        """
+        '''
         Load the peak data from a .pkl file.
-        """
+    
+        Parameters
+        ----------
+        filename : str
+            The path to the .pkl file containing the peak data.
+    
+        Returns
+        -------
+        None
+        '''
         try:
-            self.df = pd.read_pickle(filename)
-            print(f"Data loaded successfully from {filename}")
+            self.df = pd.read_pickle(filename)  # Load the DataFrame from the specified .pkl file
+            print(f"Data loaded successfully from {filename}")  # Print success message
         except FileNotFoundError:
-            print(f"File {filename} not found.")
+            print(f"File {filename} not found.")  # Print error if file is not found
         except Exception as e:
-            print(f"An error occurred: {e}")
+            print(f"An error occurred: {e}")  # Print any other exceptions that occur
 
     
     def show_as_text(self):
-        """
+        '''
         Display the peak data as text.
-        """
+    
+        Returns
+        -------
+        None
+        '''
         if self.df is not None:
-            print(self.df.to_string(index=False))
+            print(self.df.to_string(index=False))  # Print the DataFrame as a string without the index
         else:
-            print("No data to display. Please read data from a file first.")
+            print("No data to display. Please read data from a file first.")  # Print message if no data is available
     
     
-    def show_in_image():
-        pass
+    def show_in_image(self):
+        '''
+        Display the image with the peak data overlay (if image and data exist),
+        with different colors for different particle types.
+    
+        Parameters
+        ----------
+        self : object
+            The instance of the class containing the image and peak data.
+    
+        Returns
+        -------
+        None
+            The method does not return a value but displays an image with overlayed peak data.
+    
+        Raises
+        ------
+        ValueError
+            If the DataFrame does not contain the required columns.
+        '''
+        if self.img is None:
+            print("No image to display.")
+            return
+        if self.df.empty:
+            print("No peak data to overlay on the image.")
+            return
+    
+        # Check if the DataFrame contains the required columns
+        if 'X' not in self.df.columns or 'Y' not in self.df.columns:
+            print("Peak data does not contain 'X' and 'Y' columns.")
+            return
+        if 'Class' not in self.df.columns:
+            print("Peak data does not contain 'Class' column.")
+            return
+    
+        # Define a dictionary mapping particle types to colors
+        color_map = {
+            '1': 'red',
+            '2': 'blue',
+            '3': 'green',
+            '4': 'yellow',
+        }
+    
+        # Plot the image
+        plt.imshow(self.img, cmap='gray')
+    
+        # Loop through each unique particle type and plot the peaks with the corresponding color
+        for particle_type in self.df['Class'].unique():
+            particle_data = self.df[self.df['Class'] == particle_type]
+            plt.scatter(particle_data['X'], particle_data['Y'], 
+                        c=color_map.get(str(particle_type), 'black'),  # Default to black if type is not in the map
+                        label=particle_type, 
+                        s=10)
+        
+        plt.legend(title="Particle Type")
+        plt.title(f"Peaks on {self.img_name}")
+        plt.show()
+
 
    
-    def find(method='manual'):
-        pass
-
+    def find(self, method='manual'):
+        '''
+        Create an interactive plot for particle classification.
     
+        Parameters
+        ----------
+        self : object
+            The instance of the class that contains the image and associated methods.
+        method : str, optional
+            The method to use for finding peaks. Currently, only 'manual' is supported.
+            Default is 'manual'.
+    
+        Returns
+        -------
+        None
+            This method does not return a value but displays an interactive plot for particle classification.
+    
+        Raises
+        ------
+        ValueError
+            If the specified method is not 'manual'.
+        '''
+        from myimg.utils.iplot import interactive_plot, default_plot_params
+        
+        if method != 'manual':
+            raise ValueError("Currently, only the 'manual' method is supported.")
+        
+        # Get default plot parameters
+        ppar = default_plot_params()
+        
+        # Use the image already stored in the Peaks object
+        fig, ax = interactive_plot(self.img, ppar)  # Pass the image object
+        plt.show()
+
+
     def correct(method='manual'):
         pass
 

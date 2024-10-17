@@ -1,471 +1,351 @@
+# -*- coding: utf-8 -*-
 '''
-Module: bground.iplot
----------------------
-The module with functions to create an interactive plot.
-
-The interactive plot can be defined/created at three levels/steps:
-    
-* Level 1 = func yielding the interactive plot = the plot linked with events.
-* Level 2 = funcs for event types (such as key_press_event, close_event, ...).
-* Level 3 = funcs for individual sub-events (such as specific keypress events).
-
-Important technical notes:
-
-* We keep the (very reasonable) mouse events from Matplotlib UI.
-* We define just *key_press_events*, with which we can do the whole job.
-* We can define additional simple events (here: *close_event* = on closing).
+Interactive Plot for Particle Classification.
+Created on: Oct 16, 2024
+Author: Jakub
 '''
 
-import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.image as mpimg  # Required for image loading
+import warnings
 
-from bground import bdata, bfunc
-import warnings; warnings.filterwarnings("ignore")
+warnings.filterwarnings("ignore")  # Ignore warnings for cleaner output
+
 
 # =============================================================================
-# Level 1: Create plot with events
+# Level 1: Create plot with events and set classifier
 
-def interactive_plot(data, bkgr, ppar):
+def interactive_plot(image_path: str, ppar) -> tuple:
     '''
-    Create plot from input data.
-    
-    This is a plot window, which will be made interactive later.
-    In the rest of the program, the plot will be the program interface.
+    Create an interactive plot for particle classification.
 
     Parameters
     ----------
-    data : 2D numpy array
-        Data for plotting; columns [X,Y].
-    bkgr : bground.bdata.XYbackground object
-        An object storing data for the background calculation.
-    ppar : bground.ui.PlotParameters object
-        An object with data for interactive plot + name of output file
-    
+    image_path : str
+        The file path to the image to be displayed in the plot.
+    ppar : object
+        Parameter object containing plot settings (xlabel, ylabel, xlim, ylim).
+
     Returns
     -------
-    fig,ax : maptplotlib.pyplot objects
-        The figure and axis of the interactive plot which shows XY-data.
-        
-    Technical notes
-    ---------------
-    The arguments/objects for this function (data, bkgr, ppar)
-    are usually defined by means of a simple OO-interface
-    before this function is called.
+    tuple
+        A tuple containing the figure and axes objects for further manipulation.
     '''
-    
-    # (0) Initialize
-    plt.close('all')  # Close all previous plots - to avoid mess in Jupyter
-    initialize_interactive_plot_parameters()
-    
-    # (1) Prepare the plot: fig,ax including window title
-    # (num argument below can take both integers and strings
-    fig,ax = plt.subplots(num='Background correction')
+    plt.close("all")  # Ensure all previous plots are closed
+    initialize_interactive_plot_parameters()  # Set plot parameters
 
-    # (2) Read XY data and create the plot
-    # Get XY data from the function argument data
-    X,Y = (data[0],data[1])
-    # Plot XY data
-    ax.plot(X,Y, 'b-')
-    # Set the remaining plot parameters
-    ax.set_xlim(ppar.xlim)
-    ax.set_ylim(ppar.ylim)
+    # Set up the plot and load the background image
+    fig, ax = plt.subplots(num="Particle Classification")
+    img = mpimg.imread(image_path)  # Load the image from the specified path
+    ax.imshow(img)  # Display the image
+
+    # Set plot labels and limits based on the provided parameters
     ax.set_xlabel(ppar.xlabel)
     ax.set_ylabel(ppar.ylabel)
-    
-    # (3) Connect the plot with event(s)
-    #   => link fig.canvas event(s) to a callback function(s).
-    # Here: two types of events:
-    #   key_press_event -> callback function = on_keypress.
-    #   close_event     -> callback function = on_close
-    # The callback function links the events to further user-defind funcs.
-    #   Note1: all is based on standard matplotlib function canvas.mpl_connect
-    #   Note2: the individual functions are defined below.
-    # Trick: If we need an event with multiple arguments => lambda functions.
-    #   GoogleSearch: python calback with multiple arguments 
-    
-    # (3a) Connect plot with key_press_event (= when a key is pressed)
-    fig.canvas.mpl_connect('key_press_event',
-        lambda event: on_keypress(event, fig, ax, data, bkgr, ppar))
-    
-    # (3b) Connect plot with close_event (= when the window is closed)
-    fig.canvas.mpl_connect('close_event',
-        lambda event: on_close(event, ppar))
-    
-    # (4) Optimize the plot layout
-    plt.tight_layout()
-    
-    # (5) Return fig,ax
-    # (This is necessary, among others, fof Jupyter + %matplotlib widget
-    return(fig,ax)
+    ax.set_xlim(ppar.xlim)
+    ax.set_ylim(ppar.ylim)
+
+    # Initialize the particle classifier to manage particle data
+    classifier = ParticleClassifier()
+
+    # Connect key press and close events to their respective handlers
+    fig.canvas.mpl_connect(
+        "key_press_event", lambda event: on_keypress(event, ax, classifier)
+    )
+    fig.canvas.mpl_connect(
+        "close_event", lambda event: on_close(event, ppar, classifier)
+    )
+
+    plt.tight_layout()  # Adjust layout for better spacing
+    return fig, ax  # Return the figure and axes objects
 
 
 # =============================================================================
-# Level 2: Callback functions for all events
+# Level 2: Callback functions for events
 
-def on_keypress(event, fig, ax, data, bkgr, ppar):
+# Define a color map for each class to visualize particles
+color_map = {
+    1: 'red',      # Class 1 -> Red
+    2: 'blue',     # Class 2 -> Blue
+    3: 'green',    # Class 3 -> Green
+    4: 'yellow'    # Class 4 -> Yellow
+}
+
+def on_keypress(event, ax, classifier):
     '''
-    Definition of key_press_events for a plot.
-    
-    The callback function, which defines all keypress events.
-    The functions for the individual keypress events are defined below.
-    '''
-    # Step 3 in defining interactive plot
-    # = defining individual functions for specific pressed keys.
-    # -----
-    # Read pressed key and mouse coordinates
-    key = event.key
-    xm,ym = event.xdata,event.ydata
-    # Mouse outside graph area - just print warning!
-    if xm == None or ym == None:
-        if ppar.messages:
-            print(f'Key [{key}] mouse outside plot area - no action!')
-    # Mouse inside graph area, run corresponding function.
-    else:
-        if ppar.messages:
-            print(f'Key [{key:s}] mouse [{xm:.1f},{ym:.1f}]', end=' ')
-        # Functions run by means try-except
-        # Reason: to ignore nonsense actions...
-        # ...such as delete/draw points if no points are defined
-        try:
-            if   key == '1': add_bkg_point(plt,data,bkgr,ppar,xm,ym)
-            elif key == '2': del_bkg_point_close_to_mouse(plt,bkgr,ppar,xm,ym)
-            elif key == '3': replot_with_bkg_points(plt,data,bkgr,ppar)
-            elif key == '4': replot_with_bkg(plt,data,bkgr,ppar,'linear')
-            elif key == '5': replot_with_bkg(plt,data,bkgr,ppar,'quadratic')
-            elif key == '6': replot_with_bkg(plt,data,bkgr,ppar,'cubic')
-            elif key == 'a': load_bkg_points(plt,data,bkgr,ppar)
-            elif key == 'b': save_bkg_points(bkgr,ppar)
-            elif key == 't': subtract_bkg_and_save(plt, data, bkgr, ppar)
-            elif key == 's': save_PNG_image(ppar) 
-            elif ppar.messages: print() # for any other key just empty line
-        except Exception:
-            pass
+    Handle key press events for particle classification.
 
-
-def on_close(event, ppar):
-    '''
-    Definition of on_close event of the plot.
-    
-    The simple callback function, which runs
-    when the interactive plot window is closed.
-    The function just prints some concluding remarks
-    and information about the output files.
-    '''
-    out_file1 = ppar.output_file
-    out_file2 = ppar.output_file + '.bkg'
-    out_file3 = ppar.output_file + '.png'
-    if not(out_file1.lower().endswith('.txt')): out_file1 = out_file1 + '.txt'
-    print()
-    print('The interactive plot was closed.')
-    print('If you followed the instructions on www,')
-    print('the outputs should be saved in the following files:')
-    print(f' - {out_file1} = TXT file with background-corrected XYdata')
-    print(f' - {out_file2} = BKG file containing background points')
-    print(f' - {out_file3} = PNG plot of XY-data with defined background')
-
-
-# =============================================================================
-# Level 3: Functions for individual keypress events       
-
-def add_bkg_point(plt, data, bkgr, ppar, xm, ym):
-    '''
-    Function for keypress = '1'.
-    
-    Add background point at current mouse position.
-    More precisely: add a background point at the the XY-curve,
-    whose X-coordinate is the closest to the mouse X-coordinate.
-    '''
-    idx = find_nearest(data[0],xm)
-    xm,ym = (data[0,idx],data[1,idx])
-    bkgr.points.add_point(xm,ym)
-    plt.plot(xm,ym,'r+')
-    plt.draw()
-    if ppar.messages: print('background point added.')
-    
-
-def del_bkg_point_close_to_mouse(plt, bkgr, ppar, xm, ym):
-    '''
-    Function for keypress = '2'.
-    
-    Remove the background point close to mouse cursor position.
-    More precisely: remove the background point from the XY-curve,
-    whose X-coordinate is the closest to the mouse cursor X-coordinate.
-    '''
-    # a) Sort bkg points (sorted array is necessary for the next step)
-    bfunc.sort_bkg_points(bkgr)
-    # b) Find index of background point closest to the mouse X-position
-    idx = find_nearest(np.array(bkgr.points.X), xm)
-    # c) Remove element with given index from X,Y-lists (save coordinates)
-    xr = bkgr.points.X.pop(idx)
-    yr = bkgr.points.Y.pop(idx)
-    # d) Redraw removed element with background color
-    plt.plot(xr,yr, 'w+')
-    # e) Redraw plot
-    plt.draw()
-    # f) Print message to stdout.
-    if ppar.messages: print('background point deleted.')
-
-
-def replot_with_bkg_points(plt, data, bkgr, ppar, points_reloaded=False):
-    '''
-    Function for keypress = '3'.
-    
-    Re-draw plot with backround points.
-    Additional keyword parameter (points_reloaded=False),
-    is employed if the function is called from load_bkg_points function.
-    The load_bkg_points function uses its own short message
-    and sets points_reloaded=True to avoid additional confusing messaging.
-    '''
-    clear_plot()
-    plt.plot(data[0],data[1],'b-')
-    plt.plot(bkgr.points.X,bkgr.points.Y,'r+')
-    plt.draw()
-    if ppar.messages == True and points_reloaded == False:
-        # 
-        print('backround points re-drawn.')
-
-def replot_with_bkg(plt, data, bkgr, ppar, btype):
-    '''
-    Function for keypress = '4,5,6'.
-    
-    Re-draw plot with backround points and background curve.
-    Type of the curve is given by parameter btype.
-    For key = 4/5/6 the function called with btype = linear/quadratic/cubic.
-    '''
-    # Sort background points + calculate background
-    bfunc.sort_bkg_points(bkgr)
-    bkgr.btype = btype
-    bfunc.calculate_background(data, bkgr)
-    # Clear plot + re-draw it with the background points
-    clear_plot()
-    plt.plot(data[0],data[1],'b-')
-    plt.plot(bkgr.points.X,bkgr.points.Y,'r+')
-    plt.plot(bkgr.curve.X,bkgr.curve.Y,'r:')
-    plt.draw()
-    # Print a brief message on stdout if requested
-    if ppar.messages:
-        if bkgr.btype == 'linear':
-            print('linear background displayed.')
-        elif bkgr.btype == 'quadratic':
-            print('quadratic background displayed.')
-        elif bkgr.btype == 'cubic':
-            print('cubic background displayed.')
-
-
-def load_bkg_points(plt, data, bkgr, ppar):
-    '''
-    Function for keypress = 'a'.
-
-    Load background points from previously saved file.
-    Assumption: the file has been saved with save_bkg_points function,
-    which means that its name is fixed and known (bkgr.basename + '.bkg').
-    '''
-    # a) get input file with previously saved background points
-    # (the filename is fixed to [output_file_name].bkg
-    # (reason: inserting a name during an interactive plot session is a hassle
-    # (solution: manual renaming of the BKG-file before running this program
-    input_filename = bkgr.basename + '.bkg'
-    # b) read input file to DataFrame
-    df = pd.read_csv(input_filename, sep=r'\s+')
-    # c) initialize bkg object by means of above-read DataFrame
-    bkgr.points = bdata.XYpoints(X = list(df.X), Y = list(df.Y))
-    bkgr.btype='linear'
-    # d) print message if requested
-    if ppar.messages:
-        print(f'background points read from: [{input_filename}].')
-    # e) replot with currently loaded background
-    replot_with_bkg_points(plt, data, bkgr, ppar, points_reloaded=True)
-
-
-def save_bkg_points(bkgr, ppar):
-    '''
-    Function for keypress = 'b'.
-    
-    Save background points to file.
-    The output file name is bkgr.basename + extension 'bkg'.
-    '''
-    # Treat the special case when the user presses 'b'
-    # but there are no background points defined at the moment.
-    if len(bkgr.points.X) == 0:
-        print('no background points defined!')
-        return()
-    # Standard processing of event 'b' = saving of the background points.
-    bfunc.sort_bkg_points(bkgr)
-    output_filename = bkgr.basename + '.bkg'
-    df = bkg_to_df(bkgr)
-    with open(output_filename, 'w') as f:
-        f.write(df.to_string())
-        if ppar.messages:
-            print(f'background points saved to: [{output_filename}]')
-    
-
-def subtract_bkg_and_save(plt, data, bkgr, ppar):
-    '''
-    Function for keypress 't'.
-    
-    This is the final function which:
-    
-    * Recalculates recently defined background
-    * Calculates background-corrected data = subtracts bkg from data
-    * Saves the results to TXT-file with 3 cols [X, Y, bkg-corrected-Y]
-    '''
-    # Subtract recently defined background and save results
-    # (a) Recalculate background
-    bfunc.calculate_background(data,bkgr)
-    # (b) Subtract background
-    data = bfunc.subtract_background(data,bkgr)
-    # (c) Save background-corrected data to TXT-file
-    # (we will use ppar object properties for this
-    # (ppar.output_file = output file name, ppar.xlabel = label of X-data...
-    output_filename = ppar.output_file
-    if not(output_filename.lower().endswith('.txt')):
-        output_filename = output_filename + '.txt'
-    file_header = (
-        f'Columns: {ppar.xlabel}, {ppar.ylabel}, ' +
-        f'background-corrected-{ppar.ylabel}\n' +
-        f'Background correction type: {bkgr.btype}')
-    np.savetxt(
-        output_filename, 
-        np.transpose(data),
-        fmt=('%8.3f','%11.3e','%11.3e'),
-        header=file_header)
-    if ppar.messages:
-        print(f'backround-corrected data saved to: [{output_filename}]')
-
-
-def save_PNG_image(ppar):
-    '''
-    Function for keypress 's'.
-    
-    Special case - 's' is Matplotlib UI shortcut,
-    which saves PNG image of the current (interactive) plot.
-    
-    As key_press_event 's' was NOT disconnected from the plot,
-    the following two things are going to happen:
-    
-    * At first, the default event (saving as PNG) will take place.
-    * At second, this function prints a message on stdout (if requested).
-    '''
-    
-    # 0) If 's' was pressed the current plot is saved automatically.
-    # (Note: default Matplotlib UI shortcut
-    
-    # 1) We define the output filename.
-    # (Note: this is only RECOMMENDED filename - user can select anything...
-    output_filename = ppar.output_file + '.png'
-    
-    # 2) We print the message that the plot was saved
-    # (Note: we add the info about the recommended filename
-    if ppar.messages:
-        print(f'plot saved to PNG; recommended name: [{output_filename}]')
-
-
-# =============================================================================
-# Level 4: Auxiliary functions for the interactive plot
-
-
-def initialize_interactive_plot_parameters():
-    '''
-    Initialize parameters of the interactive plot.
-    '''
-    plt.rcParams.update({
-        'figure.figsize' : (6,4),
-        'figure.dpi' : 100,
-        'font.size' : 12,
-        'lines.linewidth' : 1.0})
-
-
-def print_brief_help(ppar):
-    '''
-    Print ultra-brief help before activating the interactive plot.
-    
     Parameters
     ----------
-    ppar : 
-        It is used just to get the value of ppar.messages.
-        If ppar.messages == True, additional empty line is printed.
-        Reason: To separate the introductory help from the following messages.
-    
+    event : matplotlib.backend_bases.KeyEvent
+        The key press event that triggered this function.
+    ax : matplotlib.axes.Axes
+        The axes object to plot the particles on.
+    classifier : ParticleClassifier
+        The classifier managing the particle data.
+
     Returns
     -------
     None
-        The output is the brief help printed on stdout.
     '''
-    print('(0) Click on the newly-opened window {Background correction},')
-    print('    which is a Matplotlib interative figure with extra shortcuts.')
-    print('(1) Use Matplotlib UI + keyboard shortcuts to define a background:')
-    print('    1,2 = add/delete a background point close to the mouse cursor')
-    print('    3,4,5,6 = show bkg points + linear/quadratic/cubic background')
-    print('(2) Save the results + close the window when you are done:')
-    print('    b = save the background points as a BKG-file (a = restore)')
-    print('    t = subtract the background & save the result as a TXT-file')
-    print('(3) Detailed help, complete documentation, and worked examples:')
-    print('    https://mirekslouf.github.io/bground/docs')
-    # Add an extra empty line if short messages to stdoud should be printed.
-    if ppar.messages: print()
+    if event.key in ['1', '2', '3', '4']:  # Check if a class key is pressed
+        # Get the current mouse position in the plot coordinates
+        x, y = event.xdata, event.ydata
+        if x is not None and y is not None:  # Ensure the coordinates are valid
+            # Add the particle with the selected class
+            particle_class = int(event.key)
+            classifier.add_particle(x, y, particle_class)  # Store particle data
+
+            # Use the appropriate color from the color_map
+            color = color_map.get(particle_class, 'black')  # Default to black if class not found
+
+            # Plot the particle with the selected color
+            ax.plot(x, y, 'o', color=color, markersize=5)  # Circle marker with the class color
+
+            plt.draw()  # Redraw the plot to update with the new point
+
+    elif event.key == '5':  # If '5' is pressed, save particle data
+        classifier.save_particles()  # Save the particles
+        print("Particle data saved to PKL and TXT.")
+
+    elif event.key == 'q':  # If 'q' is pressed, quit the interactive session
+        plt.close()  # Close the plot
+        print("Plot closed.")
 
 
-def find_nearest(arr, value):
+def on_close(event, ppar, classifier):
     '''
-    Auxiliary function:
-    Find the index of the element with the nearest {value} in 1D-array.
-    
+    Handle the close event and save results.
+
     Parameters
     ----------
-    arr : 1D numpy array
-        The array, in which we search the element with closest value.
-        Important prerequisite: the array must be sorted.
-    value : float
-        The value, for which we search the closest element.
+    event : matplotlib.backend_bases.CloseEvent
+        The close event that triggered this function.
+    ppar : object
+        Parameter object containing output file information.
+    classifier : ParticleClassifier
+        The classifier managing the particle data.
 
     Returns
     -------
-    idx : int
-        Index of the element with the closest value.
+    None
     '''
-    # Find index of the element with nearest value in 1D-array.
-    # Important prerequisite: the array must be sorted.
-    # https://stackoverflow.com/q/2566412
-    # 1) Key step = np.searchsorted
-    idx = np.searchsorted(arr, value, side="left")
-    # 2) finalization = consider special cases and return final value
-    if idx > 0 and (
-            idx == len(arr) or abs(value-arr[idx-1]) < abs(value-arr[idx])):
-        return(idx-1)
-    else:
-        return(idx)
+    # Save the plot as a PNG file
+    plt.savefig(f"{ppar.output_file}.png")
+    print(f"Plot saved as '{ppar.output_file}.png'.")
+
+    # Save particle data to a TXT file
+    df = classifier.get_coordinates()  # Get the particle coordinates
+    df.to_csv(f"{ppar.output_file}.txt", index=False)  # Save to CSV format
+    print(f"Coordinates saved to '{ppar.output_file}.txt'.")
+
+    # Confirm all outputs
+    print("Interactive plot closed. Output files:")
+    print(f" - {ppar.output_file}.txt")
+    print(f" - {ppar.output_file}.pkl")
+    print(f" - {ppar.output_file}.png")
+
+
+# =============================================================================
+# Level 3: Particle Classifier Class
+
+class ParticleClassifier:
+    '''
+    Class to store and manage particle data.
+
+    Attributes
+    ----------
+    x_coords : list
+        List to store x-coordinates of the particles.
+    y_coords : list
+        List to store y-coordinates of the particles.
+    classes : list
+        List to store the classes of the particles.
+    notes : list
+        List to store notes associated with the particle classes.
+    class_labels : list
+        List of labels corresponding to each particle class.
+    class_notes : list
+        List of notes corresponding to each particle class.
+    output : pandas.DataFrame
+        DataFrame to store the output particle data.
+
+    Methods
+    -------
+    get_coordinates() -> pd.DataFrame
+        Return particle data as a DataFrame.
+    add_particle(x: float, y: float, particle_class: int) -> None
+        Add a particle and store its data.
+    save_particles(filename: str = "pdParticles.pkl") -> None
+        Save particle data to a pickle file.
+    '''
+
+    def __init__(self):
+        '''
+        Initialize ParticleClassifier object with empty data structures.
+
+        Returns
+        -------
+        None
+        '''
+        self.x_coords = []  # Initialize x-coordinates list
+        self.y_coords = []  # Initialize y-coordinates list
+        self.classes = []    # Initialize classes list
+        self.notes = []      # Initialize notes list
+
+        self.class_labels = [1, 2, 3, 4]  # Define class labels
+        self.class_notes = [
+            "SS : Small Sharp",
+            "SB : Small Blurry",
+            "BS : Big Sharp",
+            "BB : Big Blurry",
+        ]
+        self.output = pd.DataFrame()  # Initialize DataFrame for output
+
+    def get_coordinates(self) -> pd.DataFrame:
+        '''
+        Return particle data as a DataFrame.
+
+        Returns
+        -------
+        pandas.DataFrame
+            DataFrame containing particle coordinates and associated data.
+        '''
+        self.output = pd.DataFrame({
+            "X": self.x_coords,
+            "Y": self.y_coords,
+            "Class": self.classes,
+            "Note": self.notes,
+        })
+        return self.output  # Return the DataFrame
+
+    def add_particle(self, x: float, y: float, particle_class: int) -> None:
+        '''
+        Add a particle and store its data.
+
+        Parameters
+        ----------
+        x : float
+            The x-coordinate of the particle.
+        y : float
+            The y-coordinate of the particle.
+        particle_class : int
+            The class of the particle (1-4).
+
+        Returns
+        -------
+        None
+        '''
+        self.x_coords.append(x)  # Store the x-coordinate
+        self.y_coords.append(y)  # Store the y-coordinate
+        self.classes.append(self.class_labels[particle_class - 1])  # Store the class
+        self.notes.append(self.class_notes[particle_class - 1])  # Store the corresponding note
+        print(f"Added particle at (X={x}, Y={y}) as Class={particle_class}")
+
+    def save_particles(self, filename: str = "pdParticles.pkl") -> None:
+        '''
+        Save particle data to a pickle file.
+
+        Parameters
+        ----------
+        filename : str, optional
+            The name of the file to save the particle data to (default is "pdParticles.pkl").
+
+        Returns
+        -------
+        None
+        '''
+        self.get_coordinates().to_pickle(filename)  # Save the coordinates DataFrame to a pickle file
+        print(f"Particles saved to '{filename}'.")
+
+
+# =============================================================================
+# Level 4: Auxiliary Functions
+
+def initialize_interactive_plot_parameters():
+    '''
+    Initialize parameters for the interactive plot.
+
+    Returns
+    -------
+    None
+    '''
+    plt.rcParams.update({
+        'figure.figsize': (6, 4),  # Set default figure size
+        'figure.dpi': 100,          # Set figure resolution
+        'font.size': 12,            # Set default font size
+        'lines.linewidth': 1.0       # Set default line width
+    })
 
 
 def clear_plot():
     '''
-    Auxilliary function: clear interactive plot before re-drawing.
-    
-    Key feature of the function:
-    It keeps current labels and XY-limits of the plot.
-    '''
-    my_xlabel = plt.gca().get_xlabel()
-    my_ylabel = plt.gca().get_ylabel()
-    my_xlim = plt.xlim()
-    my_ylim = plt.ylim()
-    plt.cla()
-    plt.xlabel(my_xlabel)
-    plt.ylabel(my_ylabel)
-    plt.xlim(my_xlim)
-    plt.ylim(my_ylim)
-    
+    Clear the interactive plot while keeping labels and limits.
 
-def bkg_to_df(bkgr):
+    Returns
+    -------
+    None
     '''
-    Auxiliary function: Convert current background points to dataframe.
-    
-    Why this function?
-    => df can be used to save/restore background points nicely.
+    ax = plt.gca()  # Get the current axes
+    xlabel, ylabel = ax.get_xlabel(), ax.get_ylabel()  # Store current labels
+    xlim, ylim = plt.xlim(), plt.ylim()  # Store current limits
+    plt.cla()  # Clear the axes
+    plt.xlabel(xlabel)  # Restore x-label
+    plt.ylabel(ylabel)  # Restore y-label
+    plt.xlim(xlim)  # Restore x-limits
+    plt.ylim(ylim)  # Restore y-limits
+
+def default_plot_params():
     '''
-    # Convert bkg to DataFrame to get nicely formated output
-    # (our trick: df.to_string & then print/save to file as string
-    # (more straightforward: df.to_csv('something.txt', sep='\t')
-    # (BUT the output with to_string has better-aligned columns
-    df = pd.DataFrame(
-        np.transpose([bkgr.points.X, bkgr.points.Y]), columns=['X','Y'])
-    return(df)
+    Provide default plot parameters if none are given.
+
+    Returns
+    -------
+    DefaultParams
+        An instance of DefaultParams containing default values for plot parameters.
+    '''
+    class DefaultParams:
+        xlabel = "X-axis"  # Default x-axis label
+        ylabel = "Y-axis"  # Default y-axis label
+        xlim = [0, 1000]   # Default x-axis limits
+        ylim = [0, 1000]   # Default y-axis limits
+        output_file = "output"  # Default output file name
+
+    return DefaultParams()  # Return an instance of DefaultParams
+
+
+# =============================================================================
+# Example Usage
+
+if __name__ == "__main__":
+    class MockPlotParams:
+        '''
+        Mock object to simulate plot parameters for demonstration purposes.
+
+        Attributes
+        ----------
+        xlabel : str
+            Label for the x-axis.
+        ylabel : str
+            Label for the y-axis.
+        xlim : list
+            Limits for the x-axis.
+        ylim : list
+            Limits for the y-axis.
+        output_file : str
+            Base name for output files.
+        messages : bool
+            Flag to control message printing (not used in this mock).
+        '''
+        xlabel = "X-axis"
+        ylabel = "Y-axis"
+        xlim = [0, 1000]
+        ylim = [0, 1000]
+        output_file = "output"
+        messages = True
+
+    # Create and show the interactive plot with 'imParticles.png'
+    ppar = MockPlotParams()  # Create mock plot parameters
+    fig, ax = interactive_plot("imParticles.png", ppar)  # Initialize the interactive plot
+    plt.show()  # Display the plot
