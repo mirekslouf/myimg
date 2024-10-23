@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+"""
+Created on Tue Oct 22 12:16:25 2024
+
+@author: Jakub
+"""
+# -*- coding: utf-8 -*-
 '''
 Interactive Plot for Particle Classification.
 Created on: Oct 16, 2024
@@ -7,7 +13,8 @@ Author: Jakub
 
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.image as mpimg  # Required for image loading
+#import matplotlib.image as mpimg  # Required for image loading
+#import numpy as np  # Required for image array handling
 import warnings
 
 warnings.filterwarnings("ignore")  # Ignore warnings for cleaner output
@@ -16,14 +23,14 @@ warnings.filterwarnings("ignore")  # Ignore warnings for cleaner output
 # =============================================================================
 # Level 1: Create plot with events and set classifier
 
-def interactive_plot(image_path: str, ppar) -> tuple:
+def interactive_plot(im, ppar) -> tuple:
     '''
     Create an interactive plot for particle classification.
 
     Parameters
     ----------
-    image_path : str
-        The file path to the image to be displayed in the plot.
+    im :  image itself 
+
     ppar : object
         Parameter object containing plot settings (xlabel, ylabel, xlim, ylim).
 
@@ -34,11 +41,10 @@ def interactive_plot(image_path: str, ppar) -> tuple:
     '''
     plt.close("all")  # Ensure all previous plots are closed
     initialize_interactive_plot_parameters()  # Set plot parameters
-
+    
     # Set up the plot and load the background image
     fig, ax = plt.subplots(num="Particle Classification")
-    img = mpimg.imread(image_path)  # Load the image from the specified path
-    ax.imshow(img)  # Display the image
+    ax.imshow(im)  # Display the image
 
     # Set plot labels and limits based on the provided parameters
     ax.set_xlabel(ppar.xlabel)
@@ -48,6 +54,9 @@ def interactive_plot(image_path: str, ppar) -> tuple:
 
     # Initialize the particle classifier to manage particle data
     classifier = ParticleClassifier()
+
+    # Show keyboard shortcuts for the user
+    show_instructions()
 
     # Connect key press and close events to their respective handlers
     fig.canvas.mpl_connect(
@@ -59,6 +68,23 @@ def interactive_plot(image_path: str, ppar) -> tuple:
 
     plt.tight_layout()  # Adjust layout for better spacing
     return fig, ax  # Return the figure and axes objects
+
+
+def show_instructions():
+    '''
+    Display instructions on how to use the keyboard shortcuts for classification.
+
+    Returns
+    -------
+    None
+    '''
+    print("\nInteractive Plot Instructions:")
+    print(" - Press '1' to classify a particle as Class 1 (Red-SS : Small Sharp).")
+    print(" - Press '2' to classify a particle as Class 2 (Blue-SB : Small Blurry).")
+    print(" - Press '3' to classify a particle as Class 3 (Green-BS : Big Sharp).")
+    print(" - Press '4' to classify a particle as Class 4 (Yellow-BB : BigBlurry).")
+    print(" - Press '5' to save the current particle data.")
+    print(" - Press 'q' to quit the interactive session and close the plot.\n")
 
 
 # =============================================================================
@@ -145,7 +171,6 @@ def on_close(event, ppar, classifier):
     print(f" - {ppar.output_file}.txt")
     print(f" - {ppar.output_file}.pkl")
     print(f" - {ppar.output_file}.png")
-
 
 # =============================================================================
 # Level 3: Particle Classifier Class
