@@ -1,45 +1,80 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Sep 25 06:23:59 2024
+'''
+Module: myimg.dsim.simuParticles
+--------------------
+Simulate nanoparticles to be added to your existing EM image.
 
-@author: Pavlina Sikorova 
-"""
 
+
+>>> # Example: How to use dataGenerator and export nanoparticles (coordinates,
+>>>            classification) visualize outputs.
+>>> import myimg.dsim.simuParticles as midsp
+>>>
+>>> # Initialize simulator, set simulation parameters
+>>> simulator = midsp.dataGenerator(imWidth=512, imHeight=512,
+                                    numP=50,
+                                    disp=True,
+                                    smallParticles=(0.2,1),
+                                    bigParticles=(1.1,2),
+                                    thrGauss=0.01,
+                                    blurAmp=0.5)
+>>>
+>>> # Get the simulated image and nanoparticle data
+>>> imSimu = simulator.imNanop
+>>> dfSimu = simulator.output
+>>>
+>>> # Save simulated data
+>>> simulator.save_outputs(data=dfSimu,
+                           image=imSimu,
+                           path="path/to/your/data")
+>>>
+>>> # Load simulated data
+>>> dfSimu_loaded, imSimu_loaded = simulator.load_data(
+                                    path="path/to/your/data",
+                                    dfFile="dfSimu.pkl",
+                                    imFile="imSimu.png")
+>>>
+'''
 import numpy as np
 import matplotlib.pyplot as plt
-from os import getcwd, sep
+from os import getcwd
+from os.path import join, normpath
 import pandas as pd
 from PIL import Image
 
-
 class dataGenerator():
+    """
+    Initialize the dataGenerator class with options for controlling
+    particle sizes, sharpness, and display preferences.
+    
+    Parameters
+    ----------
+    imWidth : int, optional
+        Image width (pixels). Default is 512.
+    imHeight: int, optional
+        Image height (pixels). Default is 0.
+    numP : int, optional
+        Number of particles to simulate. Default is 4.
+    disp : bool, optional
+        Whether to display the images. Default is True.
+    smallParticle : tuple, optional
+        Size range for small particles (min, max). Default is (1, 5).
+    bigParticle : tuple, optional
+        Size range for big particles (min, max). Default is (10, 15).
+    thrGauss : float, optional
+        Threshold for sharpness in Gaussian. Default is 0.01.
+    blurAmp : float, optional
+        Amplitude for blurry particles. Default is 0.5.
+    """
     
     def __init__(self, imWidth=512, imHeight=0, numP=4, disp=True, 
-                     smallParticle=(1, 5), bigParticle=(10, 15),
+                     smallParticle=(0.2, 1), bigParticle=(1.1, 2),
                      thrGauss=0.01, blurAmp=0.5):
-        """
-        Initialize the dataGenerator class with options for controlling
-        particle sizes, sharpness, and display preferences.
         
-        Parameters
-        ----------
-        imWidth : int, optional
-            Image width (pixels). Default is 512.
-        imHeight: int, optional
-            Image height (pixels). Default is 0.
-        numP : int, optional
-            Number of particles to simulate. Default is 4.
-        disp : bool, optional
-            Whether to display the images. Default is True.
-        smallParticle : tuple, optional
-            Size range for small particles (min, max). Default is (1, 5).
-        bigParticle : tuple, optional
-            Size range for big particles (min, max). Default is (10, 15).
-        thrGauss : float, optional
-            Threshold for sharpness in Gaussian. Default is 0.01.
-        blurAmp : float, optional
-            Amplitude for blurry particles. Default is 0.5.
-        """
+        ######################################################################
+        # PRIVATE FUNCTION: Initialize dataGenerator object.
+        # The parameters are described above in class definition.
+        ######################################################################
+        
         # Image size (dimension of the image)
         self.imWidth = imWidth   
         
@@ -506,7 +541,7 @@ class dataGenerator():
         # Show simulations
         if show:
             plt.figure()
-            plt.imshow(self.imNanop, origin="lower", cmap="inferno")
+            plt.imshow(self.imNanop, origin="lower", cmap="gray")
             plt.title("Simulated Nanoparticles")
             plt.xticks([]); plt.yticks([])
             plt.tight_layout()
@@ -517,8 +552,41 @@ class dataGenerator():
         return self.imNanop
 
 
+    def show2D(self, im, cmap="gray", title=None):
+        """
+        Display a 2D image of simulated nanoparticles.
     
-    def show1D(self, im):
+        Parameters
+        ----------
+        im : numpy.ndarray
+            The 2D image (NumPy array) to be displayed.
+        cmap : str, optional
+            The colormap to use for the image display. Default is "gray".
+        
+        Returns
+        -------
+        None
+            This function does not return any value. It simply displays 
+            the image using Matplotlib.
+        
+        Notes
+        -----
+        The image is shown with the origin at the lower-left corner, 
+        and the axes are hidden. A default title of "Simulated Nanoparticles" 
+        is added to the plot.
+        """
+        plt.figure()
+        plt.imshow(im, origin='lower', cmap=cmap)
+        if title:
+            plt.title(title)
+        else:
+            plt.title("Simulated Nanoparticles")
+        plt.xticks([]); plt.yticks([])
+        plt.tight_layout()
+        plt.show()
+
+    
+    def show1D(self, im, clss=True, title=None):
         '''
         Displays a 1D profile of the simulated nanoparticle image along with 
         class-specific markers.
@@ -570,57 +638,113 @@ class dataGenerator():
         added_classes = set()
     
         # Add vertical lines for each particle
-        for i, xc in enumerate(self.x_coords):
-            # Determine the class index based on the particle index
-            class_idx = self.output["Class"][i]
-
-            # Draw a vertical line at the x coordinate
-            if i<20:
-                plt.axvline(x=xc,color=class_colors[class_idx],linestyle='--')
+        if clss:
+            for i, xc in enumerate(self.x_coords):
+                # Determine the class index based on the particle index
+                class_idx = self.output["Class"][i]
     
-            # Add the class label to the legend if not already added
-            if class_idx not in added_classes:
-                plt.plot([],[], color=class_colors[class_idx], linestyle='--', 
-                         label=f'Class {class_idx}')  
-                added_classes.add(class_idx)
+                # Draw a vertical line at the x coordinate
+                if i<40:
+                    plt.axvline(x=xc,color=class_colors[class_idx],linestyle='--')
+        
+                # Add the class label to the legend if not already added
+                if class_idx not in added_classes:
+                    plt.plot([],[], color=class_colors[class_idx], linestyle='--', 
+                             label=f'Class {class_idx}')  
+                    added_classes.add(class_idx)
         
         plt.xlabel("Image Width [Pixel] ")
         plt.ylabel("Normalized Intensity Sum [-]")
-
-        plt.title("Profile of Simulated Nanoparticles")
+        
+        if title is not None:
+            plt.title(title)
+        else: 
+            plt.title("Profile of Simulated Nanoparticles")
+            
         plt.legend(loc="best")
         plt.show()
-
-
-
-
-if __name__ == "__main__":
-    plt.close("all")
     
-    for i in range(10):
-        # Create a new instance of the dataGenerator class
-        numP = int(np.round(np.random.uniform(4, 20)))
-        dataGen = dataGenerator(imWidth=1024, numP=numP, disp=False)  
-        
-        # Get the simulated image and particle data
-        imSimu = dataGen.imNanop
-        data = dataGen.output
-        
-        # Save simulated data    
-        path = getcwd() + sep  
-        dfFile=f"pdParticles_{i}.pkl"
-        data.to_pickle(path+dfFile)
-        
-        # Save the image
-        imFile=f"imParticles_{i}.png"
-        Image.fromarray(imSimu).save(path+imFile)
-        
-        # # Load data
-        # data_loaded = pd.read_pickle(path+file)
-        # im_loaded = np.array(Image.open(path+imFile))
     
-        # plt.figure()
-        # plt.imshow(im_loaded, cmap='inferno',  origin="lower")
-        # plt.title('Loaded Image of Simulated particles')
-        # plt.axis('off')  # Hide axis ticks
-        # plt.show()
+    def save_outputs(self, data, image, path=None, dfFile=None, imFile=None):
+        """
+        Save simulated data and image to specified paths.
+    
+        Parameters
+        ----------
+        data : pandas.DataFrame
+            DataFrame containing the simulated data.
+        image : numpy.ndarray
+            Image array to be saved.
+        path : str, optional
+            Directory path where the files will be saved. 
+            Defaults to the current working directory.
+        dfFile : str, optional
+            Filename for saving the DataFrame. Default is "dfSimu.pkl".
+        imFile : str, optional
+            Filename for saving the image. Default is "imSimu.png".
+        """
+    
+        if path is None:
+            path = getcwd()
+        if dfFile is None:
+            dfFile = "dfSimu.pkl"
+        if imFile is None:
+            imFile = "imSimu.png"
+    
+        # Normalize paths
+        df_path = normpath(join(path, dfFile))
+        im_path = normpath(join(path, imFile))
+    
+        # Save the DataFrame and image
+        data.to_pickle(df_path)
+        Image.fromarray(image).save(im_path)
+    
+        # Print messages
+        print(f"DataFrame saved to: {df_path}")
+        print(f"Image saved to:     {im_path}")
+
+
+    def load_data(self, path, dfFile="dfSimu.pkl", imFile="imSimu.png"):
+        """
+        Load simulated data and image from specified files.
+    
+        Parameters
+        ----------
+        path : str
+            Directory path where the files are stored.
+        dfFile : str, optional
+            Filename for the DataFrame containing nanoparticle data. 
+            Default is "dfSimu.pkl".
+        imFile : str, optional
+            Filename for the image file. Default is "imSimu.png".
+    
+        Returns
+        -------
+        data : pandas.DataFrame
+            Loaded DataFrame containing the nanoparticle data.
+        image : numpy.ndarray
+            Loaded image as a NumPy array.
+        """    
+        # Normalize paths
+        df_path = normpath(join(path, dfFile))
+        im_path = normpath(join(path, imFile))
+    
+        # Load DataFrame
+        try:
+            data = pd.read_pickle(df_path)
+            print(f"DataFrame loaded from: {df_path}")
+        except Exception as e:
+            print(f"Error loading DataFrame: {e}")
+            raise
+    
+        # Load image
+        try:
+            image = np.array(Image.open(im_path))
+            print(f"Image loaded from:     {im_path}")
+        except Exception as e:
+            print(f"Error loading image: {e}")
+            raise
+    
+        return data, image
+
+
