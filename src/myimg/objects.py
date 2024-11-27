@@ -1034,6 +1034,7 @@ class Peaks:
         None
         '''
         try:
+<<<<<<< HEAD
             self.df = pd.read_pickle(filename)
             # Load the DataFrame from the specified .pkl file
             print(f"Data loaded successfully from {filename}")
@@ -1044,6 +1045,14 @@ class Peaks:
         except Exception as e:
             print(f"An error occurred: {e}") 
             # Print any other exceptions that occur
+=======
+            self.df = pd.read_pickle(filename)  # Load the DataFrame from the specified .pkl file
+            print(f"Data loaded successfully from {filename}")  # Print success message
+        except FileNotFoundError:
+            print(f"File {filename} not found.")  # Print error if file is not found
+        except Exception as e:
+            print(f"An error occurred: {e}")  # Print any other exceptions that occur
+>>>>>>> 519bdbd013c5e9cd003b5f518a8bb743a92fa1a1
 
     
     def show_as_text(self):
@@ -1055,11 +1064,17 @@ class Peaks:
         None
         '''
         if self.df is not None:
+<<<<<<< HEAD
             print(self.df.to_string(index=False)) 
             # Print the DataFrame as a string without the index
         else:
             print("No data to display. Please read data from a file first.")
             # Print message if no data is available
+=======
+            print(self.df.to_string(index=False))  # Print the DataFrame as a string without the index
+        else:
+            print("No data to display. Please read data from a file first.")  # Print message if no data is available
+>>>>>>> 519bdbd013c5e9cd003b5f518a8bb743a92fa1a1
     
     
     def show_in_image(self):
@@ -1075,8 +1090,12 @@ class Peaks:
         Returns
         -------
         None
+<<<<<<< HEAD
             The method does not return a value but displays an image with
                 overlayed peak data.
+=======
+            The method does not return a value but displays an image with overlayed peak data.
+>>>>>>> 519bdbd013c5e9cd003b5f518a8bb743a92fa1a1
     
         Raises
         ------
@@ -1107,6 +1126,7 @@ class Peaks:
         }
     
         # Plot the image
+<<<<<<< HEAD
         plt.imshow(self.img, origin="lower")
     
         # Loop through each unique particle type,
@@ -1118,6 +1138,17 @@ class Peaks:
                         # Default to black if type is not in the map
                         label=particle_type, 
                         s=10, marker='+')
+=======
+        plt.imshow(self.img, cmap='gray')
+    
+        # Loop through each unique particle type and plot the peaks with the corresponding color
+        for particle_type in self.df['Class'].unique():
+            particle_data = self.df[self.df['Class'] == particle_type]
+            plt.scatter(particle_data['X'], particle_data['Y'], 
+                        c=color_map.get(str(particle_type), 'black'),  # Default to black if type is not in the map
+                        label=particle_type, 
+                        s=10)
+>>>>>>> 519bdbd013c5e9cd003b5f518a8bb743a92fa1a1
         
         plt.legend(title="Particle Type")
         plt.title(f"Peaks on {self.img_name}")
@@ -1132,18 +1163,28 @@ class Peaks:
         Parameters
         ----------
         self : object
+<<<<<<< HEAD
             The instance of the class that contains the image
             and associated methods.
         method : str, optional
             The method to use for finding peaks.
             Currently, only 'manual' is supported.
+=======
+            The instance of the class that contains the image and associated methods.
+        method : str, optional
+            The method to use for finding peaks. Currently, only 'manual' is supported.
+>>>>>>> 519bdbd013c5e9cd003b5f518a8bb743a92fa1a1
             Default is 'manual'.
     
         Returns
         -------
         None
+<<<<<<< HEAD
             This method does not return a value
             but displays an interactive plot for particle classification.
+=======
+            This method does not return a value but displays an interactive plot for particle classification.
+>>>>>>> 519bdbd013c5e9cd003b5f518a8bb743a92fa1a1
     
         Raises
         ------
@@ -1153,12 +1194,23 @@ class Peaks:
         from myimg.utils.iplot import interactive_plot, default_plot_params
         
         if method != 'manual':
+<<<<<<< HEAD
             raise ValueError("Currently, only the 'manual'\
                              method is supported.")
         
         # Create the interactive plot and show it once at the end
         fig, ax = interactive_plot(self.img, default_plot_params())
         plt.show()  
+=======
+            raise ValueError("Currently, only the 'manual' method is supported.")
+        
+        # Get default plot parameters
+        ppar = default_plot_params()
+        
+        # Use the image already stored in the Peaks object
+        fig, ax = interactive_plot(self.img, ppar)  # Pass the image object
+        plt.show()
+>>>>>>> 519bdbd013c5e9cd003b5f518a8bb743a92fa1a1
 
 
     def correct(method='manual'):
