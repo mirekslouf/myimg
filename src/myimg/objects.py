@@ -831,6 +831,10 @@ class Montage:
                 elif 'gray' in self.itype:
                     # Read image as grayscale (as_grayscale=True)
                     self.images[i] = ski.io.imread(image, as_gray=True)
+                else:
+                    print('Error in: myimg.Montage.process_images')
+                    print('Unknown input image type!')
+                    sys.exit()
                 # Save image size
                 img_sizes.append(self.images[i].shape)
                 
