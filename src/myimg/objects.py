@@ -78,7 +78,7 @@ class MyImage:
     '''
 
         
-    def __init__(self, filename, peaks=False):
+    def __init__(self, filename, peaks=False, messages=False):
         '''
         Initialize MyImage object.
 
@@ -98,12 +98,15 @@ class MyImage:
         self.name = filename
         self.img = MyImage.open_image(filename)
         self.width, self.height = self.img.size
+        self.messages = messages
 
         # Initialize Peaks with the image and its name
         if peaks is False:
             self.peaks = None
         elif peaks is True:
-            self.peaks = Peaks(img=self.img, img_name=self.name)
+            self.peaks = Peaks(img=self.img, 
+                               img_name=self.name, 
+                               messages=self.messages)
         elif isinstance(peaks, pd.DataFrame):
             self.peaks = Peaks(df=peaks, img=self.img, img_name=self.name)
         else:
@@ -990,7 +993,7 @@ class Peaks:
     '''
 
     
-    def __init__(self, df=None, img=None, img_name=""):
+    def __init__(self, df=None, img=None, img_name="", messages=False):
         '''
         Initialize Peaks object.
 
@@ -1021,6 +1024,7 @@ class Peaks:
         # Initialize the image and image name
         self.img = img
         self.img_name = img_name
+        self.messages = messages
             
     
     
@@ -1040,7 +1044,8 @@ class Peaks:
         try:
             self.df = pd.read_pickle(filename)
             # Load the DataFrame from the specified .pkl file
-            print(f"Data loaded successfully from {filename}")
+            if self.messages:
+                print(f"Data loaded successfully from {filename}")
             # Print success message
         except FileNotFoundError:
             print(f"File {filename} not found.")
@@ -1111,7 +1116,7 @@ class Peaks:
         }
     
         # Plot the image
-        plt.imshow(self.img, origin="lower")
+        plt.imshow(self.img)
     
         # Loop through each unique particle type,
         # and plot the peaks with the corresponding color
