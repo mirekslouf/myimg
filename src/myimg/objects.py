@@ -1161,7 +1161,7 @@ class Peaks:
                              method is supported.")
         
         # Create the interactive plot and show it once at the end
-        fig, ax = interactive_plot(self.img, default_plot_params())
+        fig, ax = interactive_plot(self.img, default_plot_params(self.img))
         plt.show()  
 
 
