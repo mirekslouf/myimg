@@ -316,23 +316,38 @@ def clear_plot():
     plt.xlim(xlim)  # Restore x-limits
     plt.ylim(ylim)  # Restore y-limits
 
-def default_plot_params():
+
+def default_plot_params(image):
     '''
-    Provide default plot parameters if none are given.
+    Provide default plot parameters based on the input image size.
+
+    Parameters
+    ----------
+    image : PIL.Image or np.ndarray
+        The input image, used to determine default axis limits.
 
     Returns
     -------
     DefaultParams
-    An instance of DefaultParams containing default values for plot parameters.
+        An instance of DefaultParams containing default values for plot 
+        parameters.
     '''
+    # Get image size from PIL or NumPy
+    if hasattr(image, 'size'):  # PIL.Image
+        width, height = image.size
+    elif hasattr(image, 'shape'):  # np.ndarray
+        height, width = image.shape[:2]
+    else:
+        raise TypeError("Unsupported image type. Provide a PIL.Image or NumPy array.")
+
     class DefaultParams:
-        xlabel = "X-axis"  # Default x-axis label
-        ylabel = "Y-axis"  # Default y-axis label
-        xlim = [0, 1000]   # Default x-axis limits
-        ylim = [0, 1000]   # Default y-axis limits
-        output_file = "output"  # Default output file name
-        pdParticles = "output"
-    return DefaultParams()  # Return an instance of DefaultParams
+        xlabel = "X-axis"
+        ylabel = "Y-axis"
+        xlim = [0, width]
+        ylim = [height, 0]  # Flip Y-axis if plotting like image (origin top-left)
+        output_file = "output"
+
+    return DefaultParams()
 
 
 # =============================================================================
