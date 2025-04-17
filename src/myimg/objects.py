@@ -78,7 +78,7 @@ class MyImage:
     '''
 
         
-    def __init__(self, filename, peaks=False, messages=False):
+    def __init__(self, filename, peaks=False, file_name="output", messages=False):
         '''
         Initialize MyImage object.
 
@@ -96,6 +96,7 @@ class MyImage:
         '''
         # Store image name and open the image
         self.name = filename
+        self.file_name = file_name
         self.img = MyImage.open_image(filename)
         self.width, self.height = self.img.size
         self.messages = messages
@@ -106,9 +107,13 @@ class MyImage:
         elif peaks is True:
             self.peaks = Peaks(img=self.img, 
                                img_name=self.name, 
+                               file_name=self.file_name,
                                messages=self.messages)
         elif isinstance(peaks, pd.DataFrame):
-            self.peaks = Peaks(df=peaks, img=self.img, img_name=self.name)
+            self.peaks = Peaks(df=peaks, 
+                               img=self.img, 
+                               img_name=self.name, 
+                               file_name=self.file_name)
         else:
             print('Error initializing MyImage! Wrong type of {peaks} argument!')
             print('Empty {peaks} object created.')
@@ -993,7 +998,7 @@ class Peaks:
     '''
 
     
-    def __init__(self, df=None, img=None, img_name="", messages=False):
+    def __init__(self, df=None, img=None, img_name="", file_name="output", messages=False):
         '''
         Initialize Peaks object.
 
@@ -1024,6 +1029,7 @@ class Peaks:
         # Initialize the image and image name
         self.img = img
         self.img_name = img_name
+        self.file_name = file_name
         self.messages = messages
             
     
@@ -1112,7 +1118,7 @@ class Peaks:
             '1': 'red',
             '2': 'blue',
             '3': 'green',
-            '4': 'yellow',
+            '4': 'purple',
         }
     
         # Plot the image
@@ -1126,9 +1132,10 @@ class Peaks:
                         c=color_map.get(str(particle_type), 'black'),
                         # Default to black if type is not in the map
                         label=particle_type, 
-                        s=10, marker='+')
+                        s=25, marker='+')
         
         plt.legend(title="Particle Type")
+        plt.axis("off")
         plt.title(f"Peaks on {self.img_name}")
         plt.show()
 
@@ -1166,7 +1173,10 @@ class Peaks:
                              method is supported.")
         
         # Create the interactive plot and show it once at the end
-        fig, ax = interactive_plot(self.img, default_plot_params(self.img))
+        fig, ax = interactive_plot(self.img, 
+                                   default_plot_params(self.img),
+                                   filename=self.file_name, 
+                                   messages=self.messages)
         plt.show()  
 
 
