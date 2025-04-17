@@ -16,7 +16,7 @@ warnings.filterwarnings("ignore")  # Suppress warnings for cleaner output
 # =============================================================================
 # Level 1: Create plot with events and set classifier
 
-def interactive_plot(im, ppar, messages=False) -> tuple:
+def interactive_plot(im, ppar, filename="output.pkl", messages=False) -> tuple:
     '''
     Create an interactive plot for particle classification.
     '''
@@ -40,7 +40,7 @@ def interactive_plot(im, ppar, messages=False) -> tuple:
 
     instructions = (
         "Press 1-4 to classify particles:\n"
-        "  1: Red (Small Sharp) | 2: Blue (Small Blurry) | 3: Green (Big Sharp) | 4: Purple (Big Blurry)\n"
+        "  1: Red (Small Sharp) | 2: Blue (Small Blury) | 3: Green (Big Sharp) | 4: Purple (Big Blury)\n"
         "  5: Save | 6: Delete Nearest | r: Remove last | q: Quit"
     )
 
@@ -58,9 +58,12 @@ def interactive_plot(im, ppar, messages=False) -> tuple:
         show_instructions()
 
     fig.canvas.mpl_connect(
-        "key_press_event", lambda event: on_keypress(event, ax, classifier, im, ppar))
+        "key_press_event", lambda event: on_keypress(event, ax, classifier,
+                                                     im, ppar, filename,
+                                                     messages=messages))
     fig.canvas.mpl_connect(
-        "close_event", lambda event: on_close(event, ppar, classifier))
+        "close_event", lambda event: on_close(event, ppar, classifier,
+                                              messages=messages))
 
     return fig, ax
 
@@ -76,9 +79,9 @@ def show_instructions():
     instructions = (
         "\nInteractive Plot Instructions:\n"
         " - Press '1' : Class 1 (Red-SS: Small Sharp).\n"
-        " - Press '2' : Class 2 (Blue-SB: Small Blurry).\n"
+        " - Press '2' : Class 2 (Blue-SB: Small Blury).\n"
         " - Press '3' : Class 3 (Green-BS: Big Sharp).\n"
-        " - Press '4' : Class 4 (Purple-BB: Big Blurry).\n"
+        " - Press '4' : Class 4 (Purple-BB: Big Blury).\n"
         " - Press '5' : Save data.\n"
         " - Press '6' : Remove the nearest particle marker.\n"
         " - Press 'r' : Remove last marker. \n"
@@ -95,7 +98,7 @@ color_map = {  # Map classes to colors for visualization
     1: 'red',
     2: 'blue',
     3: 'green',
-    4: 'yellow'
+    4: 'purple'
 }
 
 
@@ -137,9 +140,11 @@ def del_bkg_point_close_to_mouse(classifier, x, y, ax, im, threshold=10, message
         ax.imshow(im)  # Redraw the background image
 
         # Re-plot the remaining points
-        for px, py, particle_class in zip(classifier.x_coords, classifier.y_coords, classifier.classes):
+        for px, py, particle_class in zip(classifier.x_coords, 
+                                          classifier.y_coords, 
+                                          classifier.classes):
             color = color_map.get(particle_class, 'black')
-            ax.plot(px, py, '+', color=color, markersize=5)
+            ax.plot(px, py, '+', color=color, markersize=10)
         plt.axis("off")
         plt.draw()  # Redraw the plot
         if messages:
@@ -149,7 +154,7 @@ def del_bkg_point_close_to_mouse(classifier, x, y, ax, im, threshold=10, message
             print("No particle found within threshold for deletion.")
 
 
-def on_keypress(event, ax, classifier, im, ppar, messages=False):
+def on_keypress(event, ax, classifier, im, ppar, filename="output", messages=False):
     '''
     Handle key press events for particle classification.
 
@@ -168,37 +173,40 @@ def on_keypress(event, ax, classifier, im, ppar, messages=False):
         x, y = event.xdata, event.ydata
         if x is not None and y is not None:
             particle_class = int(event.key)
-            classifier.add_particle(x, y, particle_class)
+            classifier.add_particle(x, y, particle_class, messages=messages)
             color = color_map.get(particle_class, 'black')
-            ax.plot(x, y, color=color, markersize=5, marker='+')
+            ax.plot(x, y, color=color, markersize=10, marker='+')
             classifier.plot_points[-1] = ax.plot(x, y, '+', 
                                                  color=color, 
-                                                 markersize=5)[0]
+                                                 markersize=10)[0]
             plt.draw()
     elif event.key == '5': 
         # Save all files as pickle
-        classifier.save_particles(filename=f"{ppar.pdParticles}.pkl") 
+        classifier.save_particles(filename=f"{filename}.pkl",
+                                  messages=messages) 
         if messages:
-            print(f"Particle data saved to '{ppar.pdParticles}.pkl'.")
+            print(f"Particle data saved to '{filename}.pkl'.")
 
         # Save coordinates to TXT
         df = classifier.get_coordinates()
-        df.to_csv(f"{ppar.output_file}.txt", index=False)
+        df.to_csv(f"{filename}.txt", index=False)
         if messages:
             print(f"Coordinates saved to '{ppar.output_file}.txt'.")
 
         # Save the current plot to PNG
-        plt.savefig(f"{ppar.output_file}.png")
+        plt.savefig(f"{filename}.png")
         if messages:
-            print(f"Plot saved as '{ppar.output_file}.png'.")
+            print(f"Plot saved as '{filename}.png'.")
 
-            print("All outputs saved successfully.")
+        print("All outputs saved successfully.")
+        
     elif event.key == '6':
         x, y = event.xdata, event.ydata
         if x is not None and y is not None:
-            del_bkg_point_close_to_mouse(classifier, x, y, ax, im, threshold=10)
+            del_bkg_point_close_to_mouse(classifier, x, y, ax, im, threshold=10,
+                                         messages=messages)
     elif event.key == 'q':  # Quit and save
-        on_close(None, ppar, classifier)
+        on_close(None, ppar, classifier, filename, messages=messages)
         plt.close()
         if messages:
             print("Plot closed.")
@@ -221,7 +229,7 @@ def on_keypress(event, ax, classifier, im, ppar, messages=False):
                                               classifier.y_coords, 
                                               classifier.classes):
                 color = color_map.get(particle_class, 'black')
-                ax.plot(px, py, '+', color=color, markersize=5)
+                ax.plot(px, py, '+', color=color, markersize=10)
            
             plt.draw()
  
@@ -230,25 +238,26 @@ def on_keypress(event, ax, classifier, im, ppar, messages=False):
 
 
 
-def on_close(event, ppar, classifier, messages=False):
+def on_close(event, ppar, classifier, filename="output", messages=False):
     """
     Handle close event, saving all outputs.
     """
     # Save particle data
-    classifier.save_particles(filename=f"{ppar.output_file}.pkl")
+    classifier.save_particles(filename=f"{filename}.pkl",
+                              messages=messages)
     if messages:
-        print(f"Particle data saved to '{ppar.output_file}.pkl'.")
+        print(f"Particle data saved to '{filename}.pkl'.")
 
     # Save coordinates to TXT
     df = classifier.get_coordinates()
-    df.to_csv(f"{ppar.output_file}.txt", index=False)
+    df.to_csv(f"{filename}.txt", index=False)
     if messages:
-        print(f"Coordinates saved to '{ppar.output_file}.txt'.")
+        print(f"Coordinates saved to '{filename}.txt'.")
 
     # Save the plot as PNG
-    plt.savefig(f"{ppar.output_file}.png")
+    plt.savefig(f"{filename}.png")
     if messages:
-        print(f"Plot saved as '{ppar.output_file}.png'.")
+        print(f"Plot saved as '{filename}.png'.")
 
 # =============================================================================
 # Level 3: Particle Classifier Class
@@ -273,9 +282,9 @@ class ParticleClassifier:
         self.class_labels = [1, 2, 3, 4]
         self.class_notes = [
             "SS : Small Sharp",
-            "SB : Small Blurry",
+            "SB : Small Blury",
             "BS : Big Sharp",
-            "BB : Big Blurry",
+            "BB : Big Blury",
         ]
         self.output = pd.DataFrame()
         self.plot_points = []
@@ -321,7 +330,7 @@ class ParticleClassifier:
         # Plot particle and save plot reference
         color_map = {1: 'red', 2: 'blue', 3: 'green', 4: 'purple'}
         color = color_map.get(particle_class, 'black')
-        plot_point, = self.ax.plot(x, y, '+', color=color, markersize=5)  
+        plot_point, = self.ax.plot(x, y, '+', color=color, markersize=10)  
         self.plot_points.append(plot_point)  # Save the plot reference
         if messages:
             print(f"Added particle at (X={x}, Y={y}) as Class={particle_class}")
