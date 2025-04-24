@@ -108,41 +108,6 @@ CLASS_NOTES = {
     4: "BB : Big Blurry"
 }
 
-# =============================================================================
-# Level 1: Create plot with events and set classifier
-
-def interactive_plot(im, ppar) -> tuple:
-    plt.close("all")
-    initialize_interactive_plot_parameters()
-
-    fig, ax = plt.subplots(num="Particle Classification")
-    ax.imshow(im)
-    ax.set_xlabel(ppar.xlabel)
-    ax.set_ylabel(ppar.ylabel)
-    ax.set_xlim(ppar.xlim)
-    ax.set_ylim(ppar.ylim)
-
-    classifier = ParticleClassifier(ax=ax)
-    show_instructions()
-
-    fig.canvas.mpl_connect("key_press_event", lambda event: on_keypress(event, ax, classifier, im, ppar))
-    fig.canvas.mpl_connect("close_event", lambda event: on_close(event, ppar, classifier))
-
-    plt.tight_layout()
-    return fig, ax
-
-
-def show_instructions():
-    print("\nInteractive Plot Instructions:")
-    for i in range(1, 5):
-        print(f" - Press '{i}' to classify a particle as Class {i} ({CLASS_NOTES[i]}).")
-    print(" - Press '5' to save the current particle data.")
-    print(" - Press '6' to remove the nearest particle marker.")
-    print(" - Press 'q' to quit and close the plot.\n")
-
-
-# =============================================================================
-# Level 2: Callback functions
 
 
 def del_bkg_point_close_to_mouse(classifier, x, y, ax, im, threshold=10, messages=False):
@@ -239,9 +204,34 @@ def on_keypress(event, ax, classifier, im, ppar, filename="output", messages=Fal
             print(f"Coordinates saved to '{ppar.output_file}.txt'.")
 
         # Save the current plot to PNG
-        plt.savefig(f"{filename}.png")
+        fig = plt.gcf()
+        fig.canvas.draw()
+        fig.savefig(f"{filename}.png", dpi=300, bbox_inches='tight')
         if messages:
             print(f"Plot saved as '{filename}.png'.")
+   
+        # Save per-class plots
+        for cls in range(1, 5):
+            fig_class, ax_class = plt.subplots()
+            ax_class.imshow(im)
+            ax_class.set_xlim(ppar.xlim)
+            ax_class.set_ylim(ppar.ylim)
+            ax_class.axis("off")
+
+            # Select only particles of the current class
+            indices = [i for i, c in enumerate(classifier.classes) if int(c) == cls]
+            for i in indices:
+                x, y = classifier.x_coords[i], classifier.y_coords[i]
+                color = color_map.get(cls, 'black')
+                ax_class.plot(x, y, '+', color=color, markersize=10)
+        
+            fig_class.tight_layout()
+            class_filename = f"{filename}_class_{cls}.png"
+            fig_class.savefig(class_filename, dpi=300, bbox_inches='tight')
+            plt.close(fig_class)
+        
+            if messages:
+                print(f"Saved class {cls} plot to '{class_filename}'.")
 
         print("All outputs saved successfully.")
         
@@ -405,11 +395,11 @@ def clear_plot():
     plt.xlim(xlim)
     plt.ylim(ylim)
 
-
-    Returns
-    -------
-    None
     '''
+    Returns
+    ----------
+    None
+   ''' 
     ax = plt.gca()  # Get the current axes
     xlabel, ylabel = ax.get_xlabel(), ax.get_ylabel()  # Store current labels
     xlim, ylim = plt.xlim(), plt.ylim()  # Store current limits
@@ -420,7 +410,7 @@ def clear_plot():
     plt.ylim(ylim)  # Restore y-limits
     plt.axis("off")
     plt.draw()
-
+    
 
 def default_plot_params(image):
     '''
@@ -436,8 +426,8 @@ def default_plot_params(image):
     DefaultParams
         An instance of DefaultParams containing default values for plot 
         parameters.
-   
-    '''
+   '''
+    
     # Get image size from PIL or NumPy
     if hasattr(image, 'size'):  # PIL.Image
         width, height = image.size
@@ -457,7 +447,7 @@ def default_plot_params(image):
 
 # =============================================================================
 # Example Usage
-
+'''
 if __name__ == "__main__":
     class MockPlotParams:
         xlabel = "X-axis"
@@ -470,4 +460,5 @@ if __name__ == "__main__":
 
     ppar = MockPlotParams()
     fig, ax = ...  # Replace this with actual image loading and call to interactive_plot()
-    '''
+    
+'''

@@ -1134,7 +1134,7 @@ class Peaks:
                         label=particle_type, 
                         s=25, marker='+')
         
-        plt.legend(title="Particle Type")
+        plt.legend(title="Particle Type", loc='center left', bbox_to_anchor=(1.05, 0.5))
         plt.axis("off")
         plt.title(f"Peaks on {self.img_name}")
         plt.show()
