@@ -60,13 +60,14 @@ when creating scalebars (as a scalebar contains *number with units*).
 
 import os, sys, re
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from PIL import Image, ImageFont, ImageDraw
 from dataclasses import dataclass
 
 
 import skimage as ski
-
+import myimg.apps.iLabels.classPeaks as mipks
 
 
 class MyImage:
@@ -104,8 +105,23 @@ class MyImage:
 
         # Initialize Peaks with the image and its name
         # TODO
-        self.peaks = None
-        
+        if peaks is False:
+            self.peaks = None
+        elif peaks is True:
+            self.peaks = mipks.Peaks(img=self.img, 
+                                   img_name=self.name, 
+                                   file_name=self.file_name,
+                                   messages=self.messages)
+        elif isinstance(peaks, pd.DataFrame):    
+                self.peaks = mipks.Peaks(df=peaks, 
+                                   img=self.img, 
+                                   img_name=self.name, 
+                                   file_name=self.file_name)
+        else:
+            print('Error initializing MyImage! Wrong type of {peaks} argument!')
+            print('Empty {peaks} object created.')
+            self.peaks = mipks.Peaks(img=self.img, img_name=self.name)
+               
         # if peaks is False:
         #     self.peaks = None
         # elif peaks is True:
