@@ -8,7 +8,7 @@ Created on Wed Apr 30 08:19:46 2025
 from skimage.feature import match_template
 from skimage import measure
 import matplotlib.pyplot as plt
-import myimg.peaks.roi as miroi
+import myimg.apps.iLabels.roi as miroi
 import numpy as np
 
 def detector_correlation(image, mask, threshold=0.5, show=True):
