@@ -11,8 +11,11 @@ import joblib
 import os
 import matplotlib.pyplot as plt
 import pandas as pd
-import myimg.apps.iLabels as milab
 from sklearn.base import ClassifierMixin
+
+
+import myimg.apps.iLabels as milab
+
 
 class Peaks:
     '''
