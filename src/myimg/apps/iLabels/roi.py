@@ -13,6 +13,8 @@ import matplotlib.patches as patches
 import random
 import os
 import pickle
+import math
+
 
 
 def load_myimg(image, cut_bottom=300, save_as="output.tif", show=False):
@@ -371,7 +373,7 @@ def create_masks(rois, df, class_col="class", n_per_class=10, show=True, save=Fa
 
     if show:
         fig, axs = plt.subplots(1, len(class_order), 
-                                figsize=(4 * len(class_order), 4))
+                                figsize=(3 * len(class_order), 3))
         if len(class_order) == 1:
             axs = [axs]  # Ensure it's iterable
 
@@ -454,56 +456,48 @@ def min_max_normalize(data, mrange=255):
 
 def show_random_rois(rois, df, n=5, cmap="viridis"):
     """
-    Display a random subset of ROI (Region of Interest) images with titles 
-    derived from a DataFrame. Each ROI is shown in its own figure.
+    Display a random subset of ROI images as subplots in one figure.
 
     Parameters:
     -----------
     rois : list of tuple
-        A list where each element is a tuple (roi, label), with:
-        - roi : np.ndarray
-            A 2D array representing the image of the ROI.
-        - label : str or int
-            A label or identifier associated with the ROI, used in the title.
+        Each element is (roi, label) where:
+        - roi : np.ndarray, the ROI image
+        - label : identifier (str or int)
 
     df : pandas.DataFrame
-        DataFrame containing metadata about the ROIs. Must be the same length 
-        as `rois`. If it contains a column named 'Note', its values are used 
-        as titles for the displayed images.
+        Metadata about the ROIs. Must match `rois` in length.
+        If 'Note' exists, it’s used in titles.
 
-    n : int, optional (default=5)
-        Number of random ROI images to display. If `n` is greater than the 
-        number of available ROIs, all will be shown.
+    n : int, optional
+        Number of ROIs to show. Default is 5.
 
-    cmap : str, optional (default='viridis')
-        Colormap to use for displaying the ROI images.
-
-    Raises:
-    -------
-    AssertionError
-        If the length of `rois` and `df` do not match.
-
-    Notes:
-    ------
-    - Displays each image in a separate `matplotlib` figure.
-    - If 'Note' column exists in `df`, it is included in the figure title.
-    - The label from each ROI tuple is also shown in the title.
-
+    cmap : str, optional
+        Colormap for displaying images.
     """
-
     assert len(rois) == len(df), "Length of ROIs and DataFrame must match."
-    n = min(n, len(rois))  # Cap to max available
+    n = min(n, len(rois))
 
     indices = random.sample(range(len(rois)), n)
 
-    for idx in indices:
-        plt.figure()
-        # Access the ROI and label
+    # Layout: always 2 rows
+    ncols = math.ceil(n / 2)
+    nrows = 2
+
+    fig, axes = plt.subplots(nrows, ncols, figsize=(3 * ncols, 3 * nrows))
+    axes = axes.flatten() if n > 1 else [axes]
+
+    for ax, idx in zip(axes, indices):
         roi, label = rois[idx]
-        plt.imshow(roi, cmap=cmap)
-        title = f"{df.Note.iloc[idx]} (Image: {label})" if 'Note' in df.columns \
-            else f"ROI {idx} ({label})"
-        plt.title(title)
-        plt.axis("off")
-        plt.tight_layout()
-        plt.show()    
+        ax.imshow(roi, cmap=cmap)
+        title = f"{df.Note.iloc[idx]} (Image: {label})" \
+            if 'Note' in df.columns else f"ROI {idx} ({label})"
+        ax.set_title(title, fontsize=8)
+        ax.axis("off")
+
+    # Hide any unused subplots
+    for ax in axes[len(indices):]:
+        ax.axis("off")
+
+    plt.tight_layout()
+    plt.show()
