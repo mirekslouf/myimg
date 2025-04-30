@@ -60,14 +60,11 @@ when creating scalebars (as a scalebar contains *number with units*).
 
 import os, sys, re
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 from PIL import Image, ImageFont, ImageDraw, ImageOps
+import skimage as ski
 from dataclasses import dataclass
 
-
-import skimage as ski
-import myimg.apps.iLabels.classPeaks as mipks
 
 
 class MyImage:
