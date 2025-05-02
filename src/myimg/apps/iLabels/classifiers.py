@@ -11,6 +11,9 @@ from sklearn.feature_selection import SequentialFeatureSelector
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
+import matplotlib.pyplot as plt
+
+
 def dataset(features, valid=False):
     """
     Splits the input dataset into training, testing, and optionally validation 
@@ -149,9 +152,9 @@ def get_optimal_rfc(X_train, y_train, param_dist=None):
 
     # Print the best parameters found and the accuracy on the training set
     print("Best parameters found:", random_search.best_params_)
-    print("Train set accuracy:", estimator.score(X_train, y_train))
+    # print("Train set accuracy:", estimator.score(X_train, y_train))
     
-    return estimator
+    return estimator, random_search.best_params_
 
 
 def select_features(X_train, y_train, num=5, estimator=None):
@@ -266,8 +269,21 @@ def fitting(X_train, y_train, estimator, reports=True, sfeatures=None):
     
         # Plot confusion matrix
         cm = confusion_matrix(y_train, y_pred)
+        
         disp = ConfusionMatrixDisplay(confusion_matrix=cm)
-        disp.plot(cmap='Blues')
+        
+        fig, ax = plt.subplots(figsize=(4, 3))  # Set figure size here
+        disp.plot(cmap='Blues', ax=ax)          # Pass the custom axes to the plot
+        
+        # Adjust font sizes to better match Jupyter default display
+        plt.xticks(fontsize=8)
+        plt.yticks(fontsize=8)
+        ax.set_xlabel("Predicted label", fontsize=8)
+        ax.set_ylabel("True label", fontsize=8)
+
+        plt.tight_layout()
+        plt.show()
+
     
     return estimator, y_pred
 
@@ -318,10 +334,23 @@ def predicting(X_test, estimator, sfeatures=None, y_test=None):
         print("\nClassification test report:\n")
         print(classification_report(y_test, y_pred))
         
-        # Plot confusion matrix if requested
+        # Plot confusion matrix with adjusted size and font
         cm = confusion_matrix(y_test, y_pred)
         disp = ConfusionMatrixDisplay(confusion_matrix=cm)
-        disp.plot(cmap='Greens')
+        
+        fig, ax = plt.subplots(figsize=(4, 3))  # Set figure size
+        disp.plot(cmap='Greens', ax=ax)
+        
+        # Adjust font sizes to better match Jupyter default display
+        plt.xticks(fontsize=8)
+        plt.yticks(fontsize=8)
+        ax.set_xlabel("Predicted label", fontsize=8)
+        ax.set_ylabel("True label", fontsize=8)
+
+        plt.tight_layout()
+        plt.show()
     
     return y_pred
-            
+
+
+         

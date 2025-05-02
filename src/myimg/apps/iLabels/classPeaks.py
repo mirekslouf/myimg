@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.base import ClassifierMixin
 
-
+import numpy as np
 import myimg.apps.iLabels as milab
 
 
@@ -224,12 +224,21 @@ class Peaks:
                     raise FileNotFoundError(f"Input file not found: {file_path}")
                 with open(file_path, 'rb') as f:
                     self.masks[i] = pickle.load(f)
-                    
+            
+            
             # Proceed with detector-based correlation using the mask
-            self.detected = milab.detectors.detector_correlation(self.img, 
-                                                     self.masks[midx], 
-                                                     thr, 
-                                                     show)
+            if midx=="all":
+                # Average all class-specific masks to get a single "ultimate" mask
+                mmask = np.mean(np.stack(list(self.masks.values())), axis=0)
+                self.detected = milab.detectors.detector_correlation(self.img, 
+                                                         mmask, 
+                                                         thr, 
+                                                         show)
+            else: 
+                self.detected = milab.detectors.detector_correlation(self.img, 
+                                                         self.masks[midx], 
+                                                         thr, 
+                                                         show)
             
             return self.detected
     
@@ -279,7 +288,7 @@ class Peaks:
             attributes such as self.features, self.selection, self.X_train, 
             self.X_test, etc.
         """
-
+        
         # (1) Load masks
         self.masks = {}
         for i in range(1, 5):
@@ -424,6 +433,8 @@ class Peaks:
             instance.
             
         """
+        # TODO: calculate only selected features for the testing data   
+
 
         if method == "rfc":
             # If no estimator is provided, optimize and train a new Random Forest

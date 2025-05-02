@@ -57,7 +57,8 @@ def detector_correlation(image, mask, threshold=0.5, show=True):
         plt.imshow(image, cmap='viridis')
         for (row, col) in centers:
             plt.plot(col, row, 'r+', markersize=10)
-
+        
+        plt.title("Detected peaks in image")
         plt.axis('off')
         plt.show()
         

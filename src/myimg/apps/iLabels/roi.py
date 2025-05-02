@@ -121,7 +121,7 @@ def preprocess_image(image, apply_clahe=True, gamma=1.2, normalize=True):
     return gamma_corrected
 
 
-def prep_data(fpath_img, fpath_peaks, min_xy=20, imID='im01', show=False):
+def prep_data(fpath_img, fpath_peaks=None, min_xy=20, imID='im01', show=False):
     """
     Load an image and its peak annotations, and filter out low-X/Y points.
 
@@ -152,22 +152,25 @@ def prep_data(fpath_img, fpath_peaks, min_xy=20, imID='im01', show=False):
     arr = np.array(img_obj.img)
    
     # Load coordinates of peaks from the image
-    img_obj.peaks.read(fpath_peaks)
+    if fpath_peaks is not None:
+        img_obj.peaks.read(fpath_peaks)
     
-    # Optionally show image with detected peaks
-    if show:
-        img_obj.peaks.show_in_image()
+        # Optionally show image with detected peaks
+        if show:
+            img_obj.peaks.show_in_image()
     
-    # Extract dataframe with coordinates
-    df = img_obj.peaks.df
+        # Extract dataframe with coordinates
+        df = img_obj.peaks.df
     
-    # Avoid peaks of which a ROI cannot be created
-    df = df[(df.X > min_xy) & (df.Y > min_xy)].reset_index(drop=True)
+        # Avoid peaks of which a ROI cannot be created
+        df = df[(df.X > min_xy) & (df.Y > min_xy)].reset_index(drop=True)
+        
+        # Assign data with an image ID
+        df['imID'] = imID    
     
-    # Assign data with an image ID
-    df['imID'] = imID    
-    
-    return arr, df, img_obj
+        return arr, df, img_obj
+    else:
+        return arr, img_obj
 
 
 def get_ROIs(im, df, s=20, norm=True, show=False):
@@ -407,7 +410,8 @@ def create_masks(rois, df, class_col="class", n_per_class=10, show=True, save=Fa
     if show:
         plt.tight_layout()
         plt.show()
-
+    
+            
     return mean_masks, class_order
         
 
