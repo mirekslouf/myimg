@@ -1,10 +1,10 @@
 MyImg :: Processing of micrographs
 ----------------------------------
 
-* MyImg contains tools/modules for the processing of microscopic images.
-* Module MyImage = improve image(s): contrast, label, caption, scalebar ...
-* Module Montage = create image montages (several images in a rectangular grid)
-* Additional utilities/modules for: FFT, imunolabelling ...
+* MyImg provides tools and apps for processing of microscopic images.
+* Module MyImage  = process single image(s): contrast, label, scalebar ...
+* Module MyReport = create image report (several images in a rectangular grid)
+* Additional apps/sub-packages for: FFT, size distributions, imunolabelling ...
 
 Principle
 ---------
@@ -21,10 +21,13 @@ Installation
 Quick start
 -----------
 
-* [Example 1](https://www.dropbox.com/scl/fi/uv76nx5e78ck3ir4vv6zh/ex1_one-migrograph.nb.html.pdf?rlkey=mzsxovdriljt1054tpjey8kpm&st=dqjt2w0c&dl=0):
-  one micrograph, improve contrast, insert scalebar ...
-* Example 2:
-  multiple micrographs, prepare a publication-ready image.
+* [Example 1](https://www.dropbox.com/scl/fi/uv76nx5e78ck3ir4vv6zh/ex1_one-migrograph.nb.html.pdf?rlkey=mzsxovdriljt1054tpjey8kpm&st=dqjt2w0c&dl=0)
+  :: MyImage :: process single image(s)
+* [Example 2]()
+  :: MyReport :: create nice, publication-ready image reports
+* [Example 3]()
+  :: Apps/FFT :: calculate Fourier transforms and use them for image analysis
+ 
 
 Documentation, help and examples
 --------------------------------
@@ -39,5 +42,5 @@ Versions of MyImg
 
 * Version 0.1 = 1st draft, too complex, later completely re-written 
 * Version 0.2 = 2nd draft, better concept; functions: cut, crop, label, scalebar
-* Version 0.3 = MyImage and Montage modules fully working
-* Version 0.4 = TODO: scalebar/stripes, border/shadow, iLabels ...
+* Version 0.3 = MyImage and MyReport modules Ok; FFT and iLabels semi-finished 
+* Version 0.4 = TODO: scalebar/stripes, border/shadow, finish FFT, iLabels ...

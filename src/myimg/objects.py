@@ -808,11 +808,11 @@ class MyImage:
 
 
     
-class Montage:
+class MyReport:
     '''
-    Class defining Montage objects.
+    Class defining MyReport objects.
     
-    * Montage object = a rectangular multi-image. 
+    * MyReport object = a rectangular multi-image. 
     * See __init__ for more information about initial object parameters.
     * More help: https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg.html
     '''
@@ -820,20 +820,20 @@ class Montage:
     def __init__(self, images, itype,
                  grid=None, padding=0, fill='white', crop=True, rescale=None):
         '''
-        Initialize Montage object.
+        Initialize MyReport object.
 
         Parameters
         ----------
         images : list of images (arrays or str or path-like or MyImage objects)
-            The list of images from which the montage will be created.
+            The list of images from which the MyReport will be created.
             If {images} list consists of arrays,
-            we assume that these arrays are the direct input to montage
-            (more precisely: the direct input to skimage.util.montage method).
+            we assume that these arrays are the direct input to
+            skimage.util.montage method.
             If {images} list contains of strings or path-like objects,
             we assume that these are filenames of images
             that should be read as arrays.
             If {images} lists contains MyImage objecs,
-            we use MyImage objects to create the final montage.
+            we use MyImage objects to create the final MyReport/montage.
         itype : type of images/arrays ('gray' or 'rgb' or 'rgba')
             The type of input/output images/arrays.
             If itype='gray',
@@ -869,8 +869,9 @@ class Montage:
             
         Returns
         -------
-        Montage object = multi-image/montage of *images*.
-        The montage object can be shown (Montage.show) or saved (Montage.save).
+        MyReport object = multi-image/montage of *images*.
+        The MyReport object can be shown (MyReport.show)
+        or saved (MyReport.save).
         
         Technical notes
         ---------------
@@ -945,9 +946,9 @@ class Montage:
     
     def process_images(self):
         '''
-        Check and prepare images before creating montage.
+        Check and prepare images before creating MyReport/montage.
         
-       * The images used for montage
+       * The images used for MyReport/montage
          should be convertible to arrays with the same type and size.
        * This method goes through all images in self.images
          and converts them to arrays.
@@ -1102,7 +1103,7 @@ class Montage:
 
     def show(self, cmap=None, axes=False):
         '''
-        Show image montage.
+        Show MyReport = rectangular montage of images.
 
         Parameters
         ----------
@@ -1115,7 +1116,7 @@ class Montage:
         Returns
         -------
         None
-            The output is the image montage shown on the screen.
+            The output is the MyReport (image montage) shown on the screen.
 
         ''' 
         ski.io.imshow(self.montage)
@@ -1124,7 +1125,7 @@ class Montage:
     
     def save(self, output_image):
         '''
-        Save image montage (using an arbitrary path, name and extension).
+        Save MyReport (using an arbitrary path, name and extension).
 
         Parameters
         ----------
@@ -1146,10 +1147,6 @@ class Montage:
         
         
         
-
-
-
-
 @dataclass
 class Units:
     '''

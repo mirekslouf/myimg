@@ -16,13 +16,13 @@ A simple interface to package myimg.
 >>> img.scalebar('rwi,100um')  # scalebar to the lower-right corner
 >>>
 >>> # (3) Save the modified image 
->>> img.save_with_ext('_clm.png')  # output: somefile_clm.png
+>>> img.save_with_ext('_clm.png')  # output: somefile_ls.png
 
 More examples are spread all over the documentation.
     
 1. How to use myimg.objects:
     - myimg.objects.MyImage = single image = the basic object with many methods
-    - myimg.objects.Montage = multi-image = a rectangular grid of images
+    - myimg.objects.MyReport = multi-image = a rectangular grid of images
 2. Specific frequent tasks:
     - myimg.objects.MyImage.scalebar = a method to insert scalebar
     - myimg.objects.MyImage.label = a method to insert label in the corner
@@ -51,12 +51,12 @@ class MyImage(myimg.objects.MyImage):
 
 
 
-class Montage(myimg.objects.Montage):
+class MyReport(myimg.objects.MyReport):
     '''
-    Class defining Montage objects.
+    Class defining MyReport objects.
     
-    * Montage object = a rectangular multi-image.
-    * This class is just inherited from myimg.objects.Montage. 
+    * MyReport object = a rectangular multi-image.
+    * This class is just inherited from myimg.objects.MyReport. 
     * More help: https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg.html 
     '''
     pass
@@ -80,7 +80,7 @@ class Apps:
         >>> mi.Apps.fourier(img)  # additional utility, called as a function
     '''
 
-    def fourier(img):
+    def FFT(img):
         pass
 
 
