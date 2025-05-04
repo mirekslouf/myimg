@@ -14,6 +14,8 @@ The module contains several dataclasess:
 * myimg.settings.MicDescriptionFiles
   = class describing the microscope description files
 '''
+
+
 from dataclasses import dataclass
 from typing import Any
 
@@ -40,6 +42,7 @@ class Scalebar:
     position    : Any = None      # scalebar position: None or (X,Y) coords
     color       : Any = 'black'   # color of text and line
     bcolor      : Any = 'white'   # color of backgound
+
 
 @dataclass
 class Label:

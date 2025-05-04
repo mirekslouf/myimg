@@ -34,8 +34,9 @@ More examples are spread all over the documentation.
 '''
 
 
-import myimg.objects
+import myimg.apps, myimg.objects
 import matplotlib.pyplot as plt
+import pandas as pd
 
 
 
@@ -80,8 +81,60 @@ class Apps:
         >>> mi.Apps.fourier(img)  # additional utility, called as a function
     '''
 
+
     def FFT(img):
-        pass
+        '''
+        Calculate FFT of img object + add it as img.FFT.
+
+        Parameters
+        ----------
+        img : MyImage object
+            MyImage object, created within this app.
+
+        Returns
+        -------
+        None
+            The result is FFT object.
+            MyImage object aggregates the FFT object.
+            Therefore, the FFT object is accessible as img.FFT.  
+        '''
+        # TODO
+        pass 
+    
+
+    def iLabels(img, df=None):
+        '''
+        Create/read iLabels object + add it as img.iLabels.
+
+        Parameters
+        ----------
+        img : MyImage object
+            MyImage object, created within this app.
+        df : None or Pandas.DataFrame 
+            If df is a Pandas.Dataframe object,
+            the iLabels are created from this object/dataframe.
+            Otherwise, the iLabels are created as empty object/dataframe.
+
+        Returns
+        -------
+        None
+            The result is iLabels object.
+            MyImage object aggregates the iLabels object.
+            Therefore, the iLabels object is accessible as img.iLabels.  
+        '''
+        import myimg.apps.iLabels.classPeaks
+        if df is None:
+            img.iLabels = myimg.apps.iLabels.classPeaks.Peaks(
+                img=img.img, img_name=img.name)
+        elif isinstance(df, pd.DataFrame):    
+            img.iLabels = myimg.apps.iLabels.classPeaks.Peaks(
+                df=df, img=img.img, img_name=img.name)
+        else:
+            print('Error initializing MyImage.iLabels!')
+            print('Wrong type of {peaks} argument!')
+            print('Empty {peaks} object created.')
+            img.iLabels = myimg.apps.iLabels.classPeaks.Peaks(
+                img=img.img, img_name=img.name)
 
 
 

@@ -58,6 +58,7 @@ when creating scalebars (as a scalebar contains *number with units*).
 '''
 
 
+
 import os, sys, re
 import numpy as np
 import matplotlib.pyplot as plt
@@ -101,7 +102,7 @@ class MyImage:
 
         # Additional (optional) properties/features/methods/objects
         self.iLabels = None
-        self.fourier = None
+        self.FFT = None
     
     
     @staticmethod
