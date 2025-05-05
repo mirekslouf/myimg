@@ -58,16 +58,14 @@ when creating scalebars (as a scalebar contains *number with units*).
 '''
 
 
+
 import os, sys, re
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
-from PIL import Image, ImageFont, ImageDraw
+from PIL import Image, ImageFont, ImageDraw, ImageOps
+import skimage as ski
 from dataclasses import dataclass
 
-
-import skimage as ski
-import myimg.apps.iLabels.classPeaks as mipks
 
 
 class MyImage:
@@ -80,7 +78,7 @@ class MyImage:
     '''
 
         
-    def __init__(self, filename, peaks=False, file_name="output", messages=False):
+    def __init__(self, filename):
         '''
         Initialize MyImage object.
 
@@ -98,46 +96,13 @@ class MyImage:
         '''
         # Store image name and open the image
         self.name = filename
-        self.file_name = file_name
         self.img = MyImage.open_image(filename)
         self.width, self.height = self.img.size
-        self.messages = messages
+        self.itype = self._set_image_type()
 
-        # Initialize Peaks with the image and its name
-        # TODO
-        if peaks is False:
-            self.peaks = None
-        elif peaks is True:
-            self.peaks = mipks.Peaks(img=self.img, 
-                                   img_name=self.name, 
-                                   file_name=self.file_name,
-                                   messages=self.messages)
-        elif isinstance(peaks, pd.DataFrame):    
-                self.peaks = mipks.Peaks(df=peaks, 
-                                   img=self.img, 
-                                   img_name=self.name, 
-                                   file_name=self.file_name)
-        else:
-            print('Error initializing MyImage! Wrong type of {peaks} argument!')
-            print('Empty {peaks} object created.')
-            self.peaks = mipks.Peaks(img=self.img, img_name=self.name)
-               
-        # if peaks is False:
-        #     self.peaks = None
-        # elif peaks is True:
-        #     self.peaks = Peaks(img=self.img, 
-        #                        img_name=self.name, 
-        #                        file_name=self.file_name,
-        #                        messages=self.messages)
-        # elif isinstance(peaks, pd.DataFrame):
-        #     self.peaks = Peaks(df=peaks, 
-        #                        img=self.img, 
-        #                        img_name=self.name, 
-        #                        file_name=self.file_name)
-        # else:
-        #     print('Error initializing MyImage! Wrong type of {peaks} argument!')
-        #     print('Empty {peaks} object created.')
-        #     self.peaks = Peaks(img=self.img, img_name=self.name)
+        # Additional (optional) properties/features/methods/objects
+        self.iLabels = None
+        self.FFT = None
     
     
     @staticmethod
@@ -233,9 +198,46 @@ class MyImage:
         return(text_height)
     
     
+    def _set_image_type(self):
+        '''
+        Set the image type.
+        
+        This method gets the image type
+        AND converts some less common image type to more standard ones.
+
+        Returns
+        -------
+        Image type
+            We use image types: 'binary', 'gray', 'gray16', 'rgb', 'rgba'.
+        '''
+        # Get the image type
+        # AND convert some less common image types to more standard.
+        imode = self.img.mode
+        if imode == '1':
+            itype = 'binary'
+        elif imode == 'L':
+            itype ='gray'
+        elif imode == 'P':
+            self.img = self.img.convert('L')
+            itype ='gray'
+        elif imode == 'RGB':
+            itype = 'rgb'
+        elif imode == 'RGBA':
+            itype = 'rgba'
+        elif imode == 'I;16':
+            itype = 'gray16'
+        else:
+            print('Unsuported image type!')
+            print(f'PIL image mode: {imode}')
+            print('End of program.')
+            sys.exit()
+        # Return the image type
+        return(itype)
+        
+            
     def to_gray(self, itype='8bit'):
         '''
-        Convert image to 8-bit grayscale.
+        Convert image to grayscale.
 
         Parameters
         ----------
@@ -269,9 +271,10 @@ class MyImage:
             if self.img.mode in ('RGB','RGBA'):
                 # Conversion of RGB and RGBA images should be fine.
                 self.img = self.img.convert('L')
+                self.itype = 'gray'
             elif self.img.mode == 'L':
-                # The image is 8-bit grayscale - just pass.
-                pass
+                # The image is 8-bit grayscale - just reset itype='gray'.
+                self.itype='gray'
             elif self.img.mode == 'I;16':
                 # Conversion of 16-bit grayscale to 8-bit grayscale
                 # (requires special treatment, not supported by Pillow.
@@ -279,9 +282,12 @@ class MyImage:
                 normalized = (arr - arr.min()) / (arr.max() - arr.min()) * 255
                 normalized = normalized.astype(np.uint8)
                 self.img = Image.fromarray(normalized)
+                self.itype = 'gray'
+            else:
+                print('Conversion to grayscale - unsupported image type!')
         else:
-            # Conversion to non-standard grayscale formats not supported.
-            print('Only standard 8-bit grayscale images are supported.')
+            # Conversion to non-8bit grayscale formats not supported now.
+            print('Conversion to grayscale - only 8-bit grayscale supported!')
             print('The original image was not changed.')
             
     
@@ -441,7 +447,24 @@ class MyImage:
         self.img = self.img.resize(
             (new_width, new_height), resample=resample)
 
-             
+    
+    def autocontrast(self, **kwargs):
+        '''
+        Enhance image contrast (using PIL.ImageOps.autocontrast function).
+
+        Parameters
+        ----------
+        **kwargs : dict
+            Any arguments of PIL.ImageOps.autocontrast function.
+
+        Returns
+        -------
+        None
+            The modified image is saved in self.img object.
+        '''
+        self.img = ImageOps.autocontrast(image = self.img, **kwargs)
+        
+        
     def label(self, label, F=None, **kwargs):
         '''
         Insert a one-letter label in the upper left corner of an image. 
@@ -490,8 +513,108 @@ class MyImage:
         # This method is a wrapper calling the function in the external module. 
         from myimg.utils import label as my_label
         my_label.insert_label(self, label, F, **kwargs)
+
+         
+    def caption(self, text, F=None, **kwargs):
+        '''
+        Insert a short textual description at the bottom of an image. 
+
+        Parameters
+        ----------
+        text : str
+            A short text that will be inserted at the bottom of an image.
+        F : float, optional, default is None
+            Multiplication coefficient/factor that changes the text size.
+            If F = 1.2, then all label parameters are enlarged 1.2 times.
+        kwargs : list of keyword arguments
+            Allowed keyword arguments are:
+            color, bcolor, messages.
+            See section *List of allowed kwargs* for detailed descriptions.
+            
+        Returns
+        -------
+        None
+            The label is drawn directly to *self.img*.
+
+        List of allowed kwargs
+        ----------------------
+        * color : PIL color specification, default is 'black'.
+            Text color = color of the label text.
+        * bcolor : PIL color specification, default is 'white'.
+            Background color = color of the label background/box.
+
+        Technical notes
+        ---------------
+        * Transparent background:
+          To set transparent background,
+          set optional/keyword argument bcolor='transparent'.
+          It is not enough to omit bcolor,
+          because all omitted keyword arguments
+          are set to their defaults defined in Settings.Label.
+          In the case of omitted bcolor argument, the default is 'white'. 
+        * Color label in grayscale image:
+          To set color label in grayscale image,
+          it is necessary to convert image to RGB;
+          otherwise the colored label would be converted to grayscale.
+        '''
         
-                
+        # The complete code of this method is long. 
+        # Therefore, the code has been moved to its own module.
+        # This method is a wrapper calling the function in the external module. 
+        from myimg.utils import caption as my_caption
+        my_caption.insert_label(self, text, F, **kwargs)
+    
+
+    def border(self, color='black', F=None, **kwargs):
+        '''
+        Add a border around an image. 
+
+        Parameters
+        ----------
+        color : PIL color specification, default is 'black'
+            A short text that will be inserted at the bottom of an image.
+        F : float, optional, default is None
+            Multiplication coefficient/factor that changes the border width.
+            If F = 1.2, then the border width is enlarged 1.2 times.
+        kwargs : list of keyword arguments
+            Allowed keyword arguments are:
+            color, bcolor, messages.
+            See section *List of allowed kwargs* for detailed descriptions.
+            
+        Returns
+        -------
+        None
+            The label is drawn directly to *self.img*.
+
+        List of allowed kwargs
+        ----------------------
+        * color : PIL color specification, default is 'black'.
+            Text color = color of the label text.
+        * bcolor : PIL color specification, default is 'white'.
+            Background color = color of the label background/box.
+
+        Technical notes
+        ---------------
+        * Transparent background:
+          To set transparent background,
+          set optional/keyword argument bcolor='transparent'.
+          It is not enough to omit bcolor,
+          because all omitted keyword arguments
+          are set to their defaults defined in Settings.Label.
+          In the case of omitted bcolor argument, the default is 'white'. 
+        * Color label in grayscale image:
+          To set color label in grayscale image,
+          it is necessary to convert image to RGB;
+          otherwise the colored label would be converted to grayscale.
+        '''
+        
+        # The complete code of this method is long. 
+        # Therefore, the code has been moved to its own module.
+        # This method is a wrapper calling the function in the external module. 
+        from myimg.utils import border as my_border
+        my_border.ad_border(self, color, F, **kwargs)
+
+         
     def scalebar(self, pixsize, F=None, **kwargs):
         '''
         Insert a scalebar in the lower right corner of the image.
@@ -594,7 +717,7 @@ class MyImage:
         my_scalebar.insert_scalebar(self, pixsize, F, **kwargs)
     
     
-    def show(self, cmap=None, axes=False):
+    def show(self, cmap=None, axes=False, iscale=False):
         '''
         Show image.
 
@@ -612,10 +735,26 @@ class MyImage:
             The output is the image shown on the screen.
 
         '''
-        arr = np.asarray(self.img)
-        if arr.ndim == 2: cmap='gray'
+        # Grayscale images require special treatment
+        grayscale_image = self.itype == 'gray' or self.itype == 'gray16'
+        if grayscale_image:
+            # If not specified explicitly, cmap should be gray.
+            if cmap == None: cmap='gray'
+            # If not required, grayscale images should not be autoscaled.
+            if iscale == False:
+                # ...limits for non-intensity-autoscaled grayscale-8bit
+                if self.itype == 'gray': imin,imax = (0,255)
+                # ...limits for non-intensity-autoscaled grayscale-16bit
+                if self.itype == 'gray16': imin,imax = (0,65535)
+        # Do not show axes if axes = False
         if not(axes): plt.axis('off')
-        plt.imshow(arr, cmap=cmap)
+        # Plot the image
+        # ...intensity of grayscale images should not be autoscaled
+        if grayscale_image and iscale == False:
+            plt.imshow(self.img, cmap=cmap, vmin=imin, vmax=imax)
+        else:
+            plt.imshow(self.img, cmap=cmap)
+        # Show the plot 
         plt.show()
     
     
@@ -670,11 +809,11 @@ class MyImage:
 
 
     
-class Montage:
+class MyReport:
     '''
-    Class defining Montage objects.
+    Class defining MyReport objects.
     
-    * Montage object = a rectangular multi-image. 
+    * MyReport object = a rectangular multi-image. 
     * See __init__ for more information about initial object parameters.
     * More help: https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg.html
     '''
@@ -682,20 +821,20 @@ class Montage:
     def __init__(self, images, itype,
                  grid=None, padding=0, fill='white', crop=True, rescale=None):
         '''
-        Initialize Montage object.
+        Initialize MyReport object.
 
         Parameters
         ----------
         images : list of images (arrays or str or path-like or MyImage objects)
-            The list of images from which the montage will be created.
+            The list of images from which the MyReport will be created.
             If {images} list consists of arrays,
-            we assume that these arrays are the direct input to montage
-            (more precisely: the direct input to skimage.util.montage method).
+            we assume that these arrays are the direct input to
+            skimage.util.montage method.
             If {images} list contains of strings or path-like objects,
             we assume that these are filenames of images
             that should be read as arrays.
             If {images} lists contains MyImage objecs,
-            we use MyImage objects to create the final montage.
+            we use MyImage objects to create the final MyReport/montage.
         itype : type of images/arrays ('gray' or 'rgb' or 'rgba')
             The type of input/output images/arrays.
             If itype='gray',
@@ -731,8 +870,9 @@ class Montage:
             
         Returns
         -------
-        Montage object = multi-image/montage of *images*.
-        The montage object can be shown (Montage.show) or saved (Montage.save).
+        MyReport object = multi-image/montage of *images*.
+        The MyReport object can be shown (MyReport.show)
+        or saved (MyReport.save).
         
         Technical notes
         ---------------
@@ -807,9 +947,9 @@ class Montage:
     
     def process_images(self):
         '''
-        Check and prepare images before creating montage.
+        Check and prepare images before creating MyReport/montage.
         
-       * The images used for montage
+       * The images used for MyReport/montage
          should be convertible to arrays with the same type and size.
        * This method goes through all images in self.images
          and converts them to arrays.
@@ -964,7 +1104,7 @@ class Montage:
 
     def show(self, cmap=None, axes=False):
         '''
-        Show image montage.
+        Show MyReport = rectangular montage of images.
 
         Parameters
         ----------
@@ -977,7 +1117,7 @@ class Montage:
         Returns
         -------
         None
-            The output is the image montage shown on the screen.
+            The output is the MyReport (image montage) shown on the screen.
 
         ''' 
         ski.io.imshow(self.montage)
@@ -986,7 +1126,7 @@ class Montage:
     
     def save(self, output_image):
         '''
-        Save image montage (using an arbitrary path, name and extension).
+        Save MyReport (using an arbitrary path, name and extension).
 
         Parameters
         ----------
@@ -1008,10 +1148,6 @@ class Montage:
         
         
         
-
-
-
-
 @dataclass
 class Units:
     '''
