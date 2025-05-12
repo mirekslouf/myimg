@@ -10,51 +10,39 @@ Key classes/objects for myimg package:
 2. *Montage* class
    defines a montage/combination of several images,
    which are arranged in a rectangular grid/multi-image.
-3. *Units, NumberWithUnits and ScaleWithUnits* classes
+3. *Units*, *NumberWithUnits* and *ScaleWithUnits* classes
    defines allowed units, number-with-units and scale-with-units, respectively.
 
 Examples = how does it work?
 ----------------------------
 
-*MyImage* class creates the basic object,
+**MyImage** class creates the basic object,
 which is used in most image manipulations within myimg.api module.
 
 >>> # MyImage class :: simple example (short but real)
->>> import myimage.api as mi      # import API, which provides a simple UI
+>>> import myimg.api as mi        # import MyImage API ~ simple UI
 >>> img = mi.MyImage('some.bmp')  # open image: some.bmp
 >>> img.label('a')                # insert a label in the upper left corner
 >>> img.scalebar('rwi,100um')     # insert a scalebar to the lower right corner
 >>> img.save_with_ext('_s.png')   # save the modified image to: some_ls.png
 
-*Montage* class creates the multi-image object,
+**MyReport** class creates the multi-image object,
 which contains several images arranged in a rectangular grid.
 
->>> # Montage class :: simple example (short but real)
->>> import myimage.api as mi      # import API, which provides a simple UI
+>>> # MyReport class :: simple example (short but real)
+>>> import myimg.api as mi        # import MyImage API ~ simple UI
 >>> images = ['s1.png','s2.png']  # define input images
->>> montage = mi.Montage(images,  # create montage image
+>>> mrep = mi.MyReport(images,    # create montage image
 >>>     itype='gray', grid=(1,2), # ...grayscale, just two images in a row
 >>>     padding=10)               # ...padding/spacing between imgs = 10pixels
->>> montage.save('mreport.png')   # save the final montage of (the two) images   
+>>> mrep.save('mreport.png')      # save the final montage of (the two) images   
 
-*Units, NumberWithUnits, and ScaleWithUnits* classes
+**Units**, **NumberWithUnits**, and **ScaleWithUnits** classes
 are used in myimg.utils.scalebar module
 when creating scalebars (as a scalebar contains *number with units*).
-
->>> # Units, NumberWithUnits and ScaleWithUnits classes :: typical/indirect use 
->>> # (the classes are employed behind the scenes when calling scalebar method
->>> img = mi.MyImage('some.bmp')  # open image: some.bmp
->>> img.scalebar('rwi,100um')     # scalebar (employs Units, NumberWithUnits... 
->>> img.save_with_ext('_s.png')   # save modified image: to some_s.png
-   
->>> # NumberWithUnits class :: NON-typical/direct use
->>> # (the NumberWithUnits class can be used/tested for various conversions
->>> from myimg.objects import NumberWithUnits
->>> n =NumberWithUnits('0.1mm')
->>> print('Initial number_with_units:', n)  # prints 0.1 mm
->>> print('Setting correct units...')
->>> n.set_correct_units()
->>> print(n)                                # prints 100 um
+More information can be found below at the definitions of
+myimg.objects.Units, myimg.objects.NumberWithUnits,
+and myimg.objects.ScaleWithUnits.
 '''
 
 
@@ -70,14 +58,10 @@ from dataclasses import dataclass
 
 class MyImage:
     '''
-    Class defining MyImage objects.
-    
-    * MyImage object = image name + PIL image object + extra props/methods.
-    * See __init__ for more information about initial object parameters.
-    * More help: https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg.html
+    Class defining MyImage objects.    
     '''
 
-        
+
     def __init__(self, filename):
         '''
         Initialize MyImage object.
@@ -86,9 +70,6 @@ class MyImage:
         ----------
         filename : str or path-like object
             Name of the image file to work with.
-        peaks : bool or pd.DataFrame, optional
-            If True, initializes an empty Peaks object.
-            If DataFrame is passed, initializes Peaks with data.
 
         Returns
         -------
@@ -299,7 +280,7 @@ class MyImage:
         ----------
         itype : str, optional, default is '24bit'
             The image is converted to standard RGB image = 24bit = 3*8bit.
-            Only the tandard 24bit RGB images are supported at the moment.
+            Only the standard 24bit RGB images are supported at the moment.
 
         Returns
         -------
@@ -330,7 +311,7 @@ class MyImage:
         ----------
         itype : str, optional, default is '32bit'
             The image is converted to standard RGBA image = 32bit = 3*8+8bit.
-            Only the tandard 32bit RGBA images are supported at the moment.
+            Only the standard 32bit RGBA images are supported at the moment.
 
         Returns
         -------
@@ -346,7 +327,7 @@ class MyImage:
         '''
         if itype == '32bit':
             # Conversion to 24-bit RGB.
-            self.img = self.img.convert('RGB')
+            self.img = self.img.convert('RGBA')
         else:
             # Conversion to non-standard RGBA formats not supported.
             print('Unknown image type when converting to RGBA!')
@@ -490,8 +471,12 @@ class MyImage:
         ----------------------
         * color : PIL color specification, default is 'black'.
             Text color = color of the label text.
+            The default is defined in myimg.settings.Caption
+            (and that is why it does not have to be re-defined here).
         * bcolor : PIL color specification, default is 'white'.
             Background color = color of the label background/box.
+            The default is defined in myimg.settings.Caption
+            (and that is why it does not have to be re-defined here).
 
         Technical notes
         ---------------
@@ -517,7 +502,7 @@ class MyImage:
          
     def caption(self, text, F=None, **kwargs):
         '''
-        Insert a short textual description at the bottom of an image. 
+        Insert a one-line textual description at the bottom of an image. 
 
         Parameters
         ----------
@@ -540,8 +525,18 @@ class MyImage:
         ----------------------
         * color : PIL color specification, default is 'black'.
             Text color = color of the label text.
+            The default is defined in myimg.settings.Caption
+            (and that is why it does not have to be re-defined here).
         * bcolor : PIL color specification, default is 'white'.
             Background color = color of the label background/box.
+            The default is defined in myimg.settings.Caption
+            (and that is why it does not have to be re-defined here).
+        * align : int or str
+            This parameter determines the alignment of the figure caption.
+            If align = integer,
+            x_position of the caption is {align} pixels from left.
+            If align = string,
+            it can be either 'left' or 'Left' or ''
 
         Technical notes
         ---------------
@@ -562,57 +557,31 @@ class MyImage:
         # Therefore, the code has been moved to its own module.
         # This method is a wrapper calling the function in the external module. 
         from myimg.utils import caption as my_caption
-        my_caption.insert_label(self, text, F, **kwargs)
+        my_caption.insert_caption(self, text, F, **kwargs)
     
 
-    def border(self, color='black', F=None, **kwargs):
+    def border(self, border=1, color='black'):
         '''
-        Add a border around an image. 
+        Draw a border around an image. 
 
         Parameters
         ----------
+        border : int or tuple, optional, default is 1
+            Int = the same thickness of border around all four edges.
+            Tuple of 2 ints = (left/righ and top/bottom) border sizes.
+            Tuple of 4 ints = (left, top, right, bottom) border sizes. 
         color : PIL color specification, default is 'black'
             A short text that will be inserted at the bottom of an image.
-        F : float, optional, default is None
-            Multiplication coefficient/factor that changes the border width.
-            If F = 1.2, then the border width is enlarged 1.2 times.
-        kwargs : list of keyword arguments
-            Allowed keyword arguments are:
-            color, bcolor, messages.
-            See section *List of allowed kwargs* for detailed descriptions.
-            
-        Returns
-        -------
-        None
-            The label is drawn directly to *self.img*.
-
-        List of allowed kwargs
-        ----------------------
-        * color : PIL color specification, default is 'black'.
-            Text color = color of the label text.
-        * bcolor : PIL color specification, default is 'white'.
-            Background color = color of the label background/box.
-
-        Technical notes
-        ---------------
-        * Transparent background:
-          To set transparent background,
-          set optional/keyword argument bcolor='transparent'.
-          It is not enough to omit bcolor,
-          because all omitted keyword arguments
-          are set to their defaults defined in Settings.Label.
-          In the case of omitted bcolor argument, the default is 'white'. 
-        * Color label in grayscale image:
-          To set color label in grayscale image,
-          it is necessary to convert image to RGB;
-          otherwise the colored label would be converted to grayscale.
-        '''
+        '''        
+        # (0) In the future, we may add border with shadow
+        # Now we add just simple border using PIL.ImageOps.expand.
         
-        # The complete code of this method is long. 
-        # Therefore, the code has been moved to its own module.
-        # This method is a wrapper calling the function in the external module. 
-        from myimg.utils import border as my_border
-        my_border.ad_border(self, color, F, **kwargs)
+        # (1) Add border
+        self.img = ImageOps.expand(self.img, border=border, fill=color)
+        
+        # (2) Update MyImage properties = width and height
+        self.width  = self.img.size[0]
+        self.height = self.img.size[1]
 
          
     def scalebar(self, pixsize, F=None, **kwargs):
@@ -812,6 +781,7 @@ class MyImage:
 class MyReport:
     '''
     Class defining MyReport objects.
+    
     
     * MyReport object = a rectangular multi-image. 
     * See __init__ for more information about initial object parameters.
@@ -1195,10 +1165,12 @@ class NumberWithUnits:
     Object initialiation
     
     >>> # Three basic ways how to initialize a NumberWithUnits object
+    >>> # (this is a NON-typical usage
+    >>> # (NumberWithUnits object is used internally, when drawing scalebars
     >>> from myimg.nwu import NumberWithUnits
-    >>> nwu1 = ScaleWithUnits('1.2um')
-    >>> nwu2 = ScaleWithUnits(number=1.2, units='um')
-    >>> nwu3 = ScaleWithUnits(number_with_units_object_such_as_nwu1)
+    >>> nwu1 = NumberWithUnits('1.2um')
+    >>> nwu2 = NumberWithUnits(number=1.2, units='um')
+    >>> nwu3 = NumberWithUnits(a_number_with_units_object_such_as_nwu1)
     
     List of object properties
         
@@ -1479,10 +1451,12 @@ class ScaleWithUnits(NumberWithUnits):
     Object initialiation
     
     >>> # Three basic ways how to initialize a ScaleWithUnits object
+    >>> # (this is a NON-typical usage
+    >>> # (ScaleWithUnits object is used internally, when drawing scalebars
     >>> from myimg.nwu import ScaleWithUnits
     >>> swu1 = ScaleWithUnits('1.2um', pixels=100)
     >>> swu2 = ScaleWithUnits(number=1.2, units='um', pixels=100)
-    >>> swu3 = ScaleWithUnits(number_with_units_object, pixels=100)
+    >>> swu3 = ScaleWithUnits(a_number_with_units_object, pixels=100)
     
     List of object properties
         

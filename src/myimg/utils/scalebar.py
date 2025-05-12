@@ -13,7 +13,7 @@ This module defines function insert_scalebar, with the following features:
 >>>
 >>> img = mi.MyImage('somefile.bmp')
 >>>
->>> # img.scalebar calls our myimg.utils.scalebar.insert_scalebar function
+>>> # This calls myimg.utils.scalebar.insert_scalebar function
 >>> img.scalebar('rwi,100um')
 >>>
 >>> img.save_with_ext('_clm.png')

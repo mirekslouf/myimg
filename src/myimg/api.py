@@ -5,7 +5,7 @@ Module: myimg.api
 A simple interface to package myimg.
 
 >>> # Simple usage of myimg.api interface
->>> import myimage.api as mi
+>>> import myimg.api as mi
 >>>
 >>> # (1) Open image
 >>> img = mi.MyImage('somefile.bmp')  # input image: somefile.bmp
@@ -21,16 +21,17 @@ A simple interface to package myimg.
 More examples are spread all over the documentation.
     
 1. How to use myimg.objects:
-    - myimg.objects.MyImage = single image = the basic object with many methods
-    - myimg.objects.MyReport = multi-image = a rectangular grid of images
-2. Specific frequent tasks:
+    - myimg.api.MyImage = single image = an image with additional methods
+    - myimg.api.MyReport = multi-image = a rectangular grid of images
+2. Specific frequent tasks for single images:
     - myimg.objects.MyImage.scalebar = a method to insert scalebar
+    - myimg.objects.MyImage.caption = a method to add figure caption
     - myimg.objects.MyImage.label = a method to insert label in the corner
-3. Additional utilities:
-    - myimg.utils = sub-package with special/more complex utilities
-    - myimg.utils.scalebar = the code for myimg.objects.MyImg.scalebar method
-    - myimg.utils.label = the code for myimg.objects.MyImg.label method
-    - myimg.utils.fft = additional utilities, Fourier transforms
+3. Additional utilities and applications:
+    - myimg.utils = sub-package with code for specific/more complex methods
+    - myimg.apps = sub-package with code for additional applications
+    - myimg.apps.iLabels = app for immunolabelling
+      (detection, classification, collocalization)
 '''
 
 
@@ -42,11 +43,29 @@ import pandas as pd
 
 class MyImage(myimg.objects.MyImage):
     '''
-    Class defining MyImage objects.
+    Class providing MyImage objects.
     
-    * MyImage object = image-name + PIL-image-object + various methods.
-    * This class is just inherited from myimg.objects.MyImage.
-    * More help: https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg.html 
+    * MyImage object = PIL-image-object + image name + additional methods.
+    * This class in api module (myimg.api.MyImage)
+      is just inherited from objects module (myimg.objects.MyImage).
+    
+    >>> # Simple usage of MyImage object
+    >>> import myimg.api as mi
+    >>> # Open some image using MyImage class
+    >>> img = mi.MyImage('somefile.png')
+    >>> # Show the opened image on the screen
+    >>> img.show()
+    
+    Parameters
+    ----------
+    filename : str or path-like object
+        Name of the image file to work with.
+    
+    Returns
+    -------
+    MyImage object
+        An image, typically after some processing (autocontrast, scalebar ...).
+        MyImage objects can be shown (MyImage.show) or saved (MyImage.save).
     '''
     pass
 
@@ -54,11 +73,81 @@ class MyImage(myimg.objects.MyImage):
 
 class MyReport(myimg.objects.MyReport):
     '''
-    Class defining MyReport objects.
+    Class providing MyReport objects.
     
     * MyReport object = a rectangular multi-image.
-    * This class is just inherited from myimg.objects.MyReport. 
-    * More help: https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg.html 
+    * This class in api module (myimg.api.MyReport)
+      is just inherited from objects module (myimg.objects.MyReport).
+    
+    >>> # Simple usage of MyReport object
+    >>> import myimg.api as mi
+    >>> # Define input images    
+    >>> images = ['s1.png','s2.png']
+    >>> # Combine the images into one multi-image = mreport
+    >>> mrep = mi.MyReport(images, itype='gray', grid=(1,2), padding=10)
+    >>> # Save the final multi-image               
+    >>> mrep.save('mreport.png')   
+    
+    Parameters
+    ----------
+    images : list of images (arrays or str or path-like or MyImage objects)
+        The list of images from which the MyReport will be created.
+        If {images} list consists of arrays,
+        we assume that these arrays are the direct input to
+        skimage.util.montage method.
+        If {images} list contains of strings or path-like objects,
+        we assume that these are filenames of images
+        that should be read as arrays.
+        If {images} lists contains MyImage objecs,
+        we use MyImage objects to create the final MyReport/montage.
+    itype : type of images/arrays ('gray' or 'rgb' or 'rgba')
+        The type of input/output images/arrays.
+        If itype='gray',
+        then the input/output are converted to grayscale.
+        If itype='rgb' or 'rgba'
+        then the input/output are treated as RGB or RGBA images/arrays.
+    grid : tuple of two integers (number-of-rows, number-of-cols)
+        This argument is an equivalent of
+        *grid_shape* argument in skimage.util.montage function.
+        It defines the number-of-rows and number-of-cols of the montage.
+        Note: If grid is None, it defaults to a suitable square grid.
+    padding : int; the default is 0
+        This argument is an equivalent of
+        *padding_width* argument in skimage.util.montage function.
+        It defines the distance between the images/arrays of the montage.
+    fill : str or int or tuple/list/array; the default is 'white'
+        This argument is a (slightly extended) equivalent of 
+        *fill* argument in skimage.util.montage function.
+        It defines the color between the images/arrays.
+        If fill='white' or fill='black',
+        the color among the images/arrays is white or black.
+        It can also be an integer value (for grayscale images)
+        or a three-value tuple/list/array (for RGB images);
+        in such a case, it defines the exact R,G,B color among the images.
+    crop : bool; the default is True
+        If crop=True, the outer padding is decreased to 1/2*padding.
+        This makes the montages nicer (like the outputs from ImageMagick).
+    rescale : float; the default is None
+        If *rescale* is not None, then the original size
+        of all input images/arrays is multiplied by *rescale*.
+        Example: If *rescale*=1/2, then the origina size
+        of all input images/arrays is halved (reduced by 50%).
+        
+    Returns
+    -------
+    MyReport object
+        Multi-image/montage of *images*.
+        MyReport objects can be shown (MyReport.show) or saved (MyReport.save).
+    
+    Allowed image formats
+    ---------------------
+    * Only 'gray', 'rgb', and 'rgba' standard formats are supported.
+      If an image has some non-standard format,
+      it can be read and converted using a sister MyImage class
+      (methods MyImage.to_gray, MyImage.to_rgb, MyImage.to_rgba).
+    * The user does not have to differentiate 'rgb' and 'rgba' images.
+      It is enough to specify 'rgb' for color images
+      and if the images are 'rgba', the program can handle them.
     '''
     pass
 
@@ -161,7 +250,7 @@ class Settings:
     # How does it work in real life?
     #   => Import myimg.api and use Settings as shown in the docstring above.
     
-    from myimg.settings import Scalebar, Label
+    from myimg.settings import Scalebar, Label, Caption
     from myimg.settings import MicCalibrations, MicDescriptionFiles
 
 
