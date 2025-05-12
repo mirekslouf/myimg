@@ -727,7 +727,7 @@ class MyImage:
         plt.show()
     
     
-    def save(self, output_image):
+    def save(self, output_image, dpi=300):
         '''
         Save image using arbitrary output dir, name and extension.
 
@@ -736,16 +736,18 @@ class MyImage:
         output_image : str or path-like object
             Filename of the output image.
             The format of saved image is guessed from the extension.
+        dpi : int, optional, default is 300
+            The dpi of the saved image.
 
         Returns
         -------
         None
             The output is the saved *output_image*.
         '''
-        self.img.save(output_image)
+        self.img.save(output_image, dpi=(dpi,dpi))
     
     
-    def save_with_extension(self, my_extension):
+    def save_with_extension(self, my_extension, dpi=300):
         '''
         Save image in the same dir with slightly modified name and extension.
 
@@ -756,6 +758,8 @@ class MyImage:
             The argument my_extension can extend image name
             + modify image extension/format;
             see the example below.
+        dpi : int, optional, default is 300
+            The dpi of the saved image.
             
         Returns
         -------
@@ -774,7 +778,7 @@ class MyImage:
         '''
         (file,ext) = os.path.splitext(self.name)
         output_image = file + my_extension
-        self.img.save(output_image)
+        self.img.save(output_image, dpi=(dpi,dpi))
 
 
     
@@ -1094,7 +1098,7 @@ class MyReport:
         ski.io.show()
     
     
-    def save(self, output_image):
+    def save(self, output_image, dpi=300):
         '''
         Save MyReport (using an arbitrary path, name and extension).
 
@@ -1103,6 +1107,8 @@ class MyReport:
         output_image : str or path-like object
             Filename of the output image.
             The format of saved image is guessed from the extension.
+        dpi : int, optional, default is 300
+            The dpi of the saved image/montage.
 
         Returns
         -------
@@ -1114,7 +1120,14 @@ class MyReport:
             self.montage = (
                 self.montage/np.max(self.montage) * 255).astype(np.uint8)
         # Save the output image montage.
-        ski.io.imsave(output_image, self.montage)
+        # (ski.io.imsave does not support saving with defined DPI
+        # (plt.imsave supports DPI, but grayscale images require cmap='gray'
+        if self.itype == 'gray':
+            # Grayscale images are saved with colormap = 'gray'
+            plt.imsave(output_image, self.montage, dpi=dpi, cmap='gray')
+        else:
+            # RGB (and RGBA) images are saved without cmap to keep the colors
+            plt.imsave(output_image, self.montage, dpi=dpi)
         
         
         

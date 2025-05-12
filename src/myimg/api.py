@@ -16,7 +16,7 @@ A simple interface to package myimg.
 >>> img.scalebar('rwi,100um')  # scalebar to the lower-right corner
 >>>
 >>> # (3) Save the modified image 
->>> img.save_with_ext('_clm.png')  # output: somefile_ls.png
+>>> img.save_with_ext('_ls.png')  # output: somefile_ls.png
 
 More examples are spread all over the documentation.
     
@@ -155,19 +155,19 @@ class MyReport(myimg.objects.MyReport):
 
 class Apps:
     '''
-    Additional applications of myimg package.
+    Additional applications for myimg package.
     
-    * Basic features are accessible as methods of MyImage object:
+    Basic features are accessible as methods of MyImage and MyReport objects:
     
-        >>> from myimg.api import mi
-        >>> img = mi.MyImage('someimage.bmp') 
-        >>> img.scalebar('rwi,100um')  # basic utility, called as a method
+    >>> from myimg.api import mi
+    >>> img = mi.MyImage('someimage.bmp') 
+    >>> img.scalebar('rwi,100um')  # basic utility, called as a method
     
-    * Additional features/apps can be called as functions of Apps package:
+    Additional features/apps can be called as functions of Apps package:
         
-        >>> from myimg.api import mi
-        >>> img = mi.MyImage('someimage.bmp')
-        >>> mi.Apps.fourier(img)  # additional utility, called as a function
+    >>> from myimg.api import mi
+    >>> img = mi.MyImage('someimage.bmp')
+    >>> mi.Apps.FFT(img)  # additional utility, called as a function
     '''
 
 
@@ -229,15 +229,17 @@ class Apps:
 
 class Settings:
     '''
-    Settings for package myimg.
+    Settings for myimg package.
     
-    * This class imports all classes from myimg.settings.
+    * This class (myimg.Settings)
+      imports all dataclasses from myimg.settings.
     * Thanks to this import, we can use Settings myimg.api as follows:
-        
-    * Sample usage:
-        
-        >>> import myimg.api as mi
-        >>> mi.Settings.Scalebar.position = (10,650)
+            
+    >>> # Sample usage of Settings class
+    >>> # (this is NOT a typical usage of Settings dataclasses
+    >>> # (the settings are usually not changed and just used in myimg funcs
+    >>> import myimg.api as mi
+    >>> mi.Settings.Scalebar.position = (10,650)
     '''
     
     # Technical notes:
@@ -259,14 +261,15 @@ class PlotParams:
     '''
     Simple class defining matplotlib plot parameters.
     
-    In MyImg, matplotlib library is used for visualizing
-    (i) input images/micrograph and
-    (ii) other plots, such as histograms.
+    In MyImg, matplotlib library is used for:
     
-    * Sample usage:
+    * Showing and/or saving of images/micrographs.
+    * Preparation of additional plots, such as histograms.
+    
+    Sample usage:
         
-        >>> import myimg.api as mi
-        >>> mi.PlotParams.set_plot_parameters(size='8x6', dpi=100)
+    >>> import myimg.api as mi
+    >>> mi.PlotParams.set_plot_parameters(size=(8,8), dpi=100)
     '''
 
     
