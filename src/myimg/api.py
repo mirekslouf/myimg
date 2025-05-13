@@ -136,8 +136,8 @@ class MyReport(myimg.objects.MyReport):
     Returns
     -------
     MyReport object
-        Multi-image/montage of *images*.
-        MyReport objects can be shown (MyReport.show) or saved (MyReport.save).
+        Multi-image = tiled image composed of *images*.
+        MyReport object can be shown (MyReport.show) or saved (MyReport.save).
     
     Allowed image formats
     ---------------------

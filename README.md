@@ -1,10 +1,10 @@
 MyImg :: Processing of micrographs
 ----------------------------------
 
-* MyImg provides tools and apps for processing of microscopic images.
-* Module MyImage  = process single image(s): contrast, label, scalebar ...
-* Module MyReport = create image report (several images in a rectangular grid)
-* Additional apps/sub-packages for: FFT, size distributions, imunolabelling ...
+* MyImg is a toolbox for the processing of micrographs, which can:
+	1. Process single micrographs (improve contrast, insert scalebars, etc.).
+	2. Prepare nice, publication-ready tiled images from processed micrographs.
+	3. Apply additional tools, such as: FFT, distributions, immunolabelling ...
 
 
 Principle

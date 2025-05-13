@@ -785,11 +785,6 @@ class MyImage:
 class MyReport:
     '''
     Class defining MyReport objects.
-    
-    
-    * MyReport object = a rectangular multi-image. 
-    * See __init__ for more information about initial object parameters.
-    * More help: https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg.html
     '''
     
     def __init__(self, images, itype,
@@ -839,14 +834,15 @@ class MyReport:
         rescale : float; the default is None
             If *rescale* is not None, then the original size
             of all input images/arrays is multiplied by *rescale*.
-            Example: If *rescale*=1/2, then the origina size
+            Example: If *rescale* = 1/2, then the original size
             of all input images/arrays is halved (reduced by 50%).
             
         Returns
         -------
-        MyReport object = multi-image/montage of *images*.
-        The MyReport object can be shown (MyReport.show)
-        or saved (MyReport.save).
+        MyReport object
+            Multi-image = tiled image composed of *images*.
+            The MyReport object can be shown (MyReport.show)
+            or saved (MyReport.save).
         
         Technical notes
         ---------------
@@ -1093,9 +1089,16 @@ class MyReport:
         None
             The output is the MyReport (image montage) shown on the screen.
 
-        ''' 
-        ski.io.imshow(self.montage)
-        ski.io.show()
+        '''
+        # Check/adjust the colormap
+        # (if we have grayscale image and no colormap, we want cmap='gray'
+        if (cmap == None) and (self.itype == 'gray'): cmap = 'gray'
+        # Prepare the plot
+        plt.imshow(self.montage, cmap=cmap)
+        # Switch off the axes, if not requested otherwise
+        if not(axes == True): plt.axis('off')
+        # Show the plot
+        plt.show()
     
     
     def save(self, output_image, dpi=300):

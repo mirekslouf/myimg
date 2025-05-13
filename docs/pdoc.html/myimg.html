@@ -56,14 +56,30 @@ myimg    </h1>
 
                         <div class="docstring"><h2 id="package-myimg">Package: MyImg</h2>
 
-<p>Tools for processing of microscopic images.</p>
+<p>A toolbox for the processing of micrographs, which can do the following:</p>
 
-<ul>
-<li>Simple things: insert scalebar, cut off lower bar, insert label ...</li>
-<li>Further utilities: multi-images, Fourier transform, diffraction patterns ...  </li>
-</ul>
+<ol>
+<li>Process single micrographs (improve contrast, insert scalebars, etc.).</li>
+<li>Prepare nice, publication-ready tiled images from processed micrographs.</li>
+<li>Apply additional tools, such as: FFT, distributions, immunolabelling ...</li>
+</ol>
 
 <p>See <a href="myimg/api.html">myimg.api</a> for a simple user interface.</p>
+
+<p>List of key objects, modules, and sub-packages:</p>
+
+<ul>
+<li><a href="myimg/api.html">myimg.api</a> = simple user interface, basic point to start</li>
+<li><a href="myimg/objects.html">myimg.objects</a> = key objects used by myimg
+<ul>
+<li><a href="myimg/objects.html#MyImage">myimg.objects.MyImage</a> = single micrographs</li>
+<li><a href="myimg/objects.html#MyReport">myimg.objects.MyReport</a> = multi-images = tiled images</li>
+<li>myimg.objects.Apps = additional applications (FFT, distributions ...)</li>
+</ul></li>
+<li><a href="myimg/settings.html">myimg.settings</a> = default settings employed by MyImg objects</li>
+<li><a href="myimg/apps.html">myimg.apps</a> = sub-package containing additional tools and/or applications</li>
+<li><a href="myimg/utils.html">myimg.utils</a> = sub-package with code for specific/more complex utils in myimg</li>
+</ul>
 </div>
 
                         <input id="mod-myimg-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -74,15 +90,27 @@ myimg    </h1>
 </span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="sd">Package: MyImg</span>
 </span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="sd">--------------</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>
-</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="sd">Tools for processing of microscopic images.</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="sd">* Simple things: insert scalebar, cut off lower bar, insert label ...</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="sd">* Further utilities: multi-images, Fourier transform, diffraction patterns ...  </span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="sd">See myimg.api for a simple user interface.</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="sd">A toolbox for the processing of micrographs, which can do the following:</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="sd">    </span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="sd">1. Process single micrographs (improve contrast, insert scalebars, etc.).</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="sd">2. Prepare nice, publication-ready tiled images from processed micrographs.</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="sd">3. Apply additional tools, such as: FFT, distributions, immunolabelling ...</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="sd">See myimg.api for a simple user interface.</span>
 </span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.3.1&#39;</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="sd">List of key objects, modules, and sub-packages:</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="sd">    </span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="sd">* myimg.api = simple user interface, basic point to start</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="sd">* myimg.objects = key objects used by myimg</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="sd">    - myimg.objects.MyImage = single micrographs</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="sd">    - myimg.objects.MyReport = multi-images = tiled images</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="sd">    - myimg.objects.Apps = additional applications (FFT, distributions ...)</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="sd">* myimg.settings = default settings employed by MyImg objects</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="sd">* myimg.apps = sub-package containing additional tools and/or applications</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="sd">* myimg.utils = sub-package with code for specific/more complex utils in myimg</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.3.2&#39;</span>
 </span></pre></div>
 
 
