@@ -8,8 +8,8 @@ Key classes/objects for myimg package:
    defines the basic MyImg object,
    which is used in most image manipulations.
 2. *Montage* class
-   defines a montage/combination of several images,
-   which are arranged in a rectangular grid/multi-image.
+   defines a set/montage of images,
+   which are arranged in a rectangular tiled image.
 3. *Units*, *NumberWithUnits* and *ScaleWithUnits* classes
    defines allowed units, number-with-units and scale-with-units, respectively.
 
@@ -1130,7 +1130,11 @@ class MyReport:
             plt.imsave(output_image, self.montage, dpi=dpi, cmap='gray')
         else:
             # RGB (and RGBA) images are saved without cmap to keep the colors
-            plt.imsave(output_image, self.montage, dpi=dpi)
+            # Note: if we use plt.imsave (instead of ski.io.imsave) ...
+            # ... we must convert array to contiguous so that it worked
+            # ... in most cases it works anyway, but not always (mystery)
+            arr_contiguous = np.ascontiguousarray(self.montage)
+            plt.imsave(output_image, arr_contiguous, dpi=dpi)
         
         
         

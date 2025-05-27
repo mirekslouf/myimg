@@ -4,7 +4,7 @@ MyImg :: Processing of micrographs
 * MyImg is a toolbox for the processing of micrographs, which can:
 	1. Process single micrographs (improve contrast, insert scalebars, etc.).
 	2. Prepare nice, publication-ready tiled images from processed micrographs.
-	3. Apply additional tools, such as: FFT, distributions, immunolabelling ...
+	3. Apply additional processing: FFT, size and shape distributions ...
 
 
 Principle

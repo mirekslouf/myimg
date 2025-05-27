@@ -23,11 +23,15 @@ More examples are spread all over the documentation.
 1. How to use myimg.objects:
     - myimg.api.MyImage = single image = an image with additional methods
     - myimg.api.MyReport = multi-image = a rectangular grid of images
-2. Specific frequent tasks for single images:
+2. MyImage objects - frequent methods:
     - myimg.objects.MyImage.scalebar = a method to insert scalebar
     - myimg.objects.MyImage.caption = a method to add figure caption
     - myimg.objects.MyImage.label = a method to insert label in the corner
-3. Additional utilities and applications:
+3. MyImage objects - additional applications:
+    - myimg.api.Apps = class for adding additional utils/apps to MyImage
+    - myimg.api.Apps.FFT = an example of one utility = Fourier transform
+4. Additional utilities and applications:
+    - myimg.plots = sub-package with auxiliary functions for plotting
     - myimg.utils = sub-package with code for specific/more complex methods
     - myimg.apps = sub-package with code for additional applications
     - myimg.apps.iLabels = app for immunolabelling
@@ -35,8 +39,21 @@ More examples are spread all over the documentation.
 '''
 
 
+
+# Import modules
+# --------------
+# (1) Basic myimg modules/sub-packages
+# myimg.apps, myimg.objects are used indirectly = in classes within myimg.api
+# >>> import myimg.api as mi   # standard myimg import
+# >>> mi.MyImage('some.png')   # this employs myimg.objects intrinsically
 import myimg.apps, myimg.objects
-import matplotlib.pyplot as plt
+# (2) Auxiliary myimg module for plotting
+# myimg.io is used directly = imported to myimg.api + used for function calls
+# >>> import myimg.api as mi          # standard myimg import
+# >>> mi.plots.set_plot_parameters()  # direct call of myimg.plots function
+import myimg.plots   # this imports plots module to myimg.api
+plots = myimg.plots  # this makes it accesible as myimg.api.plots
+# (3) Additional scientific python libraries
 import pandas as pd
 
 
@@ -157,17 +174,9 @@ class Apps:
     '''
     Additional applications for myimg package.
     
-    Basic features are accessible as methods of MyImage and MyReport objects:
-    
-    >>> from myimg.api import mi
-    >>> img = mi.MyImage('someimage.bmp') 
-    >>> img.scalebar('rwi,100um')  # basic utility, called as a method
-    
-    Additional features/apps can be called as functions of Apps package:
-        
-    >>> from myimg.api import mi
-    >>> img = mi.MyImage('someimage.bmp')
-    >>> mi.Apps.FFT(img)  # additional utility, called as a function
+    * Additional features/apps can be added using this myimg.api.Apps class.
+    * More help and examples can be found in the available applications below.
+    * Links to available apps: myimg.api.Apps.FFT, myimg.api.Apps.iLabels ...
     '''
 
 
@@ -178,22 +187,31 @@ class Apps:
         Parameters
         ----------
         img : MyImage object
-            MyImage object, created within this app.
+            Object of myimg.api.MyImage class, created within this package.
 
         Returns
         -------
         None
             The result is FFT object.
             MyImage object aggregates the FFT object.
-            Therefore, the FFT object is accessible as img.FFT.  
+            Therefore, the FFT object is accessible as img.FFT.
+            
+        Example
+        -------
+        >>> import myimg.api as mi
+        >>> img = mi.MyImage('someimage.png')
+        >>> mi.Apps.FFT(img)  # add FFT to img object
+        >>> img.FFT.show()    # show FFT (img object aggregates FFT object)
+        
+        For FFT object methods, see myimg.apps.fft sub-package.
         '''
-        # TODO
-        pass 
+        import myimg.apps.fft
+        img.fft = myimg.apps.fft.FFT(img)
     
 
     def iLabels(img, df=None):
         '''
-        Create/read iLabels object + add it as img.iLabels.
+        Initialize iLabels object + add it as img.iLabels.
 
         Parameters
         ----------
@@ -209,7 +227,11 @@ class Apps:
         None
             The result is iLabels object.
             MyImage object aggregates the iLabels object.
-            Therefore, the iLabels object is accessible as img.iLabels.  
+            Therefore, the iLabels object is accessible as img.iLabels.
+            
+        Example
+        -------
+        >>> # TODO => short example => Pavlina
         '''
         import myimg.apps.iLabels.classPeaks
         if df is None:
@@ -255,68 +277,5 @@ class Settings:
     from myimg.settings import Scalebar, Label, Caption
     from myimg.settings import MicCalibrations, MicDescriptionFiles
 
+    
 
-
-class PlotParams:
-    '''
-    Simple class defining matplotlib plot parameters.
-    
-    In MyImg, matplotlib library is used for:
-    
-    * Showing and/or saving of images/micrographs.
-    * Preparation of additional plots, such as histograms.
-    
-    Sample usage:
-        
-    >>> import myimg.api as mi
-    >>> mi.PlotParams.set_plot_parameters(size=(8,8), dpi=100)
-    '''
-
-    
-    def set_plot_parameters(
-            size=(8,6), dpi=100, fontsize=8, my_defaults=True, my_rcParams=None):
-        '''
-        Set global plot parameters (this is useful for repeated plotting).
-    
-        Parameters
-        ----------
-        size : tuple of two floats, optional, the default is (8,6)
-            Size of the figure (width, height) in [cm].
-        dpi : int, optional, the defalut is 100
-            DPI of the figure.
-        fontsize : int, optional, the default is 8
-            Size of the font used in figure labels etc.
-        my_defaults : bool, optional, default is True
-            If True, some reasonable additional defaults are set,
-            namely line widths and formats.
-        my_rcParams : dict, optional, default is None
-            Dictionary in plt.rcParams format
-            containing any other allowed matplotlib parameters = rcParams.
-    
-        Returns
-        -------
-        None
-            The result is a modification of the global plt.rcParams variable.
-        '''
-        # (1) Basic arguments -------------------------------------------------
-        if size:  # Figure size
-            # Convert size in [cm] to required size in [inch]
-            size = (size[0]/2.54, size[1]/2.54)
-            plt.rcParams.update({'figure.figsize' : size})
-        if dpi:  # Figure dpi
-            plt.rcParams.update({'figure.dpi' : dpi})
-        if fontsize:  # Global font size
-            plt.rcParams.update({'font.size' : fontsize})
-        # (2) Additional default parameters -----------------------------------
-        if my_defaults:  # Default rcParams (if not my_defaults==False)
-            plt.rcParams.update({
-                'lines.linewidth'    : 0.8,
-                'axes.linewidth'     : 0.6,
-                'xtick.major.width'  : 0.6,
-                'ytick.major.width'  : 0.6,
-                'grid.linewidth'     : 0.6,
-                'grid.linestyle'     : ':'})
-        # (3) Further user-defined parameter in rcParams format ---------------
-        if my_rcParams:  # Other possible rcParams in the form of dictionary
-            plt.rcParams.update(my_rcParams)
-    
