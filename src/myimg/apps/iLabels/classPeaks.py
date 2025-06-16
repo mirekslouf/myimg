@@ -13,7 +13,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.base import ClassifierMixin
 
-import numpy as np
 import myimg.apps.iLabels as milab
 
 
@@ -27,7 +26,9 @@ class Peaks:
     '''
 
     
-    def __init__(self, df=None, img=None, img_name="", file_name="output", messages=False):
+    def __init__(self, df=None, img=None, 
+                 img_name="", file_name="output", 
+                 cmap="viridis", messages=False):
         '''
         Initialize Peaks object.
 
@@ -57,6 +58,7 @@ class Peaks:
 
         # Initialize the image and image name
         self.img = img
+        self.cmap = cmap
         self.img_name = img_name
         self.file_name = file_name
         self.messages = messages
@@ -163,14 +165,17 @@ class Peaks:
                         label=particle_type, 
                         s=25, marker='+')
         
-        plt.legend(title="Particle Type", loc='center left', bbox_to_anchor=(1.05, 0.5))
+        plt.legend(title="Particle Type", 
+                   loc='center left', 
+                   bbox_to_anchor=(1.05, 0.5))
         plt.axis("off")
         plt.title(f"Peaks on {self.img_name}")
         plt.show()
 
 
    
-    def find(self, method='manual', ref=True, mask_path=None, midx=0, thr=0.5, show=True):
+    def find(self, method='ncc', ref=True, mask_path=None, 
+             thr=0.5, n_jobs=-1, margin=30, ext=1.2, show=True):
         '''
         Create an interactive plot for particle classification.
     
@@ -215,7 +220,7 @@ class Peaks:
             plt.show()
             
     
-        elif method == "ccorr":
+        elif method == "ncc":
             # Load masks
             self.masks = {}
             for i in range(1, 5):
@@ -225,31 +230,25 @@ class Peaks:
                 with open(file_path, 'rb') as f:
                     self.masks[i] = pickle.load(f)
             
-            
+            self.masks = [self.masks[i] for i in range(1, 5)]
+
             # Proceed with detector-based correlation using the mask
-            if midx=="all":
-                # Average all class-specific masks to get a single "ultimate" mask
-                mmask = np.mean(np.stack(list(self.masks.values())), axis=0)
-                self.detected = milab.detectors.detector_correlation(self.img, 
-                                                         mmask, 
-                                                         thr, 
-                                                         show)
-            else: 
-                self.detected = milab.detectors.detector_correlation(self.img, 
-                                                         self.masks[midx], 
-                                                         thr, 
-                                                         show)
-            
-            return self.detected
-    
+            self.detected = milab.detectors.detector_NCC(image=self.img, 
+                                                         masks=self.masks,
+                                                         threshold=thr,
+                                                         show=show,
+                                                         n_jobs=n_jobs,
+                                                         cmap=self.cmap,
+                                                         margin=margin,
+                                                         ext=ext)
+
         else:
-            raise ValueError("Invalid detection method. Use 'manual'/'ccorr'.")
+            raise ValueError("Invalid detection method. Use 'manual'/'ncc'.")
         
         
-        # if ref:
-        #     # TODO: apply correct method
-        #     pass
-            
+        return self.detected
+    
+    
     
     def characterize(self, img_path, peak_path, mask_path, 
                      imID='im0x', preprocess=True, show=False):
@@ -476,3 +475,6 @@ class Peaks:
                                                  y_test=target)
                 
         return self.y_pred
+    
+
+    
