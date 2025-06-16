@@ -57,7 +57,23 @@ class Label:
     text_offset : float = 0.025    # text offset to adjust XY text position
     color       : Any   = 'black'  # color of text
     bcolor      : Any   = 'white'  # color of backgound
-
+    
+    
+@dataclass
+class Caption:
+    '''
+    Default parameters of image Captions (dimensions, font, ...).
+    
+    * all dimensions in this section = multiples of image height
+    * the default font size is similar as in the case of Scalebar
+    '''
+    font        : str   = 'calibri.ttf'  # text font
+    text_height : float = 0.036    # text height
+    text_offset : float = 0.025    # text offset to adjust XY text position
+    color       : Any   = 'black'  # color of text
+    bcolor      : Any   = 'white'  # color of backgound
+    align       : str   = 'center' # text horizontal alignment
+    
 
 @dataclass
 class MicCalibrations: 

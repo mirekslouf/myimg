@@ -2,29 +2,29 @@
 Module: myimg.utils.caption
 ---------------------------
 
-This module defines function insert_label, with the following features:
+This module defines function insert_caption, with the following features:
 
-* The function inserts a label to the upper left corner of an image.
+* The function adds a single-line caption at the bottom of an image.
 * The function is in this separated module as it is a bit longer.
 * The function is usually not called directly, but through myimg.api:
     
->>> # Inserting scalebar using myimg.api interface
+>>> # Inserting caption using myimg.api interface
 >>> import myimage.api as mi
 >>>
 >>> img = mi.MyImage('somefile.bmp')
 >>>
->>> # img.label calls our myimg.utils.label.insert_label function
->>> img.label('a')
+>>> # This calls myimg.utils.caption.insert_caption
+>>> img.caption('This is my image.')
 >>>
->>> img.save_with_ext('_l.png') 
+>>> img.save_with_ext('_t.png') 
 
 Notes to documentation:
 
-* The function *insert_label* in this module does not have a docstring,
+* The function *insert_caption* in this module does not have a docstring,
   as it is not called directly. 
 * The docstring with detailed description of all parameters can be found
-  in the calling myimg.api.MyImage.label method.
-  (the usage of the label method is shown in the example above).
+  in the calling myimg.api.MyImage.caption method.
+  (the usage of the caption method is shown in the example above).
 '''
 
 
@@ -32,8 +32,8 @@ import myimg.settings as Settings
 from PIL import ImageFont, ImageDraw
 
 
-def insert_caption(my_img, label, F, **kwargs):
-    # Objective: To insert label in the upper left corner of an image.
+def insert_caption(my_img, text, F, **kwargs):
+    # Objective: To insert caption at the bottom of an image.
     # Note: this function is usually called by MyImg.label method.
     # => see the original myimg.api.MyImg.scalebar method for more info.
     #-----
@@ -48,8 +48,9 @@ def insert_caption(my_img, label, F, **kwargs):
     if F is None: F = 1
     
     # (2) Collect optional keyword arguments.
-    color  = kwargs.get('color')  or Settings.Label.color
-    bcolor = kwargs.get('bcolor') or Settings.Label.bcolor
+    color  = kwargs.get('color')  or Settings.Caption.color
+    bcolor = kwargs.get('bcolor') or Settings.Caption.bcolor
+    align  = kwargs.get('align')  or Settings.Caption.align
     # Special case: tranparent background
     # (bcolor=None would change bcolor to default = Settings.Label.bcolor
     # (bcolor='transparent' is now INTENTIONALLY changed to None => no bkg
@@ -57,31 +58,52 @@ def insert_caption(my_img, label, F, **kwargs):
     # Other optional parameters are read from Settings.Label.
     # (some of them read here for the sake of convenience
     # (all can be changed in code, such as: Settings.Label.text_height=1/10
-    font            = Settings.Label.font
-    text_height_rel = Settings.Label.text_height * F
+    font            = Settings.Caption.font
+    text_height_rel = Settings.Caption.text_height * F
     text_height_pix = text_height_rel * my_img.height
     
     # (3) Determine font size
     fontsize = my_img.get_font_size(font, text_height_pix)
-    offset   = my_img.width * Settings.Label.text_offset * F
+    offset   = my_img.width * Settings.Caption.text_offset * F
     
     # (4) Create label
-    # ...initialize drawing
+    # Initialize drawing
     draw = ImageDraw.Draw(my_img.img)
-    # ...initialize font
+    # Initialize font
     my_font = ImageFont.truetype(font, fontsize)
-    # ...get height and width of current label
-    # my_label_height = fontsize
-    my_label_height = my_img.font_height_pix(draw, my_font)
-    my_label_width  = my_font.getlength(label)
-    # ...draw background box if required
-    # (constants around offset - empirical, to get a reasonable backround
-    if bcolor is not None:
-        draw.rectangle(
-            [0, 0, my_label_width + 2*offset, my_label_height + 1.45*offset], 
-            fill=bcolor)
-    # ...draw text inside the background box
-    # (constants around offset = empirical, to get good centering of font
-    draw.text((offset,offset//3), label, font=my_font, fill=color)   
+    # Get height and width of current label
+    caption_text_height = my_img.font_height_pix(draw, my_font)
+    caption_bar_height  = int(round(caption_text_height + 1.45*offset))
+    # Add bottom bar at the bottom of an image
+    my_img.border(border=(0,0,0,caption_bar_height), color=bcolor)
+    # Draw the text into the bottom bar
+    # (i) Re-initialize drawing
+    # (reason: border employs PIL.ImageOps.expant => creates new image object!
+    draw = ImageDraw.Draw(my_img.img)
+    # (ii) prepare parameters for drawing: x_pos, x_anchor
+    # (in draw.text, the single-line text alignment => anchor argument
+    if type(align) == int:
+        x_pos = align
+        x_anchor = 'la'
+    elif align in ('left','Left'):
+        my_offset = (offset // 4) if align == 'Left' else offset
+        x_pos = my_offset
+        x_anchor = 'la'
+    elif align in ('right','Right'):
+        my_offset = (offset // 4) if align == 'Right' else offset
+        x_pos = my_img.width - my_offset
+        x_anchor = 'ra'
+    elif align == 'center':
+        x_pos = my_img.width // 2
+        x_anchor = 'ma'
+    else:
+        print('Image, figure caption - uknown alignment - setting default!')
+        x_pos = my_img.width // 2
+        x_anchor = 'ma'
+    # (iii) prepare the last parameter for drawing: y_pos
+    y_pos = my_img.height - caption_bar_height + offset//3
+    # (iv) draw the text
+    draw.text((x_pos, y_pos),
+        text, font=my_font, fill=color, anchor=x_anchor)
     
     # (5) Done. The label is drawn/saved in self.img

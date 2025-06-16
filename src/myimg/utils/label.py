@@ -13,7 +13,7 @@ This module defines function insert_label, with the following features:
 >>>
 >>> img = mi.MyImage('somefile.bmp')
 >>>
->>> # img.label calls our myimg.utils.label.insert_label function
+>>> # This calls myimg.utils.label.insert_label function
 >>> img.label('a')
 >>>
 >>> img.save_with_ext('_l.png') 
