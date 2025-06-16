@@ -14,6 +14,7 @@ import random
 import os
 import pickle
 import math
+import myimg.apps.iLabels.classPeaks as mipks
 
 
 
@@ -148,19 +149,21 @@ def prep_data(fpath_img, fpath_peaks=None, min_xy=20, imID='im01', show=False):
         The loaded MyImage object.
     """
     # Load image and convert it to numpy.array
-    img_obj = mi.MyImage(fpath_img, peaks=True)
+    # img_obj = mi.MyImage(fpath_img, peaks=True)
+    img_obj = mi.MyImage(fpath_img)
     arr = np.array(img_obj.img)
    
     # Load coordinates of peaks from the image
     if fpath_peaks is not None:
-        img_obj.peaks.read(fpath_peaks)
+        peaks = mipks.Peaks(img=arr)
+        pks = peaks.read(fpath_peaks)
     
         # Optionally show image with detected peaks
         if show:
-            img_obj.peaks.show_in_image()
+            peaks.show_in_image()
     
         # Extract dataframe with coordinates
-        df = img_obj.peaks.df
+        df = peaks.df
     
         # Avoid peaks of which a ROI cannot be created
         df = df[(df.X > min_xy) & (df.Y > min_xy)].reset_index(drop=True)
