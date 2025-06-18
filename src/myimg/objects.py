@@ -45,15 +45,12 @@ myimg.objects.Units, myimg.objects.NumberWithUnits,
 and myimg.objects.ScaleWithUnits.
 '''
 
-
-
-import os, sys, re
+import os, sys, re, pathlib
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image, ImageFont, ImageDraw, ImageOps
 import skimage as ski
 from dataclasses import dataclass
-
 
 
 class MyImage:
@@ -62,34 +59,73 @@ class MyImage:
     '''
 
 
-    def __init__(self, filename):
+    def __init__(self, img, pixsize=None):
         '''
         Initialize MyImage object.
 
         Parameters
         ----------
-        filename : str or path-like object
-            Name of the image file to work with.
+        img : image (array or str or path-like or MyImage object)
+            Name of the array/image that we want to open.
+        pixsize : str, optional, default is None
+            Description how to determine pixel size.
+            Pixel size is needed to calculate the scalebar length.
+            See docs of myimg.objects.MyImage.scalebar for more details.
 
         Returns
         -------
         MyImage object
         '''
-        # Store image name and open the image
-        self.name = filename
-        self.img = MyImage.open_image(filename)
-        self.width, self.height = self.img.size
-        self.itype = self._set_image_type()
-
-        # Additional (optional) properties/features/methods/objects
-        self.iLabels = None
-        self.FFT = None
-    
+        
+        # (1) Open the image and define/save its name
+        # (we have to consider the type of the input img argument
+        if type(img) in (str, pathlib.WindowsPath, pathlib.PosixPath):
+            # (a) img is str or path-like object = filename
+            # => open the file to PIL.Image and save its filename
+            self.img = MyImage.img_from_file(img)
+            self.name = img
+        elif type(img) == np.ndrarray:
+            # (b) img is a numpy array
+            # => convert the file to PIL.Image and create profisional name
+            self.img = MyImage.img_from_array(img)
+            self.name = 'image_from_array'
+        elif type(img) == MyImage:
+            # (c) img is an existing MyImage object
+            # => create a copy of the object
+            self.img = img.img
+            self.name = img.name
+        else:
+            print('Error initializing MyImage object!')
+            print(f'Unsuported type of input: f{type(img)}')
+            sys.exit()
+            
+        # (2) Define/determine additional image parameters
+        # (again, we have to considet the type of the input img argument
+        if type(img) == MyImage:
+            # (a) MyImage object
+            # => copy all relevant parameters
+            self.width     = img.width
+            self.height    = img.height
+            self.itype     = img.itype
+            self.pixsize = img.pixsize
+        else:
+            # (b) array or filename
+            # => determine the basic parameters
+            self.width, self.height = self.img.size
+            self.itype = self.set_image_type()
+            self.pixsize = None
+        
+        # (3) Redefine pixsize attribute if requested
+        # (pixel size can be defined
+        # (during initialization of MyImage
+        # (by means of optional pixsize argument
+        if pixsize is not None: self.set_scale(pixsize)
+        
     
     @staticmethod
-    def open_image(filename):
+    def img_from_file(filename):
         '''
-        Open image file using PIL.Image taking into account all exceptions.
+        Create PIL.Image object from an image file.
 
         Parameters
         ----------
@@ -108,7 +144,7 @@ class MyImage:
             print(f'File not found: {filename}')
             sys.exit()
         except IOError as err:
-            print(f'Error opening image: {filename}')
+            print(f'IO error when opening image: {filename}')
             print(err)
             sys.exit()
         except OSError as err:
@@ -117,69 +153,31 @@ class MyImage:
             sys.exit()
     
     
-    def get_font_size(self, font_name, required_font_size_in_pixels):
+    @staticmethod
+    def img_from_array(arr):
         '''
-        Get font size (in fontsize units)
-        corresponding to *required_font_size_in_pixels*.
+        Create PIL.Image object from an array.
 
         Parameters
         ----------
-        fontname : str
-            Name of the TrueType font to use.
-            Example (working in Windows): font_name='timesbd.ttf'
-        required_font_size_in_pixels : float
-            Required font size in pixels.
+        arr : numpy array
+            Name of the array that should be opened as PIL.Image object.
 
         Returns
         -------
-        font_size : int
-            Final font size (in font units).
-            If the returned *font_size* (in fontsize units)
-            is applied to font with given *fontname*,
-            then the height of the font (in pixels units)
-            will correspond to *required_font_size_in_pixels* argument.
-            
-        Technical notes
-        ---------------
-        * This function is a modified recipe from StackOverflow:
-          https://stackoverflow.com/q/4902198
-        * My modification may be a bit slower (not too much)
-          but it seems to be clear and reliable.
+        img : PIL image object
+            The PIL image object is usually saved in MyImage object.
         '''
-        # (1) Initial fontsize = required_font_size
-        # (Note: fontsize [in fontsize units]
-        # (is just APPROXIMATELY equal to required fontsize [in pixels].
-        font_size = round(required_font_size_in_pixels)
+        try:
+            img = Image.from_array(arr)
+            return(img)
+        except Exception as err:
+            print('Something went wrong when converting array to PIL.Image!')
+            print(err)
+            sys.exit()
+            
         
-        # (2) Initialize draw_object + font_object and calculate font height
-        # (Note1: draw_object is needed for the correct font height calculation
-        # (Note2: we calculate the font height for a model text - here: cap 'M'
-        draw_object = ImageDraw.Draw(self.img)
-        font_object = ImageFont.truetype(font_name, font_size)
-        font_height = MyImage.font_height_pix(draw_object, font_object) 
-        # (2a) Current font_height > required_font_size_in_pixels, decrease...
-        while font_height > required_font_size_in_pixels:
-            font_size -= 1
-            font_object = ImageFont.truetype(font_name, font_size)
-            font_height = MyImage.font_height_pix(draw_object, font_object)
-        # (2b) Current font_height > required_font_size_in_pixels, increase...
-        while font_height < required_font_size_in_pixels:
-            font_size += 1
-            font_object = ImageFont.truetype(font_name, font_size)
-            font_height = MyImage.font_height_pix(draw_object, font_object)
-        
-        # (3) Return font size (for given font_name, in font_name units)
-        return(font_size)
-    
-    
-    @staticmethod
-    def font_height_pix(draw_object, font_object):
-        bbox = draw_object.textbbox((20, 20), 'M', font=font_object)
-        text_height = bbox[3] - bbox[1]
-        return(text_height)
-    
-    
-    def _set_image_type(self):
+    def set_image_type(self):
         '''
         Set the image type.
         
@@ -214,8 +212,97 @@ class MyImage:
             sys.exit()
         # Return the image type
         return(itype)
-        
+    
+    
+    def set_scale(self, pixsize):
+        '''
+        Set scale = define the pixel size.
+
+        Parameters
+        ----------
+        pixsize : str
+            Description how to determine pixel size.
+            Pixel size is needed to calculate the scalebar length.
+            See docs of myimg.objects.MyImage.scalebar for more details.
+
+        Returns
+        -------
+        None
+            The result is the defined pixel size,
+            saved in the attribute pixsize of myimg.objects.MyImage object.
+        '''  
+        # The complete code of this method is long. 
+        # Therefore, the code has been moved to its own module.
+        # This method is a wrapper calling the function in the external module. 
+        from myimg.utils import scalebar as my_scalebar
+        self.pixsize = my_scalebar.get_pixel_size(self, pixsize)
+
+
+    def set_font_size(self, font_name, required_font_size_in_pixels):
+        '''
+        Set font size (in fontsize units)
+        corresponding to *required_font_size_in_pixels*.
+
+        Parameters
+        ----------
+        fontname : str
+            Name of the TrueType font to use.
+            Example (working in Windows): font_name='timesbd.ttf'
+        required_font_size_in_pixels : float
+            Required font size in pixels.
+
+        Returns
+        -------
+        font_size : int
+            Final font size (in font units).
+            If the returned *font_size* (in fontsize units)
+            is applied to font with given *fontname*,
+            then the height of the font (in pixels units)
+            will correspond to *required_font_size_in_pixels* argument.
             
+        Technical notes
+        ---------------
+        * This function is a modified recipe from StackOverflow:
+          https://stackoverflow.com/q/4902198
+        * My modification may be a bit slower (not too much)
+          but it seems to be clear and reliable.
+        * The function is employed in external functions
+          which insert label and/or scalebar to MyImage object.
+        '''
+        
+        # (0) Define auxiliary function to get font height
+        # (the font height is calculated from fictive textbox with 'M' letter
+        def font_height_pix(draw_object, font_object):
+            bbox = draw_object.textbbox((20, 20), 'M', font=font_object)
+            text_height = bbox[3] - bbox[1]
+            return(text_height)
+        
+        # (1) Initial fontsize = required_font_size
+        # (Note: fontsize [in fontsize units]
+        # (is just APPROXIMATELY equal to required fontsize [in pixels].
+        font_size = round(required_font_size_in_pixels)
+        
+        # (2) Initialize draw_object + font_object and calculate font height
+        # (Note1: draw_object is needed for the correct font height calculation
+        # (Note2: we calculate the font height for a model text - here: cap 'M'
+        draw_object = ImageDraw.Draw(self.img)
+        font_object = ImageFont.truetype(font_name, font_size)
+        font_height = font_height_pix(draw_object, font_object) 
+        # (2a) Current font_height > required_font_size_in_pixels, decrease...
+        while font_height > required_font_size_in_pixels:
+            font_size -= 1
+            font_object = ImageFont.truetype(font_name, font_size)
+            font_height = font_height_pix(draw_object, font_object)
+        # (2b) Current font_height > required_font_size_in_pixels, increase...
+        while font_height < required_font_size_in_pixels:
+            font_size += 1
+            font_object = ImageFont.truetype(font_name, font_size)
+            font_height = font_height_pix(draw_object, font_object)
+        
+        # (3) Return font size (for given font_name, in font_name units)
+        return(font_size)
+
+                    
     def to_gray(self, itype='8bit'):
         '''
         Convert image to grayscale.
@@ -444,8 +531,32 @@ class MyImage:
             The modified image is saved in self.img object.
         '''
         self.img = ImageOps.autocontrast(image = self.img, **kwargs)
+
         
+    def border(self, border=1, color='black'):
+        '''
+        Draw a border around an image. 
+
+        Parameters
+        ----------
+        border : int or tuple, optional, default is 1
+            Int = the same thickness of border around all four edges.
+            Tuple of 2 ints = (left/righ and top/bottom) border sizes.
+            Tuple of 4 ints = (left, top, right, bottom) border sizes. 
+        color : PIL color specification, default is 'black'
+            A short text that will be inserted at the bottom of an image.
+        '''        
+        # (0) In the future, we may add border with shadow
+        # Now we add just simple border using PIL.ImageOps.expand.
         
+        # (1) Add border
+        self.img = ImageOps.expand(self.img, border=border, fill=color)
+        
+        # (2) Update MyImage properties = width and height
+        self.width  = self.img.size[0]
+        self.height = self.img.size[1]
+
+                 
     def label(self, label, F=None, **kwargs):
         '''
         Insert a one-letter label in the upper left corner of an image. 
@@ -560,40 +671,18 @@ class MyImage:
         my_caption.insert_caption(self, text, F, **kwargs)
     
 
-    def border(self, border=1, color='black'):
-        '''
-        Draw a border around an image. 
-
-        Parameters
-        ----------
-        border : int or tuple, optional, default is 1
-            Int = the same thickness of border around all four edges.
-            Tuple of 2 ints = (left/righ and top/bottom) border sizes.
-            Tuple of 4 ints = (left, top, right, bottom) border sizes. 
-        color : PIL color specification, default is 'black'
-            A short text that will be inserted at the bottom of an image.
-        '''        
-        # (0) In the future, we may add border with shadow
-        # Now we add just simple border using PIL.ImageOps.expand.
-        
-        # (1) Add border
-        self.img = ImageOps.expand(self.img, border=border, fill=color)
-        
-        # (2) Update MyImage properties = width and height
-        self.width  = self.img.size[0]
-        self.height = self.img.size[1]
-
-         
-    def scalebar(self, pixsize, F=None, **kwargs):
+    def scalebar(self, pixsize=None, F=None, **kwargs):
         '''
         Insert a scalebar in the lower right corner of the image.
 
         Parameters
         ----------
-        pixsize : str
+        pixsize : str, optional, default is None
             Description how to determine pixel size.
             Pixel size is needed to calculate the scalebar length.
             See *Example* section below to see available options.
+            If pixsize is None, it is taken from self.pixsize.
+            If pixsize is None and self.pixsize is not defined - error, exit.
         F : float, optional, the default is None
             Multiplication coefficient/factor that changes the scalebar size.
             If F = 1.2, then all scalebar parameters are enlarged 1.2 times.
@@ -607,10 +696,46 @@ class MyImage:
         None
             The scalebar is drawn directly to *self.img*.
             
-        Example
-        -------
-        >>> # Four basic ways how to insert a scalebar in an image
-        >>> # (model example; in real life we use just one of the ways
+        Examples
+        --------
+        
+        Example 1 :: Four basic options HOW to define pixelsize + scalebar
+        
+        >>> # Example 1 :: 4 basic options HOW to define pixsize + scalebar
+        >>> import myimg.api as mi
+        >>> img = mi.MyImage('some.png')
+        >>> # Option 1: real-width-of-image
+        >>> # (here: rwi = 100 micrometers
+        >>> img.scalebar('rwi,100um')
+        >>> # Option 2: known-length-in-image
+        >>> # (here: known length of 100 nm = 220 pixels        
+        >>> img.scalebar('knl,100nm,220')
+        >>> # Option 3: calibrated microscope + magnification
+        >>> # (here: microscope LM_Nikon1 + magnification 20x     
+        >>> img.scalebar('mag,LM_Nikon1,20x')
+        >>> # Option 4: microscope with description files
+        >>> # (here: microscope MAIA3, which gives micrographs with BHD-files
+        >>> img.scalebar('txt,MAIA3)
+        
+        Example 2 :: Three basic ways WHEN we can define pixelsize + scalebar
+                         
+        >>> # Example 2 :: 3 basic ways WHEN we can define pixsize + scalebar
+        >>> import myimg.api as mi
+        >>> # 1st way: when we insert the scalebar
+        >>> img = mi.MyImage('some.png')
+        >>> img.scalebar('rwi,100um')
+        >>> # 2nd way: when we read the input image
+        >>> img = mi.MyImage('some.png', pixsize='rwi,100um')
+        >>> img.scalebar()
+        >>> # 3rd way: after reading of the input image, using set_scale
+        >>> img = mi.MyImage('some.png')
+        >>> img.set_scale('rwi,100um')
+        >>> img.scalebar()
+        
+        Example 3 :: Four basic ways how to insert a scalebar in more detail
+
+        >>> # Example 3 :: 4 basic ways HOW to insert a scalebar IN MORE DETAIL
+        >>> # (this is a model example; in real life, we use just one way)
         >>>
         >>> # (0) Import api + read image
         >>> import myimage.api as mi
@@ -625,10 +750,12 @@ class MyImage:
         >>> # (3) Pixel size from known magnification
         >>> # (note: this can be done only for calibrated microscope
         >>> # (calibrated microscopes => myimg.settings.MicCalibrations
+        >>>
         >>> # (3a) magnification deduced from last part of image name
         >>> # (note: mag = everything between last underscore and suffix
         >>> # (in this example we have: ../IMG/image123_20kx.bmp => mag = 20kx
         >>> img.scalebar('mag,TecnaiVeleta')
+        >>>
         >>> # (3b) magnification inserted directly
         >>> # (note: mag can be something like 20kx, 20k, 20000x, 20000
         >>> img.scalebar('mag,TecnaiVeleta,20kx')
@@ -638,7 +765,6 @@ class MyImage:
         >>> # (the format of text file must be described somehow
         >>> # (description of text files => myimg.settings.MicDescriptionFiles
         >>> img.scalebar('txt,MAIA3')
-        >>> 
 
         List of allowed kwargs
         ----------------------
@@ -780,12 +906,12 @@ class MyImage:
         output_image = file + my_extension
         self.img.save(output_image, dpi=(dpi,dpi))
 
-
     
 class MyReport:
     '''
     Class defining MyReport objects.
     '''
+    
     
     def __init__(self, images, itype,
                  grid=None, padding=0, fill='white', crop=True, rescale=None):
@@ -1136,8 +1262,7 @@ class MyReport:
             arr_contiguous = np.ascontiguousarray(self.montage)
             plt.imsave(output_image, arr_contiguous, dpi=dpi)
         
-        
-        
+               
 @dataclass
 class Units:
     '''
@@ -1149,6 +1274,7 @@ class Units:
       during NumberWithUnits/ScaleWithUnits object initialization.
       Example: If `nwu = NumberWithUnits('2um')`, then we use `Units.Lenghts`.
     '''
+
     
     @dataclass
     class Lengths:
@@ -1160,6 +1286,7 @@ class Units:
         micrometer : str = micro + 'm'
         units      : tuple = ('m','cm','mm', 'um', 'nm', 'A')
         ratios     : tuple = ( 1, 100, 1000, 1e6, 1e9, 1e10)
+
     
     @dataclass
     class RecLengths:
@@ -1208,6 +1335,7 @@ class NumberWithUnits:
     * set_units_to = set units to given units and modify number accordingly
     * set_correct_units = set units so that the number was within <1,1000)
     '''
+
     
     def __init__(self, number=None, units=None):
         '''
@@ -1297,7 +1425,7 @@ class NumberWithUnits:
         units  = self.units
         # Adjust number: if it is (very close to) integer, convert to integer.
         eps = 1e-10
-        if abs(number - int(number)) < eps: number = int(number)
+        if abs(number - int(number)) < eps: number = int(round(number))
         # Adjust units: if units contains a special character, print it.
         if   units == 'um' : units = self._units_description.micrometer
         elif units == 'A'  : units = self._units_description.angstrem
@@ -1306,6 +1434,7 @@ class NumberWithUnits:
         text = str(number) + ' ' + units
         # Return resulting string
         return(text)
+
     
     def text(self):
         '''
@@ -1319,6 +1448,7 @@ class NumberWithUnits:
             The units are printed in unicode (important for um and agstrems).
         '''
         return(self.__str__())
+
     
     def units_Ok(self, units=None):
         '''
@@ -1344,6 +1474,7 @@ class NumberWithUnits:
             return(True)
         else:
             return(False)
+
         
     def index_of_units(self, units_to_check=None):
         '''
@@ -1372,6 +1503,7 @@ class NumberWithUnits:
         if units_to_check == None: units_to_check = self.units 
         index_of_units = self._units_description.units.index(units_to_check)
         return(index_of_units)
+
         
     def increase_units(self):
         '''
@@ -1397,6 +1529,7 @@ class NumberWithUnits:
             self.number = self.number / ratio_between_units
             self.units  = self._units_description.units[i-1]
 
+
     def decrease_units(self):
         '''
         Decrease current units (for example: um -> nm).
@@ -1421,6 +1554,7 @@ class NumberWithUnits:
                 self._units_description.ratios[i+1])
             self.number = self.number / ratio_between_units
             self.units  = self._units_description.units[i+1]
+
         
     def set_units_to(self, target_units):
         '''
@@ -1444,6 +1578,7 @@ class NumberWithUnits:
             for i in range(index_difference): self.decrease_units()
         elif index_difference < 0:
             for i in range(abs(index_difference)): self.increase_units()
+
                 
     def set_correct_units(self):
         '''
@@ -1491,6 +1626,7 @@ class ScaleWithUnits(NumberWithUnits):
     * adjust_lenght_to = adjust lenght in pixels and modify number accordingly
     * adjust_scalebar_size = adjusts scalebar lenght to some reasonable size
     '''
+
     
     def __init__(self, number=None, units=None, pixels=None):
         '''
@@ -1530,6 +1666,7 @@ class ScaleWithUnits(NumberWithUnits):
         '''
         super().__init__(number, units)
         self.pixels = pixels
+
     
     def __str__(self):
         '''Overwritten __str__ method to get nice output with print.'''
@@ -1537,6 +1674,7 @@ class ScaleWithUnits(NumberWithUnits):
             'Scalebar: ' + super().__str__() + \
             ', length-in-pixels: ' + str(self.pixels)
         return(text)
+
     
     def text(self):
         '''
@@ -1555,6 +1693,7 @@ class ScaleWithUnits(NumberWithUnits):
         # => if we called self.__str__(), we would get text + pixel-size-info.
         text = super().__str__()
         return(text)
+
     
     def adjust_length_to(self, n):
         '''
@@ -1574,6 +1713,7 @@ class ScaleWithUnits(NumberWithUnits):
         '''
         self.pixels = self.pixels * n/self.number
         self.number = n
+
         
     def adjust_scalebar_size(self):
         '''

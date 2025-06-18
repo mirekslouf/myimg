@@ -7,15 +7,14 @@ This module defines function insert_scalebar, with the following features:
 * The function inserts a scalebar into a micrograph (or diffractogram).
 * The function employs many auxiliary functions defined this module.
 * The function is usually not called directly, but through myimg.api:
-    
->>> # Inserting scalebar using myimg.api interface
->>> import myimage.api as mi
->>>
->>> img = mi.MyImage('somefile.bmp')
->>>
->>> # This calls myimg.utils.scalebar.insert_scalebar function
+
+>>> # Import of MyImg + open some image
+>>> # (the next command is the standard import of MyImg package
+>>> import myimage.api as mi     
+>>> img = mi.MyImage('some.png')
+>>> # Insert scalebar + save the result
+>>> # (the next command employs myimg.utils.scalebar.insert_scalebar function
 >>> img.scalebar('rwi,100um')
->>>
 >>> img.save_with_ext('_clm.png')
 
 Documentation of the functions in this module:
@@ -24,9 +23,9 @@ Documentation of the functions in this module:
 * Nevertheless, the functions are reasonably documented in the source code.
 * In pdoc-generated-HTML, click *View source code* to get the commented code.
 
-For documentation of *insert_scalebar* function in this module, see docs
-of the calling myimg.api.MyImage.scalebar method
-(the usaage of the scalebar method is shown in the example above).
+For documentation of *insert_scalebar* function in this module,
+see docs of the calling myimg.api.MyImage.scalebar method;
+the usaage of the scalebar method is shown in the example above.
 '''
 
 import sys, os, glob, re
@@ -36,7 +35,7 @@ import myimg.settings as Settings
 from myimg.objects import NumberWithUnits, ScaleWithUnits
  
            
-def insert_scalebar(my_img, pixsize, F, **kwargs):
+def insert_scalebar(my_img, pixsize=None, F=None, **kwargs):
     # Objective: To insert scalebar in a micrograph.
     # Note: this function is usually called by MyImg.scalebar method.
     # => see the original myimg.api.MyImg.scalebar method for more info.
@@ -49,8 +48,23 @@ def insert_scalebar(my_img, pixsize, F, **kwargs):
         print(f'  Image  : {my_img.name}')
         print(f'  Pixels : {my_img.width}x{my_img.height}')
     
-    # (1) Determine pixelsize = analyze obligatory pixsize argument.
-    pixel_size = get_pixel_size(my_img, pixsize)
+    # (1) Determine pixelsize.
+    # => analyze the {pixelsize} argument
+    if pixsize is None:
+        # No pixelsize argument was given.
+        # We assume that my_image was calibrated
+        # and comes with {my_img.pixelsize} attribute.
+        if my_img.pixsize is not None:
+            pixel_size = my_img.pixsize
+        else:
+            print('Error when inserting scalebar!')
+            print('Pixel size has not been defined.')
+            sys.exit()
+    else:
+        pixel_size = get_pixel_size(my_img, pixsize)
+    # Save info about pixelsize back to my_img object
+    # (this is important for possible further processing, such as FFT
+    my_img.pixsize = pixel_size
     # Print info if requested
     if messages:
         print('Determined pixel size:')
@@ -58,13 +72,16 @@ def insert_scalebar(my_img, pixsize, F, **kwargs):
         print(f'  Final pixel size : {pixel_size}')
 
     # (2) Read multiplicative factor F
-    # (If F is not given, set it to 1 and ...
-    # (  in the following code multiply all relevant dimensions by F.
-    # (* We CANNOT multiply directly myimg.settings.Scalebar variables
-    # (  Reason is a bit tricky: In scripts processing multiple images ...
-    # (  ... the 1st image scalebar dimensions would be multiplied by F
-    # (  ... the 2nd image scalebar dimensions would be multiplied again => F*F
-    if F is None: F = 1
+    # If F is not given, set it to 1 and ...
+    #  in the following code multiply all relevant dimensions by F.
+    # We CANNOT multiply directly myimg.settings.Scalebar variables
+    #  Reason is a bit tricky: In scripts processing multiple images...
+    #  ..the 1st image scalebar dimensions would be multiplied by F
+    #  ..the 2nd image scalebar dimensions would be multiplied again => F*F
+    if F is None:
+        F = 1
+    if messages:
+        print(f'Multiplicative factor F : {F}')
     
     # (3) Initialize Scalebar = ScaleWithUnits object
     # (2a) Get lenght of scalebar (number + units)
@@ -110,7 +127,7 @@ def insert_scalebar(my_img, pixsize, F, **kwargs):
     font_name = Settings.Scalebar.font
     text_height_rel = Settings.Scalebar.text_height * F
     text_height_pix = round(text_height_rel * my_img.height) 
-    font_size = my_img.get_font_size(font_name, text_height_pix)
+    font_size = my_img.set_font_size(font_name, text_height_pix)
     font_object = ImageFont.truetype(font_name, font_size)
     ImageDraw.fontmode = 'L'
     draw = ImageDraw.Draw(my_img.img)
@@ -190,19 +207,19 @@ def get_pixel_size(my_img, pixsize):
     # Objective: to get pixel size from pixsize argument + my_img object props.
     #-----
     
-    # (1) Split pixsize argument to components
-    pixsize_list = pixsize.split(',')
-    pixsize_from = pixsize_list[0]
-    pixsize_args = pixsize_list[1:]
+    # (1) Split pixelsize argument to components
+    pixelsize_list = pixsize.split(',')
+    pixelsize_from = pixelsize_list[0]
+    pixelsize_args = pixelsize_list[1:]
     # (2) Decide how to determine pixel size value + call correct funtion 
-    if   pixsize_from == 'rwi':
-        pixel_size = pixel_size_from_rwi(my_img, pixsize_args)
-    elif pixsize_from == 'knl':
-        pixel_size = pixel_size_from_knl(my_img, pixsize_args)
-    elif pixsize_from == 'mag':
-        pixel_size = pixel_size_from_mag(my_img, pixsize_args)
-    elif pixsize_from == 'txt':
-        pixel_size = pixel_size_from_txt(my_img, pixsize_args)
+    if   pixelsize_from == 'rwi':
+        pixel_size = pixel_size_from_rwi(my_img, pixelsize_args)
+    elif pixelsize_from == 'knl':
+        pixel_size = pixel_size_from_knl(my_img, pixelsize_args)
+    elif pixelsize_from == 'mag':
+        pixel_size = pixel_size_from_mag(my_img, pixelsize_args)
+    elif pixelsize_from == 'txt':
+        pixel_size = pixel_size_from_txt(my_img, pixelsize_args)
     else:
         print('Unkwnown pixsize argument:', pixsize)
     # (3) Return final pixel size
@@ -247,7 +264,7 @@ def pixel_size_from_knl(my_img, pixsize_args):
     return(pixel)
 
 
-def pixel_size_from_mag(my_img, pixsize_args):
+def pixel_size_from_mag(my_img, pixelsize_args):
     # Objective: to get pixel size from pixsize='mag...' argument.
     # Note: this works only for the calibrated microscopes
     # (calibrated microscope = a dataclass in myimg.settings.MicCalibrations
@@ -256,16 +273,16 @@ def pixel_size_from_mag(my_img, pixsize_args):
     # (1) The first argument should be calibrated microscope name
     try:
         calibrated_microscope = getattr(
-            Settings.MicCalibrations, pixsize_args[0])
+            Settings.MicCalibrations, pixelsize_args[0])
     except AttributeError:
         print('Uknown microscope in pixsize argument!')
-        print('Pixsize argument:', pixsize_args)
+        print('Pixsize argument:', pixelsize_args)
         sys.exit()
     
     # (2) Get magnification...
     # (2a) If the 2nd argument was given, it should be magnification
-    if len(pixsize_args) == 2:
-        mag = pixsize_args[1]
+    if len(pixelsize_args) == 2:
+        mag = pixelsize_args[1]
     # (2b) If 2nd argument was not given, get it from image name
     else:
         mag = re.search(r'\S+_(\d+\.?\d*[Kk]?[Xx]?)\.\S{3,}', my_img.name)[1]
@@ -285,7 +302,7 @@ def pixel_size_from_mag(my_img, pixsize_args):
         mag = float(mag)
     except ValueError:
         print('Unclear magnification in pixsize argument!')
-        print('Pixsize argument:', pixsize_args)
+        print('Pixsize argument:', pixelsize_args)
         sys.exit()
         
     # (3) Now we should have calibrated_microscope name + magnification
@@ -308,7 +325,7 @@ def pixel_size_from_mag(my_img, pixsize_args):
     return(pixel)
     
 
-def pixel_size_from_txt(my_img, pixsize_args):
+def pixel_size_from_txt(my_img, pixelsize_args):
     # Objective: to get pixel size from  pixsize='txt...' argument.
     # Note: this works only for microscopes with known description files.
     # (known descr.file = a dataclass in myimg.settings.MicDescriptionFiles
@@ -321,7 +338,7 @@ def pixel_size_from_txt(my_img, pixsize_args):
     # => GoogleSearch: python access variable/object/class when I know string
     # => https://stackoverflow.com/q/9437726
     # => https://stackoverflow.com/q/1167398
-    microscope = pixsize_args[0]
+    microscope = pixelsize_args[0]
     mic_description_file = getattr(
         Settings.MicDescriptionFiles, microscope)
 
