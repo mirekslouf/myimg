@@ -2,7 +2,7 @@
 Module: myimg.api
 ------------------
 
-A simple interface to package myimg.
+A simple interface to MyImg package.
 
 >>> # Simple usage of myimg.api interface
 >>> import myimg.api as mi
@@ -39,53 +39,60 @@ More examples are spread all over the documentation.
 '''
 
 
-
 # Import modules
 # --------------
-# (1) Basic myimg modules/sub-packages
-# myimg.apps, myimg.objects are used indirectly = in classes within myimg.api
-# >>> import myimg.api as mi   # standard myimg import
-# >>> mi.MyImage('some.png')   # this employs myimg.objects intrinsically
-import myimg.apps, myimg.objects
-# (2) Auxiliary myimg module for plotting
+# (1) Basic MyImage objects
+# (myimg.objects are used within myimg.api
+# >>> import myimg.api as mi        # standard myimg.api import
+# >>> img = mi.MyImage('some.png')  # read image as mi.MyImage object
+import myimg.objects
+# (2) Additional MyImage applications
+# (additional applications can be added within myimg.api.Apps
+# >>> import myimg.api as mi        # standard myimg.api import
+# >>> img = mi.MyImage('some.png')  # read image as mi.MyImage object
+# >>> fft = mi.Apps.FFT(img)        # create FFT of the image using mi.Apps.FFT
+import myimg.apps.fft
+import myimg.apps.profiles
+import myimg.apps.iLabels 
+# (3) Auxiliary myimg module for plotting
 # myimg.io is used directly = imported to myimg.api + used for function calls
 # >>> import myimg.api as mi          # standard myimg import
 # >>> mi.plots.set_plot_parameters()  # direct call of myimg.plots function
 import myimg.plots   # this imports plots module to myimg.api
 plots = myimg.plots  # this makes it accesible as myimg.api.plots
-# (3) Additional scientific python libraries
-import pandas as pd
-
 
 
 class MyImage(myimg.objects.MyImage):
     '''
     Class providing MyImage objects.
     
-    * MyImage object = PIL-image-object + image name + additional methods.
+    * MyImage object = PIL-image-object + additional attributes and methods.
     * This class in api module (myimg.api.MyImage)
       is just inherited from objects module (myimg.objects.MyImage).
     
-    >>> # Simple usage of MyImage object
-    >>> import myimg.api as mi
-    >>> # Open some image using MyImage class
-    >>> img = mi.MyImage('somefile.png')
-    >>> # Show the opened image on the screen
-    >>> img.show()
+    >>> import myimg.api as mi        # standard import of MyImg package
+    >>> img = mi.MyImage('some.png')  # open some image
+    >>> img.show()                    # show the image
     
     Parameters
     ----------
-    filename : str or path-like object
-        Name of the image file to work with.
-    
+    img : image (array or str or path-like or MyImage object)
+        Name of the array/image that we want to open.
+    pixsize : str, optional, default is None
+        Description how to determine pixel size.
+        Pixel size is needed to calculate the scalebar length.
+        See docs of myimg.objects.MyImage.scalebar for more details.
+        
     Returns
     -------
     MyImage object
-        An image, typically after some processing (autocontrast, scalebar ...).
-        MyImage objects can be shown (MyImage.show) or saved (MyImage.save).
+        An image, which can be
+        adjusted (MyImage.autocontrast, MyImage.border ...),
+        processed (MyImage.label, MyImage.caption, MyImage.scalebar ...),
+        shown (MyImage.show)
+        or saved (MyImage.save, MyImage.save_with_extension).    
     '''
     pass
-
 
 
 class MyReport(myimg.objects.MyReport):
@@ -169,10 +176,9 @@ class MyReport(myimg.objects.MyReport):
     pass
 
 
-
 class Apps:
     '''
-    Additional applications for myimg package.
+    Additional applications for MyImg package.
     
     * Additional features/apps can be added using this myimg.api.Apps class.
     * More help and examples can be found in the available applications below.
@@ -180,73 +186,68 @@ class Apps:
     '''
 
 
-    def FFT(img):
+    class FFT(myimg.apps.fft.FFT):
         '''
-        Calculate FFT of img object + add it as img.FFT.
-
-        Parameters
-        ----------
-        img : MyImage object
-            Object of myimg.api.MyImage class, created within this package.
-
-        Returns
-        -------
-        None
-            The result is FFT object.
-            MyImage object aggregates the FFT object.
-            Therefore, the FFT object is accessible as img.FFT.
-            
-        Example
-        -------
-        >>> import myimg.api as mi
-        >>> img = mi.MyImage('someimage.png')
-        >>> mi.Apps.FFT(img)  # add FFT to img object
-        >>> img.FFT.show()    # show FFT (img object aggregates FFT object)
+        Class providing FFT objects.
         
-        For FFT object methods, see myimg.apps.fft sub-package.
-        '''
-        import myimg.apps.fft
-        img.fft = myimg.apps.fft.FFT(img)
-    
+        * FFT object = Fast Fourier Transform of an image/array.
 
-    def iLabels(img, df=None):
-        '''
-        Initialize iLabels object + add it as img.iLabels.
-
+        >>> # Simple usage of FFT objects
+        >>> import myimg.api as mi        # standard import of myimg
+        >>> img = mi.MyImage('some.png')  # open an image using myimg.api
+        >>> fft = my.Apps.FFT(img)        # calculate FFT of the img object
+        >>> fft.show(cmap='magma')        # show the result
+        
         Parameters
         ----------
-        img : MyImage object
-            MyImage object, created within this app.
-        df : None or Pandas.DataFrame 
-            If df is a Pandas.Dataframe object,
-            the iLabels are created from this object/dataframe.
-            Otherwise, the iLabels are created as empty object/dataframe.
+        img : image (array or str or path-like or MyImage object)
+            The 2D object, from which we will calculate FFT
+            = 2D-DFFT = 2D discrete fast Fourier transform.
 
         Returns
         -------
-        None
-            The result is iLabels object.
-            MyImage object aggregates the iLabels object.
-            Therefore, the iLabels object is accessible as img.iLabels.
-            
-        Example
-        -------
-        >>> # TODO => short example => Pavlina
+        FFT object.
+        
+        Technical details
+        -----------------
+        * FFT object, 3 basic attributes: FFT.fft (array of complex numbers),
+          FFT.intensity (array of intensities = magnitudes = real numbers)
+          and FFT.phase (array of phases = angles in range -pi:pi).
+        * FFT object is pre-processed in the sense that the intensity center
+          is shifted to the center of the array (using scipy.fftpack.fftshift).
+        * FFT object carries the information about calibration (pixel-size),
+          on condition it was created from MyImage object (the typical case).
         '''
-        import myimg.apps.iLabels.classPeaks
-        if df is None:
-            img.iLabels = myimg.apps.iLabels.classPeaks.Peaks(
-                img=img.img, img_name=img.name)
-        elif isinstance(df, pd.DataFrame):    
-            img.iLabels = myimg.apps.iLabels.classPeaks.Peaks(
-                df=df, img=img.img, img_name=img.name)
-        else:
-            print('Error initializing MyImage.iLabels!')
-            print('Wrong type of {peaks} argument!')
-            print('Empty {peaks} object created.')
-            img.iLabels = myimg.apps.iLabels.classPeaks.Peaks(
-                img=img.img, img_name=img.name)
+        pass
 
+
+    class RadialProfile(myimg.apps.profiles.RadialProfile):
+        pass
+
+
+    class iLabels():
+        # NEW
+        # iLabels jsou zcela samostatny objekt
+        # mel by se pouzivat analogicky jako objekty FFT a RadialProfile vyse
+        pass
+        
+        # OLD
+        # nasledujici kod pridaval iLabels jako attribut do objektu MyImage
+        # toto nakonec zavrzeno a nechano nize jen jako docasna zaloha
+        # def iLabels(myimg.apps.iLabels.classPeaks.Peaks):
+        #     import myimg.apps.iLabels.classPeaks
+        #     if df is None:
+        #         img.iLabels = myimg.apps.iLabels.classPeaks.Peaks(
+        #             img=img.img, img_name=img.name)
+        #     elif isinstance(df, pd.DataFrame):    
+        #         img.iLabels = myimg.apps.iLabels.classPeaks.Peaks(
+        #             df=df, img=img.img, img_name=img.name)
+        #     else:
+        #         print('Error initializing MyImage.iLabels!')
+        #         print('Wrong type of {peaks} argument!')
+        #         print('Empty {peaks} object created.')
+        #         img.iLabels = myimg.apps.iLabels.classPeaks.Peaks(
+        #             img=img.img, img_name=img.name)
 
 
 class Settings:

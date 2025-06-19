@@ -51,10 +51,16 @@
                     <a class="class" href="#Apps">Apps</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="function" href="#Apps.FFT">FFT</a>
+                                <a class="class" href="#Apps.FFT">Apps.FFT</a>
+                                        <ul class="memberlist">
+                            </ul>
+
                         </li>
                         <li>
-                                <a class="function" href="#Apps.iLabels">iLabels</a>
+                                <a class="class" href="#Apps.RadialProfile">Apps.RadialProfile</a>
+                                        <ul class="memberlist">
+                            </ul>
+
                         </li>
                 </ul>
 
@@ -98,7 +104,7 @@
 
                         <div class="docstring"><h2 id="module-myimgapi">Module: <a href="">myimg.api</a></h2>
 
-<p>A simple interface to package myimg.</p>
+<p>A simple interface to MyImg package.</p>
 
 <div class="pdoc-code codehilite">
 <pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Simple usage of <a href="">myimg.api</a> interface</span>
@@ -155,7 +161,7 @@
 </span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="sd">Module: myimg.api</span>
 </span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">------------------</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="sd">A simple interface to package myimg.</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="sd">A simple interface to MyImg package.</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a>
 </span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="sd">&gt;&gt;&gt; # Simple usage of myimg.api interface</span>
 </span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="sd">&gt;&gt;&gt; import myimg.api as mi</span>
@@ -192,245 +198,246 @@
 </span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="sd">&#39;&#39;&#39;</span>
 </span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>
 </span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>
-</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>
-</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="c1"># Import modules</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="c1"># --------------</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="c1"># (1) Basic myimg modules/sub-packages</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="c1"># myimg.apps, myimg.objects are used indirectly = in classes within myimg.api</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="c1"># &gt;&gt;&gt; import myimg.api as mi   # standard myimg import</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="c1"># &gt;&gt;&gt; mi.MyImage(&#39;some.png&#39;)   # this employs myimg.objects intrinsically</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="kn">import</span> <span class="nn">myimg.apps</span><span class="o">,</span> <span class="nn">myimg.objects</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="c1"># (2) Auxiliary myimg module for plotting</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="c1"># myimg.io is used directly = imported to myimg.api + used for function calls</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="c1"># &gt;&gt;&gt; import myimg.api as mi          # standard myimg import</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="c1"># &gt;&gt;&gt; mi.plots.set_plot_parameters()  # direct call of myimg.plots function</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="kn">import</span> <span class="nn">myimg.plots</span>   <span class="c1"># this imports plots module to myimg.api</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="n">plots</span> <span class="o">=</span> <span class="n">myimg</span><span class="o">.</span><span class="n">plots</span>  <span class="c1"># this makes it accesible as myimg.api.plots</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="c1"># (3) Additional scientific python libraries</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>
-</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="k">class</span> <span class="nc">MyImage</span><span class="p">(</span><span class="n">myimg</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">MyImage</span><span class="p">):</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="sd">    Class providing MyImage objects.</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="sd">    </span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a><span class="sd">    * MyImage object = PIL-image-object + image name + additional methods.</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="sd">    * This class in api module (myimg.api.MyImage)</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="sd">      is just inherited from objects module (myimg.objects.MyImage).</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="c1"># Import modules</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="c1"># --------------</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="c1"># (1) Basic MyImage objects</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="c1"># (myimg.objects are used within myimg.api</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="c1"># &gt;&gt;&gt; import myimg.api as mi        # standard myimg.api import</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="c1"># &gt;&gt;&gt; img = mi.MyImage(&#39;some.png&#39;)  # read image as mi.MyImage object</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="kn">import</span> <span class="nn">myimg.objects</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="c1"># (2) Additional MyImage applications</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="c1"># (additional applications can be added within myimg.api.Apps</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="c1"># &gt;&gt;&gt; import myimg.api as mi        # standard myimg.api import</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="c1"># &gt;&gt;&gt; img = mi.MyImage(&#39;some.png&#39;)  # read image as mi.MyImage object</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="c1"># &gt;&gt;&gt; fft = mi.Apps.FFT(img)        # create FFT of the image using mi.Apps.FFT</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="kn">import</span> <span class="nn">myimg.apps.fft</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="kn">import</span> <span class="nn">myimg.apps.profiles</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="kn">import</span> <span class="nn">myimg.apps.iLabels</span> 
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="c1"># (3) Auxiliary myimg module for plotting</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="c1"># myimg.io is used directly = imported to myimg.api + used for function calls</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="c1"># &gt;&gt;&gt; import myimg.api as mi          # standard myimg import</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="c1"># &gt;&gt;&gt; mi.plots.set_plot_parameters()  # direct call of myimg.plots function</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="kn">import</span> <span class="nn">myimg.plots</span>   <span class="c1"># this imports plots module to myimg.api</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="n">plots</span> <span class="o">=</span> <span class="n">myimg</span><span class="o">.</span><span class="n">plots</span>  <span class="c1"># this makes it accesible as myimg.api.plots</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a><span class="k">class</span> <span class="nc">MyImage</span><span class="p">(</span><span class="n">myimg</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">MyImage</span><span class="p">):</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="sd">    Class providing MyImage objects.</span>
 </span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="sd">    </span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="sd">    &gt;&gt;&gt; # Simple usage of MyImage object</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a><span class="sd">    &gt;&gt;&gt; import myimg.api as mi</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="sd">    &gt;&gt;&gt; # Open some image using MyImage class</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="sd">    &gt;&gt;&gt; img = mi.MyImage(&#39;somefile.png&#39;)</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="sd">    &gt;&gt;&gt; # Show the opened image on the screen</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="sd">    &gt;&gt;&gt; img.show()</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="sd">    </span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="sd">    Parameters</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="sd">    ----------</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">    filename : str or path-like object</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="sd">        Name of the image file to work with.</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="sd">    </span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a><span class="sd">    Returns</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="sd">    -------</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="sd">    MyImage object</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a><span class="sd">        An image, typically after some processing (autocontrast, scalebar ...).</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a><span class="sd">        MyImage objects can be shown (MyImage.show) or saved (MyImage.save).</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a><span class="sd">    &#39;&#39;&#39;</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>    <span class="k">pass</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a><span class="k">class</span> <span class="nc">MyReport</span><span class="p">(</span><span class="n">myimg</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">MyReport</span><span class="p">):</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="sd">    Class providing MyReport objects.</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="sd">    </span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">    * MyReport object = a rectangular multi-image.</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">    * This class in api module (myimg.api.MyReport)</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="sd">      is just inherited from objects module (myimg.objects.MyReport).</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="sd">    </span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="sd">    &gt;&gt;&gt; # Simple usage of MyReport object</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="sd">    &gt;&gt;&gt; import myimg.api as mi</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">    &gt;&gt;&gt; # Define input images    </span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="sd">    &gt;&gt;&gt; images = [&#39;s1.png&#39;,&#39;s2.png&#39;]</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="sd">    &gt;&gt;&gt; # Combine the images into one multi-image = mreport</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="sd">    &gt;&gt;&gt; mrep = mi.MyReport(images, itype=&#39;gray&#39;, grid=(1,2), padding=10)</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="sd">    &gt;&gt;&gt; # Save the final multi-image               </span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="sd">    &gt;&gt;&gt; mrep.save(&#39;mreport.png&#39;)   </span>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="sd">    </span>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">    Parameters</span>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="sd">    ----------</span>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="sd">    images : list of images (arrays or str or path-like or MyImage objects)</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">        The list of images from which the MyReport will be created.</span>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="sd">        If {images} list consists of arrays,</span>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="sd">        we assume that these arrays are the direct input to</span>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="sd">        skimage.util.montage method.</span>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="sd">        If {images} list contains of strings or path-like objects,</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="sd">        we assume that these are filenames of images</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">        that should be read as arrays.</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">        If {images} lists contains MyImage objecs,</span>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">        we use MyImage objects to create the final MyReport/montage.</span>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">    itype : type of images/arrays (&#39;gray&#39; or &#39;rgb&#39; or &#39;rgba&#39;)</span>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="sd">        The type of input/output images/arrays.</span>
-</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="sd">        If itype=&#39;gray&#39;,</span>
-</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">        then the input/output are converted to grayscale.</span>
-</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="sd">        If itype=&#39;rgb&#39; or &#39;rgba&#39;</span>
-</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a><span class="sd">        then the input/output are treated as RGB or RGBA images/arrays.</span>
-</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a><span class="sd">    grid : tuple of two integers (number-of-rows, number-of-cols)</span>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a><span class="sd">        This argument is an equivalent of</span>
-</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a><span class="sd">        *grid_shape* argument in skimage.util.montage function.</span>
-</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a><span class="sd">        It defines the number-of-rows and number-of-cols of the montage.</span>
-</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a><span class="sd">        Note: If grid is None, it defaults to a suitable square grid.</span>
-</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a><span class="sd">    padding : int; the default is 0</span>
-</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a><span class="sd">        This argument is an equivalent of</span>
-</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a><span class="sd">        *padding_width* argument in skimage.util.montage function.</span>
-</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a><span class="sd">        It defines the distance between the images/arrays of the montage.</span>
-</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a><span class="sd">    fill : str or int or tuple/list/array; the default is &#39;white&#39;</span>
-</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a><span class="sd">        This argument is a (slightly extended) equivalent of </span>
-</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a><span class="sd">        *fill* argument in skimage.util.montage function.</span>
-</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a><span class="sd">        It defines the color between the images/arrays.</span>
-</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a><span class="sd">        If fill=&#39;white&#39; or fill=&#39;black&#39;,</span>
-</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a><span class="sd">        the color among the images/arrays is white or black.</span>
-</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a><span class="sd">        It can also be an integer value (for grayscale images)</span>
-</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a><span class="sd">        or a three-value tuple/list/array (for RGB images);</span>
-</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a><span class="sd">        in such a case, it defines the exact R,G,B color among the images.</span>
-</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a><span class="sd">    crop : bool; the default is True</span>
-</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a><span class="sd">        If crop=True, the outer padding is decreased to 1/2*padding.</span>
-</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a><span class="sd">        This makes the montages nicer (like the outputs from ImageMagick).</span>
-</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a><span class="sd">    rescale : float; the default is None</span>
-</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a><span class="sd">        If *rescale* is not None, then the original size</span>
-</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a><span class="sd">        of all input images/arrays is multiplied by *rescale*.</span>
-</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a><span class="sd">        Example: If *rescale*=1/2, then the origina size</span>
-</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a><span class="sd">        of all input images/arrays is halved (reduced by 50%).</span>
-</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a><span class="sd">        </span>
-</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a><span class="sd">    Returns</span>
-</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="sd">    -------</span>
-</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a><span class="sd">    MyReport object</span>
-</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a><span class="sd">        Multi-image = tiled image composed of *images*.</span>
-</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a><span class="sd">        MyReport object can be shown (MyReport.show) or saved (MyReport.save).</span>
-</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a><span class="sd">    </span>
-</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a><span class="sd">    Allowed image formats</span>
-</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a><span class="sd">    ---------------------</span>
-</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a><span class="sd">    * Only &#39;gray&#39;, &#39;rgb&#39;, and &#39;rgba&#39; standard formats are supported.</span>
-</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a><span class="sd">      If an image has some non-standard format,</span>
-</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a><span class="sd">      it can be read and converted using a sister MyImage class</span>
-</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a><span class="sd">      (methods MyImage.to_gray, MyImage.to_rgb, MyImage.to_rgba).</span>
-</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a><span class="sd">    * The user does not have to differentiate &#39;rgb&#39; and &#39;rgba&#39; images.</span>
-</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a><span class="sd">      It is enough to specify &#39;rgb&#39; for color images</span>
-</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a><span class="sd">      and if the images are &#39;rgba&#39;, the program can handle them.</span>
-</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a><span class="sd">    &#39;&#39;&#39;</span>
-</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>    <span class="k">pass</span>
-</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>
-</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a>
-</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>
-</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a><span class="k">class</span> <span class="nc">Apps</span><span class="p">:</span>
-</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a><span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a><span class="sd">    Additional applications for myimg package.</span>
-</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a><span class="sd">    </span>
-</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a><span class="sd">    * Additional features/apps can be added using this myimg.api.Apps class.</span>
-</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a><span class="sd">    * More help and examples can be found in the available applications below.</span>
-</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a><span class="sd">    * Links to available apps: myimg.api.Apps.FFT, myimg.api.Apps.iLabels ...</span>
-</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a><span class="sd">    &#39;&#39;&#39;</span>
-</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a>
-</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a>
-</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a>    <span class="k">def</span> <span class="nf">FFT</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
-</span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a><span class="sd">        Calculate FFT of img object + add it as img.FFT.</span>
-</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a>
-</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a><span class="sd">        Parameters</span>
-</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a><span class="sd">        ----------</span>
-</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a><span class="sd">        img : MyImage object</span>
-</span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a><span class="sd">            Object of myimg.api.MyImage class, created within this package.</span>
-</span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a>
-</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a><span class="sd">        Returns</span>
-</span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a><span class="sd">        -------</span>
-</span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a><span class="sd">        None</span>
-</span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a><span class="sd">            The result is FFT object.</span>
-</span><span id="L-196"><a href="#L-196"><span class="linenos">196</span></a><span class="sd">            MyImage object aggregates the FFT object.</span>
-</span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a><span class="sd">            Therefore, the FFT object is accessible as img.FFT.</span>
-</span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a><span class="sd">            </span>
-</span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a><span class="sd">        Example</span>
-</span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a><span class="sd">        -------</span>
-</span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a><span class="sd">        &gt;&gt;&gt; import myimg.api as mi</span>
-</span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a><span class="sd">        &gt;&gt;&gt; img = mi.MyImage(&#39;someimage.png&#39;)</span>
-</span><span id="L-203"><a href="#L-203"><span class="linenos">203</span></a><span class="sd">        &gt;&gt;&gt; mi.Apps.FFT(img)  # add FFT to img object</span>
-</span><span id="L-204"><a href="#L-204"><span class="linenos">204</span></a><span class="sd">        &gt;&gt;&gt; img.FFT.show()    # show FFT (img object aggregates FFT object)</span>
-</span><span id="L-205"><a href="#L-205"><span class="linenos">205</span></a><span class="sd">        </span>
-</span><span id="L-206"><a href="#L-206"><span class="linenos">206</span></a><span class="sd">        For FFT object methods, see myimg.apps.fft sub-package.</span>
-</span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a><span class="sd">        &#39;&#39;&#39;</span>
-</span><span id="L-208"><a href="#L-208"><span class="linenos">208</span></a>        <span class="kn">import</span> <span class="nn">myimg.apps.fft</span>
-</span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a>        <span class="n">img</span><span class="o">.</span><span class="n">fft</span> <span class="o">=</span> <span class="n">myimg</span><span class="o">.</span><span class="n">apps</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">FFT</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
-</span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a>    
-</span><span id="L-211"><a href="#L-211"><span class="linenos">211</span></a>
-</span><span id="L-212"><a href="#L-212"><span class="linenos">212</span></a>    <span class="k">def</span> <span class="nf">iLabels</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="L-213"><a href="#L-213"><span class="linenos">213</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="L-214"><a href="#L-214"><span class="linenos">214</span></a><span class="sd">        Initialize iLabels object + add it as img.iLabels.</span>
-</span><span id="L-215"><a href="#L-215"><span class="linenos">215</span></a>
-</span><span id="L-216"><a href="#L-216"><span class="linenos">216</span></a><span class="sd">        Parameters</span>
-</span><span id="L-217"><a href="#L-217"><span class="linenos">217</span></a><span class="sd">        ----------</span>
-</span><span id="L-218"><a href="#L-218"><span class="linenos">218</span></a><span class="sd">        img : MyImage object</span>
-</span><span id="L-219"><a href="#L-219"><span class="linenos">219</span></a><span class="sd">            MyImage object, created within this app.</span>
-</span><span id="L-220"><a href="#L-220"><span class="linenos">220</span></a><span class="sd">        df : None or Pandas.DataFrame </span>
-</span><span id="L-221"><a href="#L-221"><span class="linenos">221</span></a><span class="sd">            If df is a Pandas.Dataframe object,</span>
-</span><span id="L-222"><a href="#L-222"><span class="linenos">222</span></a><span class="sd">            the iLabels are created from this object/dataframe.</span>
-</span><span id="L-223"><a href="#L-223"><span class="linenos">223</span></a><span class="sd">            Otherwise, the iLabels are created as empty object/dataframe.</span>
-</span><span id="L-224"><a href="#L-224"><span class="linenos">224</span></a>
-</span><span id="L-225"><a href="#L-225"><span class="linenos">225</span></a><span class="sd">        Returns</span>
-</span><span id="L-226"><a href="#L-226"><span class="linenos">226</span></a><span class="sd">        -------</span>
-</span><span id="L-227"><a href="#L-227"><span class="linenos">227</span></a><span class="sd">        None</span>
-</span><span id="L-228"><a href="#L-228"><span class="linenos">228</span></a><span class="sd">            The result is iLabels object.</span>
-</span><span id="L-229"><a href="#L-229"><span class="linenos">229</span></a><span class="sd">            MyImage object aggregates the iLabels object.</span>
-</span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a><span class="sd">            Therefore, the iLabels object is accessible as img.iLabels.</span>
-</span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a><span class="sd">            </span>
-</span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a><span class="sd">        Example</span>
-</span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a><span class="sd">        -------</span>
-</span><span id="L-234"><a href="#L-234"><span class="linenos">234</span></a><span class="sd">        &gt;&gt;&gt; # TODO =&gt; short example =&gt; Pavlina</span>
-</span><span id="L-235"><a href="#L-235"><span class="linenos">235</span></a><span class="sd">        &#39;&#39;&#39;</span>
-</span><span id="L-236"><a href="#L-236"><span class="linenos">236</span></a>        <span class="kn">import</span> <span class="nn">myimg.apps.iLabels.classPeaks</span>
-</span><span id="L-237"><a href="#L-237"><span class="linenos">237</span></a>        <span class="k">if</span> <span class="n">df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-238"><a href="#L-238"><span class="linenos">238</span></a>            <span class="n">img</span><span class="o">.</span><span class="n">iLabels</span> <span class="o">=</span> <span class="n">myimg</span><span class="o">.</span><span class="n">apps</span><span class="o">.</span><span class="n">iLabels</span><span class="o">.</span><span class="n">classPeaks</span><span class="o">.</span><span class="n">Peaks</span><span class="p">(</span>
-</span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a>                <span class="n">img</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">img</span><span class="p">,</span> <span class="n">img_name</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-</span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a>        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>    
-</span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a>            <span class="n">img</span><span class="o">.</span><span class="n">iLabels</span> <span class="o">=</span> <span class="n">myimg</span><span class="o">.</span><span class="n">apps</span><span class="o">.</span><span class="n">iLabels</span><span class="o">.</span><span class="n">classPeaks</span><span class="o">.</span><span class="n">Peaks</span><span class="p">(</span>
-</span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a>                <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">img</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">img</span><span class="p">,</span> <span class="n">img_name</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-</span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a>            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error initializing MyImage.iLabels!&#39;</span><span class="p">)</span>
-</span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a>            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Wrong type of </span><span class="si">{peaks}</span><span class="s1"> argument!&#39;</span><span class="p">)</span>
-</span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a>            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Empty </span><span class="si">{peaks}</span><span class="s1"> object created.&#39;</span><span class="p">)</span>
-</span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a>            <span class="n">img</span><span class="o">.</span><span class="n">iLabels</span> <span class="o">=</span> <span class="n">myimg</span><span class="o">.</span><span class="n">apps</span><span class="o">.</span><span class="n">iLabels</span><span class="o">.</span><span class="n">classPeaks</span><span class="o">.</span><span class="n">Peaks</span><span class="p">(</span>
-</span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a>                <span class="n">img</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">img</span><span class="p">,</span> <span class="n">img_name</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-</span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a>
-</span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="sd">    * MyImage object = PIL-image-object + additional attributes and methods.</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a><span class="sd">    * This class in api module (myimg.api.MyImage)</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="sd">      is just inherited from objects module (myimg.objects.MyImage).</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="sd">    </span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="sd">    &gt;&gt;&gt; import myimg.api as mi        # standard import of MyImg package</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="sd">    &gt;&gt;&gt; img = mi.MyImage(&#39;some.png&#39;)  # open some image</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="sd">    &gt;&gt;&gt; img.show()                    # show the image</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="sd">    </span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="sd">    Parameters</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">    ----------</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="sd">    img : image (array or str or path-like or MyImage object)</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="sd">        Name of the array/image that we want to open.</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a><span class="sd">    pixsize : str, optional, default is None</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="sd">        Description how to determine pixel size.</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="sd">        Pixel size is needed to calculate the scalebar length.</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a><span class="sd">        See docs of myimg.objects.MyImage.scalebar for more details.</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a><span class="sd">        </span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a><span class="sd">    Returns</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a><span class="sd">    -------</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a><span class="sd">    MyImage object</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a><span class="sd">        An image, which can be</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a><span class="sd">        adjusted (MyImage.autocontrast, MyImage.border ...),</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a><span class="sd">        processed (MyImage.label, MyImage.caption, MyImage.scalebar ...),</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="sd">        shown (MyImage.show)</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="sd">        or saved (MyImage.save, MyImage.save_with_extension).    </span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="sd">    &#39;&#39;&#39;</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>    <span class="k">pass</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="k">class</span> <span class="nc">MyReport</span><span class="p">(</span><span class="n">myimg</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">MyReport</span><span class="p">):</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="sd">    Class providing MyReport objects.</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">    </span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="sd">    * MyReport object = a rectangular multi-image.</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="sd">    * This class in api module (myimg.api.MyReport)</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="sd">      is just inherited from objects module (myimg.objects.MyReport).</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="sd">    </span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="sd">    &gt;&gt;&gt; # Simple usage of MyReport object</span>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="sd">    &gt;&gt;&gt; import myimg.api as mi</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">    &gt;&gt;&gt; # Define input images    </span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="sd">    &gt;&gt;&gt; images = [&#39;s1.png&#39;,&#39;s2.png&#39;]</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="sd">    &gt;&gt;&gt; # Combine the images into one multi-image = mreport</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">    &gt;&gt;&gt; mrep = mi.MyReport(images, itype=&#39;gray&#39;, grid=(1,2), padding=10)</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="sd">    &gt;&gt;&gt; # Save the final multi-image               </span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="sd">    &gt;&gt;&gt; mrep.save(&#39;mreport.png&#39;)   </span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="sd">    </span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="sd">    Parameters</span>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="sd">    ----------</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">    images : list of images (arrays or str or path-like or MyImage objects)</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">        The list of images from which the MyReport will be created.</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">        If {images} list consists of arrays,</span>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">        we assume that these arrays are the direct input to</span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="sd">        skimage.util.montage method.</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="sd">        If {images} list contains of strings or path-like objects,</span>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">        we assume that these are filenames of images</span>
+</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="sd">        that should be read as arrays.</span>
+</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a><span class="sd">        If {images} lists contains MyImage objecs,</span>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a><span class="sd">        we use MyImage objects to create the final MyReport/montage.</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a><span class="sd">    itype : type of images/arrays (&#39;gray&#39; or &#39;rgb&#39; or &#39;rgba&#39;)</span>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a><span class="sd">        The type of input/output images/arrays.</span>
+</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a><span class="sd">        If itype=&#39;gray&#39;,</span>
+</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a><span class="sd">        then the input/output are converted to grayscale.</span>
+</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a><span class="sd">        If itype=&#39;rgb&#39; or &#39;rgba&#39;</span>
+</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a><span class="sd">        then the input/output are treated as RGB or RGBA images/arrays.</span>
+</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a><span class="sd">    grid : tuple of two integers (number-of-rows, number-of-cols)</span>
+</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a><span class="sd">        This argument is an equivalent of</span>
+</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a><span class="sd">        *grid_shape* argument in skimage.util.montage function.</span>
+</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a><span class="sd">        It defines the number-of-rows and number-of-cols of the montage.</span>
+</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a><span class="sd">        Note: If grid is None, it defaults to a suitable square grid.</span>
+</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a><span class="sd">    padding : int; the default is 0</span>
+</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a><span class="sd">        This argument is an equivalent of</span>
+</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a><span class="sd">        *padding_width* argument in skimage.util.montage function.</span>
+</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a><span class="sd">        It defines the distance between the images/arrays of the montage.</span>
+</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a><span class="sd">    fill : str or int or tuple/list/array; the default is &#39;white&#39;</span>
+</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a><span class="sd">        This argument is a (slightly extended) equivalent of </span>
+</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a><span class="sd">        *fill* argument in skimage.util.montage function.</span>
+</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a><span class="sd">        It defines the color between the images/arrays.</span>
+</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a><span class="sd">        If fill=&#39;white&#39; or fill=&#39;black&#39;,</span>
+</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a><span class="sd">        the color among the images/arrays is white or black.</span>
+</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a><span class="sd">        It can also be an integer value (for grayscale images)</span>
+</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a><span class="sd">        or a three-value tuple/list/array (for RGB images);</span>
+</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a><span class="sd">        in such a case, it defines the exact R,G,B color among the images.</span>
+</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a><span class="sd">    crop : bool; the default is True</span>
+</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a><span class="sd">        If crop=True, the outer padding is decreased to 1/2*padding.</span>
+</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a><span class="sd">        This makes the montages nicer (like the outputs from ImageMagick).</span>
+</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="sd">    rescale : float; the default is None</span>
+</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a><span class="sd">        If *rescale* is not None, then the original size</span>
+</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a><span class="sd">        of all input images/arrays is multiplied by *rescale*.</span>
+</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a><span class="sd">        Example: If *rescale*=1/2, then the origina size</span>
+</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a><span class="sd">        of all input images/arrays is halved (reduced by 50%).</span>
+</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a><span class="sd">        </span>
+</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a><span class="sd">    Returns</span>
+</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a><span class="sd">    -------</span>
+</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a><span class="sd">    MyReport object</span>
+</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a><span class="sd">        Multi-image = tiled image composed of *images*.</span>
+</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a><span class="sd">        MyReport object can be shown (MyReport.show) or saved (MyReport.save).</span>
+</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a><span class="sd">    </span>
+</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a><span class="sd">    Allowed image formats</span>
+</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a><span class="sd">    ---------------------</span>
+</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a><span class="sd">    * Only &#39;gray&#39;, &#39;rgb&#39;, and &#39;rgba&#39; standard formats are supported.</span>
+</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a><span class="sd">      If an image has some non-standard format,</span>
+</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a><span class="sd">      it can be read and converted using a sister MyImage class</span>
+</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a><span class="sd">      (methods MyImage.to_gray, MyImage.to_rgb, MyImage.to_rgba).</span>
+</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a><span class="sd">    * The user does not have to differentiate &#39;rgb&#39; and &#39;rgba&#39; images.</span>
+</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a><span class="sd">      It is enough to specify &#39;rgb&#39; for color images</span>
+</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a><span class="sd">      and if the images are &#39;rgba&#39;, the program can handle them.</span>
+</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a><span class="sd">    &#39;&#39;&#39;</span>
+</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a>    <span class="k">pass</span>
+</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a>
+</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>
+</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a><span class="k">class</span> <span class="nc">Apps</span><span class="p">:</span>
+</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a><span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a><span class="sd">    Additional applications for MyImg package.</span>
+</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a><span class="sd">    </span>
+</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a><span class="sd">    * Additional features/apps can be added using this myimg.api.Apps class.</span>
+</span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a><span class="sd">    * More help and examples can be found in the available applications below.</span>
+</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a><span class="sd">    * Links to available apps: myimg.api.Apps.FFT, myimg.api.Apps.iLabels ...</span>
+</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a><span class="sd">    &#39;&#39;&#39;</span>
+</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a>
+</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a>
+</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a>    <span class="k">class</span> <span class="nc">FFT</span><span class="p">(</span><span class="n">myimg</span><span class="o">.</span><span class="n">apps</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">FFT</span><span class="p">):</span>
+</span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a><span class="sd">        Class providing FFT objects.</span>
+</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a><span class="sd">        </span>
+</span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a><span class="sd">        * FFT object = Fast Fourier Transform of an image/array.</span>
+</span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a>
+</span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a><span class="sd">        &gt;&gt;&gt; # Simple usage of FFT objects</span>
+</span><span id="L-196"><a href="#L-196"><span class="linenos">196</span></a><span class="sd">        &gt;&gt;&gt; import myimg.api as mi        # standard import of myimg</span>
+</span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a><span class="sd">        &gt;&gt;&gt; img = mi.MyImage(&#39;some.png&#39;)  # open an image using myimg.api</span>
+</span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a><span class="sd">        &gt;&gt;&gt; fft = my.Apps.FFT(img)        # calculate FFT of the img object</span>
+</span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a><span class="sd">        &gt;&gt;&gt; fft.show(cmap=&#39;magma&#39;)        # show the result</span>
+</span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a><span class="sd">        </span>
+</span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a><span class="sd">        Parameters</span>
+</span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a><span class="sd">        ----------</span>
+</span><span id="L-203"><a href="#L-203"><span class="linenos">203</span></a><span class="sd">        img : image (array or str or path-like or MyImage object)</span>
+</span><span id="L-204"><a href="#L-204"><span class="linenos">204</span></a><span class="sd">            The 2D object, from which we will calculate FFT</span>
+</span><span id="L-205"><a href="#L-205"><span class="linenos">205</span></a><span class="sd">            = 2D-DFFT = 2D discrete fast Fourier transform.</span>
+</span><span id="L-206"><a href="#L-206"><span class="linenos">206</span></a>
+</span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a><span class="sd">        Returns</span>
+</span><span id="L-208"><a href="#L-208"><span class="linenos">208</span></a><span class="sd">        -------</span>
+</span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a><span class="sd">        FFT object.</span>
+</span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a><span class="sd">        </span>
+</span><span id="L-211"><a href="#L-211"><span class="linenos">211</span></a><span class="sd">        Technical details</span>
+</span><span id="L-212"><a href="#L-212"><span class="linenos">212</span></a><span class="sd">        -----------------</span>
+</span><span id="L-213"><a href="#L-213"><span class="linenos">213</span></a><span class="sd">        * FFT object, 3 basic attributes: FFT.fft (array of complex numbers),</span>
+</span><span id="L-214"><a href="#L-214"><span class="linenos">214</span></a><span class="sd">          FFT.intensity (array of intensities = magnitudes = real numbers)</span>
+</span><span id="L-215"><a href="#L-215"><span class="linenos">215</span></a><span class="sd">          and FFT.phase (array of phases = angles in range -pi:pi).</span>
+</span><span id="L-216"><a href="#L-216"><span class="linenos">216</span></a><span class="sd">        * FFT object is pre-processed in the sense that the intensity center</span>
+</span><span id="L-217"><a href="#L-217"><span class="linenos">217</span></a><span class="sd">          is shifted to the center of the array (using scipy.fftpack.fftshift).</span>
+</span><span id="L-218"><a href="#L-218"><span class="linenos">218</span></a><span class="sd">        * FFT object carries the information about calibration (pixel-size),</span>
+</span><span id="L-219"><a href="#L-219"><span class="linenos">219</span></a><span class="sd">          on condition it was created from MyImage object (the typical case).</span>
+</span><span id="L-220"><a href="#L-220"><span class="linenos">220</span></a><span class="sd">        &#39;&#39;&#39;</span>
+</span><span id="L-221"><a href="#L-221"><span class="linenos">221</span></a>        <span class="k">pass</span>
+</span><span id="L-222"><a href="#L-222"><span class="linenos">222</span></a>
+</span><span id="L-223"><a href="#L-223"><span class="linenos">223</span></a>
+</span><span id="L-224"><a href="#L-224"><span class="linenos">224</span></a>    <span class="k">class</span> <span class="nc">RadialProfile</span><span class="p">(</span><span class="n">myimg</span><span class="o">.</span><span class="n">apps</span><span class="o">.</span><span class="n">profiles</span><span class="o">.</span><span class="n">RadialProfile</span><span class="p">):</span>
+</span><span id="L-225"><a href="#L-225"><span class="linenos">225</span></a>        <span class="k">pass</span>
+</span><span id="L-226"><a href="#L-226"><span class="linenos">226</span></a>
+</span><span id="L-227"><a href="#L-227"><span class="linenos">227</span></a>
+</span><span id="L-228"><a href="#L-228"><span class="linenos">228</span></a>    <span class="k">class</span> <span class="nc">iLabels</span><span class="p">():</span>
+</span><span id="L-229"><a href="#L-229"><span class="linenos">229</span></a>        <span class="c1"># NEW</span>
+</span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a>        <span class="c1"># iLabels jsou zcela samostatny objekt</span>
+</span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a>        <span class="c1"># mel by se pouzivat analogicky jako objekty FFT a RadialProfile vyse</span>
+</span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a>        <span class="k">pass</span>
+</span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a>        
+</span><span id="L-234"><a href="#L-234"><span class="linenos">234</span></a>        <span class="c1"># OLD</span>
+</span><span id="L-235"><a href="#L-235"><span class="linenos">235</span></a>        <span class="c1"># nasledujici kod pridaval iLabels jako attribut do objektu MyImage</span>
+</span><span id="L-236"><a href="#L-236"><span class="linenos">236</span></a>        <span class="c1"># toto nakonec zavrzeno a nechano nize jen jako docasna zaloha</span>
+</span><span id="L-237"><a href="#L-237"><span class="linenos">237</span></a>        <span class="c1"># def iLabels(myimg.apps.iLabels.classPeaks.Peaks):</span>
+</span><span id="L-238"><a href="#L-238"><span class="linenos">238</span></a>        <span class="c1">#     import myimg.apps.iLabels.classPeaks</span>
+</span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a>        <span class="c1">#     if df is None:</span>
+</span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a>        <span class="c1">#         img.iLabels = myimg.apps.iLabels.classPeaks.Peaks(</span>
+</span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a>        <span class="c1">#             img=img.img, img_name=img.name)</span>
+</span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a>        <span class="c1">#     elif isinstance(df, pd.DataFrame):    </span>
+</span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a>        <span class="c1">#         img.iLabels = myimg.apps.iLabels.classPeaks.Peaks(</span>
+</span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a>        <span class="c1">#             df=df, img=img.img, img_name=img.name)</span>
+</span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a>        <span class="c1">#     else:</span>
+</span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a>        <span class="c1">#         print(&#39;Error initializing MyImage.iLabels!&#39;)</span>
+</span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a>        <span class="c1">#         print(&#39;Wrong type of {peaks} argument!&#39;)</span>
+</span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a>        <span class="c1">#         print(&#39;Empty {peaks} object created.&#39;)</span>
+</span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a>        <span class="c1">#         img.iLabels = myimg.apps.iLabels.classPeaks.Peaks(</span>
+</span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a>        <span class="c1">#             img=img.img, img_name=img.name)</span>
 </span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a>
-</span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a><span class="k">class</span> <span class="nc">Settings</span><span class="p">:</span>
-</span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a><span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a><span class="sd">    Settings for myimg package.</span>
-</span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a><span class="sd">    </span>
-</span><span id="L-256"><a href="#L-256"><span class="linenos">256</span></a><span class="sd">    * This class (myimg.Settings)</span>
-</span><span id="L-257"><a href="#L-257"><span class="linenos">257</span></a><span class="sd">      imports all dataclasses from myimg.settings.</span>
-</span><span id="L-258"><a href="#L-258"><span class="linenos">258</span></a><span class="sd">    * Thanks to this import, we can use Settings myimg.api as follows:</span>
-</span><span id="L-259"><a href="#L-259"><span class="linenos">259</span></a><span class="sd">            </span>
-</span><span id="L-260"><a href="#L-260"><span class="linenos">260</span></a><span class="sd">    &gt;&gt;&gt; # Sample usage of Settings class</span>
-</span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a><span class="sd">    &gt;&gt;&gt; # (this is NOT a typical usage of Settings dataclasses</span>
-</span><span id="L-262"><a href="#L-262"><span class="linenos">262</span></a><span class="sd">    &gt;&gt;&gt; # (the settings are usually not changed and just used in myimg funcs</span>
-</span><span id="L-263"><a href="#L-263"><span class="linenos">263</span></a><span class="sd">    &gt;&gt;&gt; import myimg.api as mi</span>
-</span><span id="L-264"><a href="#L-264"><span class="linenos">264</span></a><span class="sd">    &gt;&gt;&gt; mi.Settings.Scalebar.position = (10,650)</span>
-</span><span id="L-265"><a href="#L-265"><span class="linenos">265</span></a><span class="sd">    &#39;&#39;&#39;</span>
-</span><span id="L-266"><a href="#L-266"><span class="linenos">266</span></a>    
-</span><span id="L-267"><a href="#L-267"><span class="linenos">267</span></a>    <span class="c1"># Technical notes:</span>
-</span><span id="L-268"><a href="#L-268"><span class="linenos">268</span></a>    <span class="c1"># * All settings/defaults are in separate data module {myimg.settings};</span>
-</span><span id="L-269"><a href="#L-269"><span class="linenos">269</span></a>    <span class="c1">#   this is better and cleaner (clear separation of code and settings).</span>
-</span><span id="L-270"><a href="#L-270"><span class="linenos">270</span></a>    <span class="c1"># * In this module we define class Settings,</span>
-</span><span id="L-271"><a href="#L-271"><span class="linenos">271</span></a>    <span class="c1">#   in which we import all necessary Setting subclasses.</span>
-</span><span id="L-272"><a href="#L-272"><span class="linenos">272</span></a>    <span class="c1"># Why is it done like this?</span>
-</span><span id="L-273"><a href="#L-273"><span class="linenos">273</span></a>    <span class="c1">#   =&gt; To have an easy access to Settings for the users of this module.</span>
-</span><span id="L-274"><a href="#L-274"><span class="linenos">274</span></a>    <span class="c1"># How does it work in real life?</span>
-</span><span id="L-275"><a href="#L-275"><span class="linenos">275</span></a>    <span class="c1">#   =&gt; Import myimg.api and use Settings as shown in the docstring above.</span>
-</span><span id="L-276"><a href="#L-276"><span class="linenos">276</span></a>    
-</span><span id="L-277"><a href="#L-277"><span class="linenos">277</span></a>    <span class="kn">from</span> <span class="nn">myimg.settings</span> <span class="kn">import</span> <span class="n">Scalebar</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> <span class="n">Caption</span>
-</span><span id="L-278"><a href="#L-278"><span class="linenos">278</span></a>    <span class="kn">from</span> <span class="nn">myimg.settings</span> <span class="kn">import</span> <span class="n">MicCalibrations</span><span class="p">,</span> <span class="n">MicDescriptionFiles</span>
-</span><span id="L-279"><a href="#L-279"><span class="linenos">279</span></a>
-</span><span id="L-280"><a href="#L-280"><span class="linenos">280</span></a>    
+</span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a>
+</span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a><span class="k">class</span> <span class="nc">Settings</span><span class="p">:</span>
+</span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a><span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a><span class="sd">    Settings for myimg package.</span>
+</span><span id="L-256"><a href="#L-256"><span class="linenos">256</span></a><span class="sd">    </span>
+</span><span id="L-257"><a href="#L-257"><span class="linenos">257</span></a><span class="sd">    * This class (myimg.Settings)</span>
+</span><span id="L-258"><a href="#L-258"><span class="linenos">258</span></a><span class="sd">      imports all dataclasses from myimg.settings.</span>
+</span><span id="L-259"><a href="#L-259"><span class="linenos">259</span></a><span class="sd">    * Thanks to this import, we can use Settings myimg.api as follows:</span>
+</span><span id="L-260"><a href="#L-260"><span class="linenos">260</span></a><span class="sd">            </span>
+</span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a><span class="sd">    &gt;&gt;&gt; # Sample usage of Settings class</span>
+</span><span id="L-262"><a href="#L-262"><span class="linenos">262</span></a><span class="sd">    &gt;&gt;&gt; # (this is NOT a typical usage of Settings dataclasses</span>
+</span><span id="L-263"><a href="#L-263"><span class="linenos">263</span></a><span class="sd">    &gt;&gt;&gt; # (the settings are usually not changed and just used in myimg funcs</span>
+</span><span id="L-264"><a href="#L-264"><span class="linenos">264</span></a><span class="sd">    &gt;&gt;&gt; import myimg.api as mi</span>
+</span><span id="L-265"><a href="#L-265"><span class="linenos">265</span></a><span class="sd">    &gt;&gt;&gt; mi.Settings.Scalebar.position = (10,650)</span>
+</span><span id="L-266"><a href="#L-266"><span class="linenos">266</span></a><span class="sd">    &#39;&#39;&#39;</span>
+</span><span id="L-267"><a href="#L-267"><span class="linenos">267</span></a>    
+</span><span id="L-268"><a href="#L-268"><span class="linenos">268</span></a>    <span class="c1"># Technical notes:</span>
+</span><span id="L-269"><a href="#L-269"><span class="linenos">269</span></a>    <span class="c1"># * All settings/defaults are in separate data module {myimg.settings};</span>
+</span><span id="L-270"><a href="#L-270"><span class="linenos">270</span></a>    <span class="c1">#   this is better and cleaner (clear separation of code and settings).</span>
+</span><span id="L-271"><a href="#L-271"><span class="linenos">271</span></a>    <span class="c1"># * In this module we define class Settings,</span>
+</span><span id="L-272"><a href="#L-272"><span class="linenos">272</span></a>    <span class="c1">#   in which we import all necessary Setting subclasses.</span>
+</span><span id="L-273"><a href="#L-273"><span class="linenos">273</span></a>    <span class="c1"># Why is it done like this?</span>
+</span><span id="L-274"><a href="#L-274"><span class="linenos">274</span></a>    <span class="c1">#   =&gt; To have an easy access to Settings for the users of this module.</span>
+</span><span id="L-275"><a href="#L-275"><span class="linenos">275</span></a>    <span class="c1"># How does it work in real life?</span>
+</span><span id="L-276"><a href="#L-276"><span class="linenos">276</span></a>    <span class="c1">#   =&gt; Import myimg.api and use Settings as shown in the docstring above.</span>
+</span><span id="L-277"><a href="#L-277"><span class="linenos">277</span></a>    
+</span><span id="L-278"><a href="#L-278"><span class="linenos">278</span></a>    <span class="kn">from</span> <span class="nn">myimg.settings</span> <span class="kn">import</span> <span class="n">Scalebar</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> <span class="n">Caption</span>
+</span><span id="L-279"><a href="#L-279"><span class="linenos">279</span></a>    <span class="kn">from</span> <span class="nn">myimg.settings</span> <span class="kn">import</span> <span class="n">MicCalibrations</span><span class="p">,</span> <span class="n">MicDescriptionFiles</span>
+</span><span id="L-280"><a href="#L-280"><span class="linenos">280</span></a>
+</span><span id="L-281"><a href="#L-281"><span class="linenos">281</span></a>    
 </span></pre></div>
 
 
@@ -446,66 +453,74 @@
 
     </div>
     <a class="headerlink" href="#MyImage"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MyImage-62"><a href="#MyImage-62"><span class="linenos">62</span></a><span class="k">class</span> <span class="nc">MyImage</span><span class="p">(</span><span class="n">myimg</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">MyImage</span><span class="p">):</span>
-</span><span id="MyImage-63"><a href="#MyImage-63"><span class="linenos">63</span></a><span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="MyImage-64"><a href="#MyImage-64"><span class="linenos">64</span></a><span class="sd">    Class providing MyImage objects.</span>
-</span><span id="MyImage-65"><a href="#MyImage-65"><span class="linenos">65</span></a><span class="sd">    </span>
-</span><span id="MyImage-66"><a href="#MyImage-66"><span class="linenos">66</span></a><span class="sd">    * MyImage object = PIL-image-object + image name + additional methods.</span>
-</span><span id="MyImage-67"><a href="#MyImage-67"><span class="linenos">67</span></a><span class="sd">    * This class in api module (myimg.api.MyImage)</span>
-</span><span id="MyImage-68"><a href="#MyImage-68"><span class="linenos">68</span></a><span class="sd">      is just inherited from objects module (myimg.objects.MyImage).</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MyImage-66"><a href="#MyImage-66"><span class="linenos">66</span></a><span class="k">class</span> <span class="nc">MyImage</span><span class="p">(</span><span class="n">myimg</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">MyImage</span><span class="p">):</span>
+</span><span id="MyImage-67"><a href="#MyImage-67"><span class="linenos">67</span></a><span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="MyImage-68"><a href="#MyImage-68"><span class="linenos">68</span></a><span class="sd">    Class providing MyImage objects.</span>
 </span><span id="MyImage-69"><a href="#MyImage-69"><span class="linenos">69</span></a><span class="sd">    </span>
-</span><span id="MyImage-70"><a href="#MyImage-70"><span class="linenos">70</span></a><span class="sd">    &gt;&gt;&gt; # Simple usage of MyImage object</span>
-</span><span id="MyImage-71"><a href="#MyImage-71"><span class="linenos">71</span></a><span class="sd">    &gt;&gt;&gt; import myimg.api as mi</span>
-</span><span id="MyImage-72"><a href="#MyImage-72"><span class="linenos">72</span></a><span class="sd">    &gt;&gt;&gt; # Open some image using MyImage class</span>
-</span><span id="MyImage-73"><a href="#MyImage-73"><span class="linenos">73</span></a><span class="sd">    &gt;&gt;&gt; img = mi.MyImage(&#39;somefile.png&#39;)</span>
-</span><span id="MyImage-74"><a href="#MyImage-74"><span class="linenos">74</span></a><span class="sd">    &gt;&gt;&gt; # Show the opened image on the screen</span>
-</span><span id="MyImage-75"><a href="#MyImage-75"><span class="linenos">75</span></a><span class="sd">    &gt;&gt;&gt; img.show()</span>
-</span><span id="MyImage-76"><a href="#MyImage-76"><span class="linenos">76</span></a><span class="sd">    </span>
-</span><span id="MyImage-77"><a href="#MyImage-77"><span class="linenos">77</span></a><span class="sd">    Parameters</span>
-</span><span id="MyImage-78"><a href="#MyImage-78"><span class="linenos">78</span></a><span class="sd">    ----------</span>
-</span><span id="MyImage-79"><a href="#MyImage-79"><span class="linenos">79</span></a><span class="sd">    filename : str or path-like object</span>
-</span><span id="MyImage-80"><a href="#MyImage-80"><span class="linenos">80</span></a><span class="sd">        Name of the image file to work with.</span>
-</span><span id="MyImage-81"><a href="#MyImage-81"><span class="linenos">81</span></a><span class="sd">    </span>
-</span><span id="MyImage-82"><a href="#MyImage-82"><span class="linenos">82</span></a><span class="sd">    Returns</span>
-</span><span id="MyImage-83"><a href="#MyImage-83"><span class="linenos">83</span></a><span class="sd">    -------</span>
-</span><span id="MyImage-84"><a href="#MyImage-84"><span class="linenos">84</span></a><span class="sd">    MyImage object</span>
-</span><span id="MyImage-85"><a href="#MyImage-85"><span class="linenos">85</span></a><span class="sd">        An image, typically after some processing (autocontrast, scalebar ...).</span>
-</span><span id="MyImage-86"><a href="#MyImage-86"><span class="linenos">86</span></a><span class="sd">        MyImage objects can be shown (MyImage.show) or saved (MyImage.save).</span>
-</span><span id="MyImage-87"><a href="#MyImage-87"><span class="linenos">87</span></a><span class="sd">    &#39;&#39;&#39;</span>
-</span><span id="MyImage-88"><a href="#MyImage-88"><span class="linenos">88</span></a>    <span class="k">pass</span>
+</span><span id="MyImage-70"><a href="#MyImage-70"><span class="linenos">70</span></a><span class="sd">    * MyImage object = PIL-image-object + additional attributes and methods.</span>
+</span><span id="MyImage-71"><a href="#MyImage-71"><span class="linenos">71</span></a><span class="sd">    * This class in api module (myimg.api.MyImage)</span>
+</span><span id="MyImage-72"><a href="#MyImage-72"><span class="linenos">72</span></a><span class="sd">      is just inherited from objects module (myimg.objects.MyImage).</span>
+</span><span id="MyImage-73"><a href="#MyImage-73"><span class="linenos">73</span></a><span class="sd">    </span>
+</span><span id="MyImage-74"><a href="#MyImage-74"><span class="linenos">74</span></a><span class="sd">    &gt;&gt;&gt; import myimg.api as mi        # standard import of MyImg package</span>
+</span><span id="MyImage-75"><a href="#MyImage-75"><span class="linenos">75</span></a><span class="sd">    &gt;&gt;&gt; img = mi.MyImage(&#39;some.png&#39;)  # open some image</span>
+</span><span id="MyImage-76"><a href="#MyImage-76"><span class="linenos">76</span></a><span class="sd">    &gt;&gt;&gt; img.show()                    # show the image</span>
+</span><span id="MyImage-77"><a href="#MyImage-77"><span class="linenos">77</span></a><span class="sd">    </span>
+</span><span id="MyImage-78"><a href="#MyImage-78"><span class="linenos">78</span></a><span class="sd">    Parameters</span>
+</span><span id="MyImage-79"><a href="#MyImage-79"><span class="linenos">79</span></a><span class="sd">    ----------</span>
+</span><span id="MyImage-80"><a href="#MyImage-80"><span class="linenos">80</span></a><span class="sd">    img : image (array or str or path-like or MyImage object)</span>
+</span><span id="MyImage-81"><a href="#MyImage-81"><span class="linenos">81</span></a><span class="sd">        Name of the array/image that we want to open.</span>
+</span><span id="MyImage-82"><a href="#MyImage-82"><span class="linenos">82</span></a><span class="sd">    pixsize : str, optional, default is None</span>
+</span><span id="MyImage-83"><a href="#MyImage-83"><span class="linenos">83</span></a><span class="sd">        Description how to determine pixel size.</span>
+</span><span id="MyImage-84"><a href="#MyImage-84"><span class="linenos">84</span></a><span class="sd">        Pixel size is needed to calculate the scalebar length.</span>
+</span><span id="MyImage-85"><a href="#MyImage-85"><span class="linenos">85</span></a><span class="sd">        See docs of myimg.objects.MyImage.scalebar for more details.</span>
+</span><span id="MyImage-86"><a href="#MyImage-86"><span class="linenos">86</span></a><span class="sd">        </span>
+</span><span id="MyImage-87"><a href="#MyImage-87"><span class="linenos">87</span></a><span class="sd">    Returns</span>
+</span><span id="MyImage-88"><a href="#MyImage-88"><span class="linenos">88</span></a><span class="sd">    -------</span>
+</span><span id="MyImage-89"><a href="#MyImage-89"><span class="linenos">89</span></a><span class="sd">    MyImage object</span>
+</span><span id="MyImage-90"><a href="#MyImage-90"><span class="linenos">90</span></a><span class="sd">        An image, which can be</span>
+</span><span id="MyImage-91"><a href="#MyImage-91"><span class="linenos">91</span></a><span class="sd">        adjusted (MyImage.autocontrast, MyImage.border ...),</span>
+</span><span id="MyImage-92"><a href="#MyImage-92"><span class="linenos">92</span></a><span class="sd">        processed (MyImage.label, MyImage.caption, MyImage.scalebar ...),</span>
+</span><span id="MyImage-93"><a href="#MyImage-93"><span class="linenos">93</span></a><span class="sd">        shown (MyImage.show)</span>
+</span><span id="MyImage-94"><a href="#MyImage-94"><span class="linenos">94</span></a><span class="sd">        or saved (MyImage.save, MyImage.save_with_extension).    </span>
+</span><span id="MyImage-95"><a href="#MyImage-95"><span class="linenos">95</span></a><span class="sd">    &#39;&#39;&#39;</span>
+</span><span id="MyImage-96"><a href="#MyImage-96"><span class="linenos">96</span></a>    <span class="k">pass</span>
 </span></pre></div>
 
 
             <div class="docstring"><p>Class providing MyImage objects.</p>
 
 <ul>
-<li>MyImage object = PIL-image-object + image name + additional methods.</li>
+<li>MyImage object = PIL-image-object + additional attributes and methods.</li>
 <li>This class in api module (<a href="#MyImage">myimg.api.MyImage</a>)
 is just inherited from objects module (<a href="objects.html#MyImage">myimg.objects.MyImage</a>).</li>
 </ul>
 
 <div class="pdoc-code codehilite">
-<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Simple usage of MyImage object</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn"><a href="">myimg.api</a></span> <span class="k">as</span> <span class="nn">mi</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Open some image using MyImage class</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">img</span> <span class="o">=</span> <span class="n">mi</span><span class="o">.</span><span class="n">MyImage</span><span class="p">(</span><span class="s1">&#39;somefile.png&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show the opened image on the screen</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">img</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn"><a href="">myimg.api</a></span> <span class="k">as</span> <span class="nn">mi</span>        <span class="c1"># standard import of MyImg package</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">img</span> <span class="o">=</span> <span class="n">mi</span><span class="o">.</span><span class="n">MyImage</span><span class="p">(</span><span class="s1">&#39;some.png&#39;</span><span class="p">)</span>  <span class="c1"># open some image</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">img</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>                    <span class="c1"># show the image</span>
 </code></pre>
 </div>
 
 <h6 id="parameters">Parameters</h6>
 
 <ul>
-<li><strong>filename</strong> (str or path-like object):
-Name of the image file to work with.</li>
+<li><strong>img</strong> (image (array or str or path-like or MyImage object)):
+Name of the array/image that we want to open.</li>
+<li><strong>pixsize</strong> (str, optional, default is None):
+Description how to determine pixel size.
+Pixel size is needed to calculate the scalebar length.
+See docs of <a href="#MyImage.scalebar">myimg.objects.MyImage.scalebar</a> for more details.</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
 
 <ul>
-<li><strong>MyImage object</strong>: An image, typically after some processing (autocontrast, scalebar ...).
-MyImage objects can be shown (<a href="#MyImage.show">MyImage.show</a>) or saved (<a href="#MyImage.save">MyImage.save</a>).</li>
+<li><strong>MyImage object</strong>: An image, which can be
+adjusted (<a href="#MyImage.autocontrast">MyImage.autocontrast</a>, <a href="#MyImage.border">MyImage.border</a> ...),
+processed (<a href="#MyImage.label">MyImage.label</a>, <a href="#MyImage.caption">MyImage.caption</a>, <a href="#MyImage.scalebar">MyImage.scalebar</a> ...),
+shown (<a href="#MyImage.show">MyImage.show</a>)
+or saved (<a href="#MyImage.save">MyImage.save</a>, <a href="#MyImage.save_with_extension">MyImage.save_with_extension</a>).</li>
 </ul>
 </div>
 
@@ -515,8 +530,11 @@ MyImage objects can be shown (<a href="#MyImage.show">MyImage.show</a>) or saved
                                 <dl>
                                     <div><dt><a href="objects.html#MyImage">myimg.objects.MyImage</a></dt>
                                 <dd id="MyImage.__init__" class="function"><a href="objects.html#MyImage.__init__">MyImage</a></dd>
-                <dd id="MyImage.open_image" class="function"><a href="objects.html#MyImage.open_image">open_image</a></dd>
-                <dd id="MyImage.get_font_size" class="function"><a href="objects.html#MyImage.get_font_size">get_font_size</a></dd>
+                <dd id="MyImage.img_from_file" class="function"><a href="objects.html#MyImage.img_from_file">img_from_file</a></dd>
+                <dd id="MyImage.img_from_array" class="function"><a href="objects.html#MyImage.img_from_array">img_from_array</a></dd>
+                <dd id="MyImage.set_image_type" class="function"><a href="objects.html#MyImage.set_image_type">set_image_type</a></dd>
+                <dd id="MyImage.set_scale" class="function"><a href="objects.html#MyImage.set_scale">set_scale</a></dd>
+                <dd id="MyImage.set_font_size" class="function"><a href="objects.html#MyImage.set_font_size">set_font_size</a></dd>
                 <dd id="MyImage.to_gray" class="function"><a href="objects.html#MyImage.to_gray">to_gray</a></dd>
                 <dd id="MyImage.to_rgb" class="function"><a href="objects.html#MyImage.to_rgb">to_rgb</a></dd>
                 <dd id="MyImage.to_rgba" class="function"><a href="objects.html#MyImage.to_rgba">to_rgba</a></dd>
@@ -524,9 +542,9 @@ MyImage objects can be shown (<a href="#MyImage.show">MyImage.show</a>) or saved
                 <dd id="MyImage.crop" class="function"><a href="objects.html#MyImage.crop">crop</a></dd>
                 <dd id="MyImage.resize" class="function"><a href="objects.html#MyImage.resize">resize</a></dd>
                 <dd id="MyImage.autocontrast" class="function"><a href="objects.html#MyImage.autocontrast">autocontrast</a></dd>
+                <dd id="MyImage.border" class="function"><a href="objects.html#MyImage.border">border</a></dd>
                 <dd id="MyImage.label" class="function"><a href="objects.html#MyImage.label">label</a></dd>
                 <dd id="MyImage.caption" class="function"><a href="objects.html#MyImage.caption">caption</a></dd>
-                <dd id="MyImage.border" class="function"><a href="objects.html#MyImage.border">border</a></dd>
                 <dd id="MyImage.scalebar" class="function"><a href="objects.html#MyImage.scalebar">scalebar</a></dd>
                 <dd id="MyImage.show" class="function"><a href="objects.html#MyImage.show">show</a></dd>
                 <dd id="MyImage.save" class="function"><a href="objects.html#MyImage.save">save</a></dd>
@@ -547,85 +565,85 @@ MyImage objects can be shown (<a href="#MyImage.show">MyImage.show</a>) or saved
 
     </div>
     <a class="headerlink" href="#MyReport"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MyReport-92"><a href="#MyReport-92"><span class="linenos"> 92</span></a><span class="k">class</span> <span class="nc">MyReport</span><span class="p">(</span><span class="n">myimg</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">MyReport</span><span class="p">):</span>
-</span><span id="MyReport-93"><a href="#MyReport-93"><span class="linenos"> 93</span></a><span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="MyReport-94"><a href="#MyReport-94"><span class="linenos"> 94</span></a><span class="sd">    Class providing MyReport objects.</span>
-</span><span id="MyReport-95"><a href="#MyReport-95"><span class="linenos"> 95</span></a><span class="sd">    </span>
-</span><span id="MyReport-96"><a href="#MyReport-96"><span class="linenos"> 96</span></a><span class="sd">    * MyReport object = a rectangular multi-image.</span>
-</span><span id="MyReport-97"><a href="#MyReport-97"><span class="linenos"> 97</span></a><span class="sd">    * This class in api module (myimg.api.MyReport)</span>
-</span><span id="MyReport-98"><a href="#MyReport-98"><span class="linenos"> 98</span></a><span class="sd">      is just inherited from objects module (myimg.objects.MyReport).</span>
-</span><span id="MyReport-99"><a href="#MyReport-99"><span class="linenos"> 99</span></a><span class="sd">    </span>
-</span><span id="MyReport-100"><a href="#MyReport-100"><span class="linenos">100</span></a><span class="sd">    &gt;&gt;&gt; # Simple usage of MyReport object</span>
-</span><span id="MyReport-101"><a href="#MyReport-101"><span class="linenos">101</span></a><span class="sd">    &gt;&gt;&gt; import myimg.api as mi</span>
-</span><span id="MyReport-102"><a href="#MyReport-102"><span class="linenos">102</span></a><span class="sd">    &gt;&gt;&gt; # Define input images    </span>
-</span><span id="MyReport-103"><a href="#MyReport-103"><span class="linenos">103</span></a><span class="sd">    &gt;&gt;&gt; images = [&#39;s1.png&#39;,&#39;s2.png&#39;]</span>
-</span><span id="MyReport-104"><a href="#MyReport-104"><span class="linenos">104</span></a><span class="sd">    &gt;&gt;&gt; # Combine the images into one multi-image = mreport</span>
-</span><span id="MyReport-105"><a href="#MyReport-105"><span class="linenos">105</span></a><span class="sd">    &gt;&gt;&gt; mrep = mi.MyReport(images, itype=&#39;gray&#39;, grid=(1,2), padding=10)</span>
-</span><span id="MyReport-106"><a href="#MyReport-106"><span class="linenos">106</span></a><span class="sd">    &gt;&gt;&gt; # Save the final multi-image               </span>
-</span><span id="MyReport-107"><a href="#MyReport-107"><span class="linenos">107</span></a><span class="sd">    &gt;&gt;&gt; mrep.save(&#39;mreport.png&#39;)   </span>
-</span><span id="MyReport-108"><a href="#MyReport-108"><span class="linenos">108</span></a><span class="sd">    </span>
-</span><span id="MyReport-109"><a href="#MyReport-109"><span class="linenos">109</span></a><span class="sd">    Parameters</span>
-</span><span id="MyReport-110"><a href="#MyReport-110"><span class="linenos">110</span></a><span class="sd">    ----------</span>
-</span><span id="MyReport-111"><a href="#MyReport-111"><span class="linenos">111</span></a><span class="sd">    images : list of images (arrays or str or path-like or MyImage objects)</span>
-</span><span id="MyReport-112"><a href="#MyReport-112"><span class="linenos">112</span></a><span class="sd">        The list of images from which the MyReport will be created.</span>
-</span><span id="MyReport-113"><a href="#MyReport-113"><span class="linenos">113</span></a><span class="sd">        If {images} list consists of arrays,</span>
-</span><span id="MyReport-114"><a href="#MyReport-114"><span class="linenos">114</span></a><span class="sd">        we assume that these arrays are the direct input to</span>
-</span><span id="MyReport-115"><a href="#MyReport-115"><span class="linenos">115</span></a><span class="sd">        skimage.util.montage method.</span>
-</span><span id="MyReport-116"><a href="#MyReport-116"><span class="linenos">116</span></a><span class="sd">        If {images} list contains of strings or path-like objects,</span>
-</span><span id="MyReport-117"><a href="#MyReport-117"><span class="linenos">117</span></a><span class="sd">        we assume that these are filenames of images</span>
-</span><span id="MyReport-118"><a href="#MyReport-118"><span class="linenos">118</span></a><span class="sd">        that should be read as arrays.</span>
-</span><span id="MyReport-119"><a href="#MyReport-119"><span class="linenos">119</span></a><span class="sd">        If {images} lists contains MyImage objecs,</span>
-</span><span id="MyReport-120"><a href="#MyReport-120"><span class="linenos">120</span></a><span class="sd">        we use MyImage objects to create the final MyReport/montage.</span>
-</span><span id="MyReport-121"><a href="#MyReport-121"><span class="linenos">121</span></a><span class="sd">    itype : type of images/arrays (&#39;gray&#39; or &#39;rgb&#39; or &#39;rgba&#39;)</span>
-</span><span id="MyReport-122"><a href="#MyReport-122"><span class="linenos">122</span></a><span class="sd">        The type of input/output images/arrays.</span>
-</span><span id="MyReport-123"><a href="#MyReport-123"><span class="linenos">123</span></a><span class="sd">        If itype=&#39;gray&#39;,</span>
-</span><span id="MyReport-124"><a href="#MyReport-124"><span class="linenos">124</span></a><span class="sd">        then the input/output are converted to grayscale.</span>
-</span><span id="MyReport-125"><a href="#MyReport-125"><span class="linenos">125</span></a><span class="sd">        If itype=&#39;rgb&#39; or &#39;rgba&#39;</span>
-</span><span id="MyReport-126"><a href="#MyReport-126"><span class="linenos">126</span></a><span class="sd">        then the input/output are treated as RGB or RGBA images/arrays.</span>
-</span><span id="MyReport-127"><a href="#MyReport-127"><span class="linenos">127</span></a><span class="sd">    grid : tuple of two integers (number-of-rows, number-of-cols)</span>
-</span><span id="MyReport-128"><a href="#MyReport-128"><span class="linenos">128</span></a><span class="sd">        This argument is an equivalent of</span>
-</span><span id="MyReport-129"><a href="#MyReport-129"><span class="linenos">129</span></a><span class="sd">        *grid_shape* argument in skimage.util.montage function.</span>
-</span><span id="MyReport-130"><a href="#MyReport-130"><span class="linenos">130</span></a><span class="sd">        It defines the number-of-rows and number-of-cols of the montage.</span>
-</span><span id="MyReport-131"><a href="#MyReport-131"><span class="linenos">131</span></a><span class="sd">        Note: If grid is None, it defaults to a suitable square grid.</span>
-</span><span id="MyReport-132"><a href="#MyReport-132"><span class="linenos">132</span></a><span class="sd">    padding : int; the default is 0</span>
-</span><span id="MyReport-133"><a href="#MyReport-133"><span class="linenos">133</span></a><span class="sd">        This argument is an equivalent of</span>
-</span><span id="MyReport-134"><a href="#MyReport-134"><span class="linenos">134</span></a><span class="sd">        *padding_width* argument in skimage.util.montage function.</span>
-</span><span id="MyReport-135"><a href="#MyReport-135"><span class="linenos">135</span></a><span class="sd">        It defines the distance between the images/arrays of the montage.</span>
-</span><span id="MyReport-136"><a href="#MyReport-136"><span class="linenos">136</span></a><span class="sd">    fill : str or int or tuple/list/array; the default is &#39;white&#39;</span>
-</span><span id="MyReport-137"><a href="#MyReport-137"><span class="linenos">137</span></a><span class="sd">        This argument is a (slightly extended) equivalent of </span>
-</span><span id="MyReport-138"><a href="#MyReport-138"><span class="linenos">138</span></a><span class="sd">        *fill* argument in skimage.util.montage function.</span>
-</span><span id="MyReport-139"><a href="#MyReport-139"><span class="linenos">139</span></a><span class="sd">        It defines the color between the images/arrays.</span>
-</span><span id="MyReport-140"><a href="#MyReport-140"><span class="linenos">140</span></a><span class="sd">        If fill=&#39;white&#39; or fill=&#39;black&#39;,</span>
-</span><span id="MyReport-141"><a href="#MyReport-141"><span class="linenos">141</span></a><span class="sd">        the color among the images/arrays is white or black.</span>
-</span><span id="MyReport-142"><a href="#MyReport-142"><span class="linenos">142</span></a><span class="sd">        It can also be an integer value (for grayscale images)</span>
-</span><span id="MyReport-143"><a href="#MyReport-143"><span class="linenos">143</span></a><span class="sd">        or a three-value tuple/list/array (for RGB images);</span>
-</span><span id="MyReport-144"><a href="#MyReport-144"><span class="linenos">144</span></a><span class="sd">        in such a case, it defines the exact R,G,B color among the images.</span>
-</span><span id="MyReport-145"><a href="#MyReport-145"><span class="linenos">145</span></a><span class="sd">    crop : bool; the default is True</span>
-</span><span id="MyReport-146"><a href="#MyReport-146"><span class="linenos">146</span></a><span class="sd">        If crop=True, the outer padding is decreased to 1/2*padding.</span>
-</span><span id="MyReport-147"><a href="#MyReport-147"><span class="linenos">147</span></a><span class="sd">        This makes the montages nicer (like the outputs from ImageMagick).</span>
-</span><span id="MyReport-148"><a href="#MyReport-148"><span class="linenos">148</span></a><span class="sd">    rescale : float; the default is None</span>
-</span><span id="MyReport-149"><a href="#MyReport-149"><span class="linenos">149</span></a><span class="sd">        If *rescale* is not None, then the original size</span>
-</span><span id="MyReport-150"><a href="#MyReport-150"><span class="linenos">150</span></a><span class="sd">        of all input images/arrays is multiplied by *rescale*.</span>
-</span><span id="MyReport-151"><a href="#MyReport-151"><span class="linenos">151</span></a><span class="sd">        Example: If *rescale*=1/2, then the origina size</span>
-</span><span id="MyReport-152"><a href="#MyReport-152"><span class="linenos">152</span></a><span class="sd">        of all input images/arrays is halved (reduced by 50%).</span>
-</span><span id="MyReport-153"><a href="#MyReport-153"><span class="linenos">153</span></a><span class="sd">        </span>
-</span><span id="MyReport-154"><a href="#MyReport-154"><span class="linenos">154</span></a><span class="sd">    Returns</span>
-</span><span id="MyReport-155"><a href="#MyReport-155"><span class="linenos">155</span></a><span class="sd">    -------</span>
-</span><span id="MyReport-156"><a href="#MyReport-156"><span class="linenos">156</span></a><span class="sd">    MyReport object</span>
-</span><span id="MyReport-157"><a href="#MyReport-157"><span class="linenos">157</span></a><span class="sd">        Multi-image = tiled image composed of *images*.</span>
-</span><span id="MyReport-158"><a href="#MyReport-158"><span class="linenos">158</span></a><span class="sd">        MyReport object can be shown (MyReport.show) or saved (MyReport.save).</span>
-</span><span id="MyReport-159"><a href="#MyReport-159"><span class="linenos">159</span></a><span class="sd">    </span>
-</span><span id="MyReport-160"><a href="#MyReport-160"><span class="linenos">160</span></a><span class="sd">    Allowed image formats</span>
-</span><span id="MyReport-161"><a href="#MyReport-161"><span class="linenos">161</span></a><span class="sd">    ---------------------</span>
-</span><span id="MyReport-162"><a href="#MyReport-162"><span class="linenos">162</span></a><span class="sd">    * Only &#39;gray&#39;, &#39;rgb&#39;, and &#39;rgba&#39; standard formats are supported.</span>
-</span><span id="MyReport-163"><a href="#MyReport-163"><span class="linenos">163</span></a><span class="sd">      If an image has some non-standard format,</span>
-</span><span id="MyReport-164"><a href="#MyReport-164"><span class="linenos">164</span></a><span class="sd">      it can be read and converted using a sister MyImage class</span>
-</span><span id="MyReport-165"><a href="#MyReport-165"><span class="linenos">165</span></a><span class="sd">      (methods MyImage.to_gray, MyImage.to_rgb, MyImage.to_rgba).</span>
-</span><span id="MyReport-166"><a href="#MyReport-166"><span class="linenos">166</span></a><span class="sd">    * The user does not have to differentiate &#39;rgb&#39; and &#39;rgba&#39; images.</span>
-</span><span id="MyReport-167"><a href="#MyReport-167"><span class="linenos">167</span></a><span class="sd">      It is enough to specify &#39;rgb&#39; for color images</span>
-</span><span id="MyReport-168"><a href="#MyReport-168"><span class="linenos">168</span></a><span class="sd">      and if the images are &#39;rgba&#39;, the program can handle them.</span>
-</span><span id="MyReport-169"><a href="#MyReport-169"><span class="linenos">169</span></a><span class="sd">    &#39;&#39;&#39;</span>
-</span><span id="MyReport-170"><a href="#MyReport-170"><span class="linenos">170</span></a>    <span class="k">pass</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MyReport-99"><a href="#MyReport-99"><span class="linenos"> 99</span></a><span class="k">class</span> <span class="nc">MyReport</span><span class="p">(</span><span class="n">myimg</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">MyReport</span><span class="p">):</span>
+</span><span id="MyReport-100"><a href="#MyReport-100"><span class="linenos">100</span></a><span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="MyReport-101"><a href="#MyReport-101"><span class="linenos">101</span></a><span class="sd">    Class providing MyReport objects.</span>
+</span><span id="MyReport-102"><a href="#MyReport-102"><span class="linenos">102</span></a><span class="sd">    </span>
+</span><span id="MyReport-103"><a href="#MyReport-103"><span class="linenos">103</span></a><span class="sd">    * MyReport object = a rectangular multi-image.</span>
+</span><span id="MyReport-104"><a href="#MyReport-104"><span class="linenos">104</span></a><span class="sd">    * This class in api module (myimg.api.MyReport)</span>
+</span><span id="MyReport-105"><a href="#MyReport-105"><span class="linenos">105</span></a><span class="sd">      is just inherited from objects module (myimg.objects.MyReport).</span>
+</span><span id="MyReport-106"><a href="#MyReport-106"><span class="linenos">106</span></a><span class="sd">    </span>
+</span><span id="MyReport-107"><a href="#MyReport-107"><span class="linenos">107</span></a><span class="sd">    &gt;&gt;&gt; # Simple usage of MyReport object</span>
+</span><span id="MyReport-108"><a href="#MyReport-108"><span class="linenos">108</span></a><span class="sd">    &gt;&gt;&gt; import myimg.api as mi</span>
+</span><span id="MyReport-109"><a href="#MyReport-109"><span class="linenos">109</span></a><span class="sd">    &gt;&gt;&gt; # Define input images    </span>
+</span><span id="MyReport-110"><a href="#MyReport-110"><span class="linenos">110</span></a><span class="sd">    &gt;&gt;&gt; images = [&#39;s1.png&#39;,&#39;s2.png&#39;]</span>
+</span><span id="MyReport-111"><a href="#MyReport-111"><span class="linenos">111</span></a><span class="sd">    &gt;&gt;&gt; # Combine the images into one multi-image = mreport</span>
+</span><span id="MyReport-112"><a href="#MyReport-112"><span class="linenos">112</span></a><span class="sd">    &gt;&gt;&gt; mrep = mi.MyReport(images, itype=&#39;gray&#39;, grid=(1,2), padding=10)</span>
+</span><span id="MyReport-113"><a href="#MyReport-113"><span class="linenos">113</span></a><span class="sd">    &gt;&gt;&gt; # Save the final multi-image               </span>
+</span><span id="MyReport-114"><a href="#MyReport-114"><span class="linenos">114</span></a><span class="sd">    &gt;&gt;&gt; mrep.save(&#39;mreport.png&#39;)   </span>
+</span><span id="MyReport-115"><a href="#MyReport-115"><span class="linenos">115</span></a><span class="sd">    </span>
+</span><span id="MyReport-116"><a href="#MyReport-116"><span class="linenos">116</span></a><span class="sd">    Parameters</span>
+</span><span id="MyReport-117"><a href="#MyReport-117"><span class="linenos">117</span></a><span class="sd">    ----------</span>
+</span><span id="MyReport-118"><a href="#MyReport-118"><span class="linenos">118</span></a><span class="sd">    images : list of images (arrays or str or path-like or MyImage objects)</span>
+</span><span id="MyReport-119"><a href="#MyReport-119"><span class="linenos">119</span></a><span class="sd">        The list of images from which the MyReport will be created.</span>
+</span><span id="MyReport-120"><a href="#MyReport-120"><span class="linenos">120</span></a><span class="sd">        If {images} list consists of arrays,</span>
+</span><span id="MyReport-121"><a href="#MyReport-121"><span class="linenos">121</span></a><span class="sd">        we assume that these arrays are the direct input to</span>
+</span><span id="MyReport-122"><a href="#MyReport-122"><span class="linenos">122</span></a><span class="sd">        skimage.util.montage method.</span>
+</span><span id="MyReport-123"><a href="#MyReport-123"><span class="linenos">123</span></a><span class="sd">        If {images} list contains of strings or path-like objects,</span>
+</span><span id="MyReport-124"><a href="#MyReport-124"><span class="linenos">124</span></a><span class="sd">        we assume that these are filenames of images</span>
+</span><span id="MyReport-125"><a href="#MyReport-125"><span class="linenos">125</span></a><span class="sd">        that should be read as arrays.</span>
+</span><span id="MyReport-126"><a href="#MyReport-126"><span class="linenos">126</span></a><span class="sd">        If {images} lists contains MyImage objecs,</span>
+</span><span id="MyReport-127"><a href="#MyReport-127"><span class="linenos">127</span></a><span class="sd">        we use MyImage objects to create the final MyReport/montage.</span>
+</span><span id="MyReport-128"><a href="#MyReport-128"><span class="linenos">128</span></a><span class="sd">    itype : type of images/arrays (&#39;gray&#39; or &#39;rgb&#39; or &#39;rgba&#39;)</span>
+</span><span id="MyReport-129"><a href="#MyReport-129"><span class="linenos">129</span></a><span class="sd">        The type of input/output images/arrays.</span>
+</span><span id="MyReport-130"><a href="#MyReport-130"><span class="linenos">130</span></a><span class="sd">        If itype=&#39;gray&#39;,</span>
+</span><span id="MyReport-131"><a href="#MyReport-131"><span class="linenos">131</span></a><span class="sd">        then the input/output are converted to grayscale.</span>
+</span><span id="MyReport-132"><a href="#MyReport-132"><span class="linenos">132</span></a><span class="sd">        If itype=&#39;rgb&#39; or &#39;rgba&#39;</span>
+</span><span id="MyReport-133"><a href="#MyReport-133"><span class="linenos">133</span></a><span class="sd">        then the input/output are treated as RGB or RGBA images/arrays.</span>
+</span><span id="MyReport-134"><a href="#MyReport-134"><span class="linenos">134</span></a><span class="sd">    grid : tuple of two integers (number-of-rows, number-of-cols)</span>
+</span><span id="MyReport-135"><a href="#MyReport-135"><span class="linenos">135</span></a><span class="sd">        This argument is an equivalent of</span>
+</span><span id="MyReport-136"><a href="#MyReport-136"><span class="linenos">136</span></a><span class="sd">        *grid_shape* argument in skimage.util.montage function.</span>
+</span><span id="MyReport-137"><a href="#MyReport-137"><span class="linenos">137</span></a><span class="sd">        It defines the number-of-rows and number-of-cols of the montage.</span>
+</span><span id="MyReport-138"><a href="#MyReport-138"><span class="linenos">138</span></a><span class="sd">        Note: If grid is None, it defaults to a suitable square grid.</span>
+</span><span id="MyReport-139"><a href="#MyReport-139"><span class="linenos">139</span></a><span class="sd">    padding : int; the default is 0</span>
+</span><span id="MyReport-140"><a href="#MyReport-140"><span class="linenos">140</span></a><span class="sd">        This argument is an equivalent of</span>
+</span><span id="MyReport-141"><a href="#MyReport-141"><span class="linenos">141</span></a><span class="sd">        *padding_width* argument in skimage.util.montage function.</span>
+</span><span id="MyReport-142"><a href="#MyReport-142"><span class="linenos">142</span></a><span class="sd">        It defines the distance between the images/arrays of the montage.</span>
+</span><span id="MyReport-143"><a href="#MyReport-143"><span class="linenos">143</span></a><span class="sd">    fill : str or int or tuple/list/array; the default is &#39;white&#39;</span>
+</span><span id="MyReport-144"><a href="#MyReport-144"><span class="linenos">144</span></a><span class="sd">        This argument is a (slightly extended) equivalent of </span>
+</span><span id="MyReport-145"><a href="#MyReport-145"><span class="linenos">145</span></a><span class="sd">        *fill* argument in skimage.util.montage function.</span>
+</span><span id="MyReport-146"><a href="#MyReport-146"><span class="linenos">146</span></a><span class="sd">        It defines the color between the images/arrays.</span>
+</span><span id="MyReport-147"><a href="#MyReport-147"><span class="linenos">147</span></a><span class="sd">        If fill=&#39;white&#39; or fill=&#39;black&#39;,</span>
+</span><span id="MyReport-148"><a href="#MyReport-148"><span class="linenos">148</span></a><span class="sd">        the color among the images/arrays is white or black.</span>
+</span><span id="MyReport-149"><a href="#MyReport-149"><span class="linenos">149</span></a><span class="sd">        It can also be an integer value (for grayscale images)</span>
+</span><span id="MyReport-150"><a href="#MyReport-150"><span class="linenos">150</span></a><span class="sd">        or a three-value tuple/list/array (for RGB images);</span>
+</span><span id="MyReport-151"><a href="#MyReport-151"><span class="linenos">151</span></a><span class="sd">        in such a case, it defines the exact R,G,B color among the images.</span>
+</span><span id="MyReport-152"><a href="#MyReport-152"><span class="linenos">152</span></a><span class="sd">    crop : bool; the default is True</span>
+</span><span id="MyReport-153"><a href="#MyReport-153"><span class="linenos">153</span></a><span class="sd">        If crop=True, the outer padding is decreased to 1/2*padding.</span>
+</span><span id="MyReport-154"><a href="#MyReport-154"><span class="linenos">154</span></a><span class="sd">        This makes the montages nicer (like the outputs from ImageMagick).</span>
+</span><span id="MyReport-155"><a href="#MyReport-155"><span class="linenos">155</span></a><span class="sd">    rescale : float; the default is None</span>
+</span><span id="MyReport-156"><a href="#MyReport-156"><span class="linenos">156</span></a><span class="sd">        If *rescale* is not None, then the original size</span>
+</span><span id="MyReport-157"><a href="#MyReport-157"><span class="linenos">157</span></a><span class="sd">        of all input images/arrays is multiplied by *rescale*.</span>
+</span><span id="MyReport-158"><a href="#MyReport-158"><span class="linenos">158</span></a><span class="sd">        Example: If *rescale*=1/2, then the origina size</span>
+</span><span id="MyReport-159"><a href="#MyReport-159"><span class="linenos">159</span></a><span class="sd">        of all input images/arrays is halved (reduced by 50%).</span>
+</span><span id="MyReport-160"><a href="#MyReport-160"><span class="linenos">160</span></a><span class="sd">        </span>
+</span><span id="MyReport-161"><a href="#MyReport-161"><span class="linenos">161</span></a><span class="sd">    Returns</span>
+</span><span id="MyReport-162"><a href="#MyReport-162"><span class="linenos">162</span></a><span class="sd">    -------</span>
+</span><span id="MyReport-163"><a href="#MyReport-163"><span class="linenos">163</span></a><span class="sd">    MyReport object</span>
+</span><span id="MyReport-164"><a href="#MyReport-164"><span class="linenos">164</span></a><span class="sd">        Multi-image = tiled image composed of *images*.</span>
+</span><span id="MyReport-165"><a href="#MyReport-165"><span class="linenos">165</span></a><span class="sd">        MyReport object can be shown (MyReport.show) or saved (MyReport.save).</span>
+</span><span id="MyReport-166"><a href="#MyReport-166"><span class="linenos">166</span></a><span class="sd">    </span>
+</span><span id="MyReport-167"><a href="#MyReport-167"><span class="linenos">167</span></a><span class="sd">    Allowed image formats</span>
+</span><span id="MyReport-168"><a href="#MyReport-168"><span class="linenos">168</span></a><span class="sd">    ---------------------</span>
+</span><span id="MyReport-169"><a href="#MyReport-169"><span class="linenos">169</span></a><span class="sd">    * Only &#39;gray&#39;, &#39;rgb&#39;, and &#39;rgba&#39; standard formats are supported.</span>
+</span><span id="MyReport-170"><a href="#MyReport-170"><span class="linenos">170</span></a><span class="sd">      If an image has some non-standard format,</span>
+</span><span id="MyReport-171"><a href="#MyReport-171"><span class="linenos">171</span></a><span class="sd">      it can be read and converted using a sister MyImage class</span>
+</span><span id="MyReport-172"><a href="#MyReport-172"><span class="linenos">172</span></a><span class="sd">      (methods MyImage.to_gray, MyImage.to_rgb, MyImage.to_rgba).</span>
+</span><span id="MyReport-173"><a href="#MyReport-173"><span class="linenos">173</span></a><span class="sd">    * The user does not have to differentiate &#39;rgb&#39; and &#39;rgba&#39; images.</span>
+</span><span id="MyReport-174"><a href="#MyReport-174"><span class="linenos">174</span></a><span class="sd">      It is enough to specify &#39;rgb&#39; for color images</span>
+</span><span id="MyReport-175"><a href="#MyReport-175"><span class="linenos">175</span></a><span class="sd">      and if the images are &#39;rgba&#39;, the program can handle them.</span>
+</span><span id="MyReport-176"><a href="#MyReport-176"><span class="linenos">176</span></a><span class="sd">    &#39;&#39;&#39;</span>
+</span><span id="MyReport-177"><a href="#MyReport-177"><span class="linenos">177</span></a>    <span class="k">pass</span>
 </span></pre></div>
 
 
@@ -743,250 +761,215 @@ and if the images are 'rgba', the program can handle them.</li>
 
     </div>
     <a class="headerlink" href="#Apps"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Apps-174"><a href="#Apps-174"><span class="linenos">174</span></a><span class="k">class</span> <span class="nc">Apps</span><span class="p">:</span>
-</span><span id="Apps-175"><a href="#Apps-175"><span class="linenos">175</span></a><span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="Apps-176"><a href="#Apps-176"><span class="linenos">176</span></a><span class="sd">    Additional applications for myimg package.</span>
-</span><span id="Apps-177"><a href="#Apps-177"><span class="linenos">177</span></a><span class="sd">    </span>
-</span><span id="Apps-178"><a href="#Apps-178"><span class="linenos">178</span></a><span class="sd">    * Additional features/apps can be added using this myimg.api.Apps class.</span>
-</span><span id="Apps-179"><a href="#Apps-179"><span class="linenos">179</span></a><span class="sd">    * More help and examples can be found in the available applications below.</span>
-</span><span id="Apps-180"><a href="#Apps-180"><span class="linenos">180</span></a><span class="sd">    * Links to available apps: myimg.api.Apps.FFT, myimg.api.Apps.iLabels ...</span>
-</span><span id="Apps-181"><a href="#Apps-181"><span class="linenos">181</span></a><span class="sd">    &#39;&#39;&#39;</span>
-</span><span id="Apps-182"><a href="#Apps-182"><span class="linenos">182</span></a>
-</span><span id="Apps-183"><a href="#Apps-183"><span class="linenos">183</span></a>
-</span><span id="Apps-184"><a href="#Apps-184"><span class="linenos">184</span></a>    <span class="k">def</span> <span class="nf">FFT</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
-</span><span id="Apps-185"><a href="#Apps-185"><span class="linenos">185</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="Apps-186"><a href="#Apps-186"><span class="linenos">186</span></a><span class="sd">        Calculate FFT of img object + add it as img.FFT.</span>
-</span><span id="Apps-187"><a href="#Apps-187"><span class="linenos">187</span></a>
-</span><span id="Apps-188"><a href="#Apps-188"><span class="linenos">188</span></a><span class="sd">        Parameters</span>
-</span><span id="Apps-189"><a href="#Apps-189"><span class="linenos">189</span></a><span class="sd">        ----------</span>
-</span><span id="Apps-190"><a href="#Apps-190"><span class="linenos">190</span></a><span class="sd">        img : MyImage object</span>
-</span><span id="Apps-191"><a href="#Apps-191"><span class="linenos">191</span></a><span class="sd">            Object of myimg.api.MyImage class, created within this package.</span>
-</span><span id="Apps-192"><a href="#Apps-192"><span class="linenos">192</span></a>
-</span><span id="Apps-193"><a href="#Apps-193"><span class="linenos">193</span></a><span class="sd">        Returns</span>
-</span><span id="Apps-194"><a href="#Apps-194"><span class="linenos">194</span></a><span class="sd">        -------</span>
-</span><span id="Apps-195"><a href="#Apps-195"><span class="linenos">195</span></a><span class="sd">        None</span>
-</span><span id="Apps-196"><a href="#Apps-196"><span class="linenos">196</span></a><span class="sd">            The result is FFT object.</span>
-</span><span id="Apps-197"><a href="#Apps-197"><span class="linenos">197</span></a><span class="sd">            MyImage object aggregates the FFT object.</span>
-</span><span id="Apps-198"><a href="#Apps-198"><span class="linenos">198</span></a><span class="sd">            Therefore, the FFT object is accessible as img.FFT.</span>
-</span><span id="Apps-199"><a href="#Apps-199"><span class="linenos">199</span></a><span class="sd">            </span>
-</span><span id="Apps-200"><a href="#Apps-200"><span class="linenos">200</span></a><span class="sd">        Example</span>
-</span><span id="Apps-201"><a href="#Apps-201"><span class="linenos">201</span></a><span class="sd">        -------</span>
-</span><span id="Apps-202"><a href="#Apps-202"><span class="linenos">202</span></a><span class="sd">        &gt;&gt;&gt; import myimg.api as mi</span>
-</span><span id="Apps-203"><a href="#Apps-203"><span class="linenos">203</span></a><span class="sd">        &gt;&gt;&gt; img = mi.MyImage(&#39;someimage.png&#39;)</span>
-</span><span id="Apps-204"><a href="#Apps-204"><span class="linenos">204</span></a><span class="sd">        &gt;&gt;&gt; mi.Apps.FFT(img)  # add FFT to img object</span>
-</span><span id="Apps-205"><a href="#Apps-205"><span class="linenos">205</span></a><span class="sd">        &gt;&gt;&gt; img.FFT.show()    # show FFT (img object aggregates FFT object)</span>
-</span><span id="Apps-206"><a href="#Apps-206"><span class="linenos">206</span></a><span class="sd">        </span>
-</span><span id="Apps-207"><a href="#Apps-207"><span class="linenos">207</span></a><span class="sd">        For FFT object methods, see myimg.apps.fft sub-package.</span>
-</span><span id="Apps-208"><a href="#Apps-208"><span class="linenos">208</span></a><span class="sd">        &#39;&#39;&#39;</span>
-</span><span id="Apps-209"><a href="#Apps-209"><span class="linenos">209</span></a>        <span class="kn">import</span> <span class="nn">myimg.apps.fft</span>
-</span><span id="Apps-210"><a href="#Apps-210"><span class="linenos">210</span></a>        <span class="n">img</span><span class="o">.</span><span class="n">fft</span> <span class="o">=</span> <span class="n">myimg</span><span class="o">.</span><span class="n">apps</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">FFT</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
-</span><span id="Apps-211"><a href="#Apps-211"><span class="linenos">211</span></a>    
-</span><span id="Apps-212"><a href="#Apps-212"><span class="linenos">212</span></a>
-</span><span id="Apps-213"><a href="#Apps-213"><span class="linenos">213</span></a>    <span class="k">def</span> <span class="nf">iLabels</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="Apps-214"><a href="#Apps-214"><span class="linenos">214</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="Apps-215"><a href="#Apps-215"><span class="linenos">215</span></a><span class="sd">        Initialize iLabels object + add it as img.iLabels.</span>
-</span><span id="Apps-216"><a href="#Apps-216"><span class="linenos">216</span></a>
-</span><span id="Apps-217"><a href="#Apps-217"><span class="linenos">217</span></a><span class="sd">        Parameters</span>
-</span><span id="Apps-218"><a href="#Apps-218"><span class="linenos">218</span></a><span class="sd">        ----------</span>
-</span><span id="Apps-219"><a href="#Apps-219"><span class="linenos">219</span></a><span class="sd">        img : MyImage object</span>
-</span><span id="Apps-220"><a href="#Apps-220"><span class="linenos">220</span></a><span class="sd">            MyImage object, created within this app.</span>
-</span><span id="Apps-221"><a href="#Apps-221"><span class="linenos">221</span></a><span class="sd">        df : None or Pandas.DataFrame </span>
-</span><span id="Apps-222"><a href="#Apps-222"><span class="linenos">222</span></a><span class="sd">            If df is a Pandas.Dataframe object,</span>
-</span><span id="Apps-223"><a href="#Apps-223"><span class="linenos">223</span></a><span class="sd">            the iLabels are created from this object/dataframe.</span>
-</span><span id="Apps-224"><a href="#Apps-224"><span class="linenos">224</span></a><span class="sd">            Otherwise, the iLabels are created as empty object/dataframe.</span>
-</span><span id="Apps-225"><a href="#Apps-225"><span class="linenos">225</span></a>
-</span><span id="Apps-226"><a href="#Apps-226"><span class="linenos">226</span></a><span class="sd">        Returns</span>
-</span><span id="Apps-227"><a href="#Apps-227"><span class="linenos">227</span></a><span class="sd">        -------</span>
-</span><span id="Apps-228"><a href="#Apps-228"><span class="linenos">228</span></a><span class="sd">        None</span>
-</span><span id="Apps-229"><a href="#Apps-229"><span class="linenos">229</span></a><span class="sd">            The result is iLabels object.</span>
-</span><span id="Apps-230"><a href="#Apps-230"><span class="linenos">230</span></a><span class="sd">            MyImage object aggregates the iLabels object.</span>
-</span><span id="Apps-231"><a href="#Apps-231"><span class="linenos">231</span></a><span class="sd">            Therefore, the iLabels object is accessible as img.iLabels.</span>
-</span><span id="Apps-232"><a href="#Apps-232"><span class="linenos">232</span></a><span class="sd">            </span>
-</span><span id="Apps-233"><a href="#Apps-233"><span class="linenos">233</span></a><span class="sd">        Example</span>
-</span><span id="Apps-234"><a href="#Apps-234"><span class="linenos">234</span></a><span class="sd">        -------</span>
-</span><span id="Apps-235"><a href="#Apps-235"><span class="linenos">235</span></a><span class="sd">        &gt;&gt;&gt; # TODO =&gt; short example =&gt; Pavlina</span>
-</span><span id="Apps-236"><a href="#Apps-236"><span class="linenos">236</span></a><span class="sd">        &#39;&#39;&#39;</span>
-</span><span id="Apps-237"><a href="#Apps-237"><span class="linenos">237</span></a>        <span class="kn">import</span> <span class="nn">myimg.apps.iLabels.classPeaks</span>
-</span><span id="Apps-238"><a href="#Apps-238"><span class="linenos">238</span></a>        <span class="k">if</span> <span class="n">df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Apps-239"><a href="#Apps-239"><span class="linenos">239</span></a>            <span class="n">img</span><span class="o">.</span><span class="n">iLabels</span> <span class="o">=</span> <span class="n">myimg</span><span class="o">.</span><span class="n">apps</span><span class="o">.</span><span class="n">iLabels</span><span class="o">.</span><span class="n">classPeaks</span><span class="o">.</span><span class="n">Peaks</span><span class="p">(</span>
-</span><span id="Apps-240"><a href="#Apps-240"><span class="linenos">240</span></a>                <span class="n">img</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">img</span><span class="p">,</span> <span class="n">img_name</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-</span><span id="Apps-241"><a href="#Apps-241"><span class="linenos">241</span></a>        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>    
-</span><span id="Apps-242"><a href="#Apps-242"><span class="linenos">242</span></a>            <span class="n">img</span><span class="o">.</span><span class="n">iLabels</span> <span class="o">=</span> <span class="n">myimg</span><span class="o">.</span><span class="n">apps</span><span class="o">.</span><span class="n">iLabels</span><span class="o">.</span><span class="n">classPeaks</span><span class="o">.</span><span class="n">Peaks</span><span class="p">(</span>
-</span><span id="Apps-243"><a href="#Apps-243"><span class="linenos">243</span></a>                <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">img</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">img</span><span class="p">,</span> <span class="n">img_name</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-</span><span id="Apps-244"><a href="#Apps-244"><span class="linenos">244</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="Apps-245"><a href="#Apps-245"><span class="linenos">245</span></a>            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error initializing MyImage.iLabels!&#39;</span><span class="p">)</span>
-</span><span id="Apps-246"><a href="#Apps-246"><span class="linenos">246</span></a>            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Wrong type of </span><span class="si">{peaks}</span><span class="s1"> argument!&#39;</span><span class="p">)</span>
-</span><span id="Apps-247"><a href="#Apps-247"><span class="linenos">247</span></a>            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Empty </span><span class="si">{peaks}</span><span class="s1"> object created.&#39;</span><span class="p">)</span>
-</span><span id="Apps-248"><a href="#Apps-248"><span class="linenos">248</span></a>            <span class="n">img</span><span class="o">.</span><span class="n">iLabels</span> <span class="o">=</span> <span class="n">myimg</span><span class="o">.</span><span class="n">apps</span><span class="o">.</span><span class="n">iLabels</span><span class="o">.</span><span class="n">classPeaks</span><span class="o">.</span><span class="n">Peaks</span><span class="p">(</span>
-</span><span id="Apps-249"><a href="#Apps-249"><span class="linenos">249</span></a>                <span class="n">img</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">img</span><span class="p">,</span> <span class="n">img_name</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Apps-180"><a href="#Apps-180"><span class="linenos">180</span></a><span class="k">class</span> <span class="nc">Apps</span><span class="p">:</span>
+</span><span id="Apps-181"><a href="#Apps-181"><span class="linenos">181</span></a><span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="Apps-182"><a href="#Apps-182"><span class="linenos">182</span></a><span class="sd">    Additional applications for MyImg package.</span>
+</span><span id="Apps-183"><a href="#Apps-183"><span class="linenos">183</span></a><span class="sd">    </span>
+</span><span id="Apps-184"><a href="#Apps-184"><span class="linenos">184</span></a><span class="sd">    * Additional features/apps can be added using this myimg.api.Apps class.</span>
+</span><span id="Apps-185"><a href="#Apps-185"><span class="linenos">185</span></a><span class="sd">    * More help and examples can be found in the available applications below.</span>
+</span><span id="Apps-186"><a href="#Apps-186"><span class="linenos">186</span></a><span class="sd">    * Links to available apps: myimg.api.Apps.FFT, myimg.api.Apps.iLabels ...</span>
+</span><span id="Apps-187"><a href="#Apps-187"><span class="linenos">187</span></a><span class="sd">    &#39;&#39;&#39;</span>
+</span><span id="Apps-188"><a href="#Apps-188"><span class="linenos">188</span></a>
+</span><span id="Apps-189"><a href="#Apps-189"><span class="linenos">189</span></a>
+</span><span id="Apps-190"><a href="#Apps-190"><span class="linenos">190</span></a>    <span class="k">class</span> <span class="nc">FFT</span><span class="p">(</span><span class="n">myimg</span><span class="o">.</span><span class="n">apps</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">FFT</span><span class="p">):</span>
+</span><span id="Apps-191"><a href="#Apps-191"><span class="linenos">191</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="Apps-192"><a href="#Apps-192"><span class="linenos">192</span></a><span class="sd">        Class providing FFT objects.</span>
+</span><span id="Apps-193"><a href="#Apps-193"><span class="linenos">193</span></a><span class="sd">        </span>
+</span><span id="Apps-194"><a href="#Apps-194"><span class="linenos">194</span></a><span class="sd">        * FFT object = Fast Fourier Transform of an image/array.</span>
+</span><span id="Apps-195"><a href="#Apps-195"><span class="linenos">195</span></a>
+</span><span id="Apps-196"><a href="#Apps-196"><span class="linenos">196</span></a><span class="sd">        &gt;&gt;&gt; # Simple usage of FFT objects</span>
+</span><span id="Apps-197"><a href="#Apps-197"><span class="linenos">197</span></a><span class="sd">        &gt;&gt;&gt; import myimg.api as mi        # standard import of myimg</span>
+</span><span id="Apps-198"><a href="#Apps-198"><span class="linenos">198</span></a><span class="sd">        &gt;&gt;&gt; img = mi.MyImage(&#39;some.png&#39;)  # open an image using myimg.api</span>
+</span><span id="Apps-199"><a href="#Apps-199"><span class="linenos">199</span></a><span class="sd">        &gt;&gt;&gt; fft = my.Apps.FFT(img)        # calculate FFT of the img object</span>
+</span><span id="Apps-200"><a href="#Apps-200"><span class="linenos">200</span></a><span class="sd">        &gt;&gt;&gt; fft.show(cmap=&#39;magma&#39;)        # show the result</span>
+</span><span id="Apps-201"><a href="#Apps-201"><span class="linenos">201</span></a><span class="sd">        </span>
+</span><span id="Apps-202"><a href="#Apps-202"><span class="linenos">202</span></a><span class="sd">        Parameters</span>
+</span><span id="Apps-203"><a href="#Apps-203"><span class="linenos">203</span></a><span class="sd">        ----------</span>
+</span><span id="Apps-204"><a href="#Apps-204"><span class="linenos">204</span></a><span class="sd">        img : image (array or str or path-like or MyImage object)</span>
+</span><span id="Apps-205"><a href="#Apps-205"><span class="linenos">205</span></a><span class="sd">            The 2D object, from which we will calculate FFT</span>
+</span><span id="Apps-206"><a href="#Apps-206"><span class="linenos">206</span></a><span class="sd">            = 2D-DFFT = 2D discrete fast Fourier transform.</span>
+</span><span id="Apps-207"><a href="#Apps-207"><span class="linenos">207</span></a>
+</span><span id="Apps-208"><a href="#Apps-208"><span class="linenos">208</span></a><span class="sd">        Returns</span>
+</span><span id="Apps-209"><a href="#Apps-209"><span class="linenos">209</span></a><span class="sd">        -------</span>
+</span><span id="Apps-210"><a href="#Apps-210"><span class="linenos">210</span></a><span class="sd">        FFT object.</span>
+</span><span id="Apps-211"><a href="#Apps-211"><span class="linenos">211</span></a><span class="sd">        </span>
+</span><span id="Apps-212"><a href="#Apps-212"><span class="linenos">212</span></a><span class="sd">        Technical details</span>
+</span><span id="Apps-213"><a href="#Apps-213"><span class="linenos">213</span></a><span class="sd">        -----------------</span>
+</span><span id="Apps-214"><a href="#Apps-214"><span class="linenos">214</span></a><span class="sd">        * FFT object, 3 basic attributes: FFT.fft (array of complex numbers),</span>
+</span><span id="Apps-215"><a href="#Apps-215"><span class="linenos">215</span></a><span class="sd">          FFT.intensity (array of intensities = magnitudes = real numbers)</span>
+</span><span id="Apps-216"><a href="#Apps-216"><span class="linenos">216</span></a><span class="sd">          and FFT.phase (array of phases = angles in range -pi:pi).</span>
+</span><span id="Apps-217"><a href="#Apps-217"><span class="linenos">217</span></a><span class="sd">        * FFT object is pre-processed in the sense that the intensity center</span>
+</span><span id="Apps-218"><a href="#Apps-218"><span class="linenos">218</span></a><span class="sd">          is shifted to the center of the array (using scipy.fftpack.fftshift).</span>
+</span><span id="Apps-219"><a href="#Apps-219"><span class="linenos">219</span></a><span class="sd">        * FFT object carries the information about calibration (pixel-size),</span>
+</span><span id="Apps-220"><a href="#Apps-220"><span class="linenos">220</span></a><span class="sd">          on condition it was created from MyImage object (the typical case).</span>
+</span><span id="Apps-221"><a href="#Apps-221"><span class="linenos">221</span></a><span class="sd">        &#39;&#39;&#39;</span>
+</span><span id="Apps-222"><a href="#Apps-222"><span class="linenos">222</span></a>        <span class="k">pass</span>
+</span><span id="Apps-223"><a href="#Apps-223"><span class="linenos">223</span></a>
+</span><span id="Apps-224"><a href="#Apps-224"><span class="linenos">224</span></a>
+</span><span id="Apps-225"><a href="#Apps-225"><span class="linenos">225</span></a>    <span class="k">class</span> <span class="nc">RadialProfile</span><span class="p">(</span><span class="n">myimg</span><span class="o">.</span><span class="n">apps</span><span class="o">.</span><span class="n">profiles</span><span class="o">.</span><span class="n">RadialProfile</span><span class="p">):</span>
+</span><span id="Apps-226"><a href="#Apps-226"><span class="linenos">226</span></a>        <span class="k">pass</span>
+</span><span id="Apps-227"><a href="#Apps-227"><span class="linenos">227</span></a>
+</span><span id="Apps-228"><a href="#Apps-228"><span class="linenos">228</span></a>
+</span><span id="Apps-229"><a href="#Apps-229"><span class="linenos">229</span></a>    <span class="k">class</span> <span class="nc">iLabels</span><span class="p">():</span>
+</span><span id="Apps-230"><a href="#Apps-230"><span class="linenos">230</span></a>        <span class="c1"># NEW</span>
+</span><span id="Apps-231"><a href="#Apps-231"><span class="linenos">231</span></a>        <span class="c1"># iLabels jsou zcela samostatny objekt</span>
+</span><span id="Apps-232"><a href="#Apps-232"><span class="linenos">232</span></a>        <span class="c1"># mel by se pouzivat analogicky jako objekty FFT a RadialProfile vyse</span>
+</span><span id="Apps-233"><a href="#Apps-233"><span class="linenos">233</span></a>        <span class="k">pass</span>
+</span><span id="Apps-234"><a href="#Apps-234"><span class="linenos">234</span></a>        
+</span><span id="Apps-235"><a href="#Apps-235"><span class="linenos">235</span></a>        <span class="c1"># OLD</span>
+</span><span id="Apps-236"><a href="#Apps-236"><span class="linenos">236</span></a>        <span class="c1"># nasledujici kod pridaval iLabels jako attribut do objektu MyImage</span>
+</span><span id="Apps-237"><a href="#Apps-237"><span class="linenos">237</span></a>        <span class="c1"># toto nakonec zavrzeno a nechano nize jen jako docasna zaloha</span>
+</span><span id="Apps-238"><a href="#Apps-238"><span class="linenos">238</span></a>        <span class="c1"># def iLabels(myimg.apps.iLabels.classPeaks.Peaks):</span>
+</span><span id="Apps-239"><a href="#Apps-239"><span class="linenos">239</span></a>        <span class="c1">#     import myimg.apps.iLabels.classPeaks</span>
+</span><span id="Apps-240"><a href="#Apps-240"><span class="linenos">240</span></a>        <span class="c1">#     if df is None:</span>
+</span><span id="Apps-241"><a href="#Apps-241"><span class="linenos">241</span></a>        <span class="c1">#         img.iLabels = myimg.apps.iLabels.classPeaks.Peaks(</span>
+</span><span id="Apps-242"><a href="#Apps-242"><span class="linenos">242</span></a>        <span class="c1">#             img=img.img, img_name=img.name)</span>
+</span><span id="Apps-243"><a href="#Apps-243"><span class="linenos">243</span></a>        <span class="c1">#     elif isinstance(df, pd.DataFrame):    </span>
+</span><span id="Apps-244"><a href="#Apps-244"><span class="linenos">244</span></a>        <span class="c1">#         img.iLabels = myimg.apps.iLabels.classPeaks.Peaks(</span>
+</span><span id="Apps-245"><a href="#Apps-245"><span class="linenos">245</span></a>        <span class="c1">#             df=df, img=img.img, img_name=img.name)</span>
+</span><span id="Apps-246"><a href="#Apps-246"><span class="linenos">246</span></a>        <span class="c1">#     else:</span>
+</span><span id="Apps-247"><a href="#Apps-247"><span class="linenos">247</span></a>        <span class="c1">#         print(&#39;Error initializing MyImage.iLabels!&#39;)</span>
+</span><span id="Apps-248"><a href="#Apps-248"><span class="linenos">248</span></a>        <span class="c1">#         print(&#39;Wrong type of {peaks} argument!&#39;)</span>
+</span><span id="Apps-249"><a href="#Apps-249"><span class="linenos">249</span></a>        <span class="c1">#         print(&#39;Empty {peaks} object created.&#39;)</span>
+</span><span id="Apps-250"><a href="#Apps-250"><span class="linenos">250</span></a>        <span class="c1">#         img.iLabels = myimg.apps.iLabels.classPeaks.Peaks(</span>
+</span><span id="Apps-251"><a href="#Apps-251"><span class="linenos">251</span></a>        <span class="c1">#             img=img.img, img_name=img.name)</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Additional applications for myimg package.</p>
+            <div class="docstring"><p>Additional applications for MyImg package.</p>
 
 <ul>
 <li>Additional features/apps can be added using this <a href="#Apps">myimg.api.Apps</a> class.</li>
 <li>More help and examples can be found in the available applications below.</li>
-<li>Links to available apps: <a href="#Apps.FFT">myimg.api.Apps.FFT</a>, <a href="#Apps.iLabels">myimg.api.Apps.iLabels</a> ...</li>
+<li>Links to available apps: <a href="#Apps.FFT">myimg.api.Apps.FFT</a>, myimg.api.Apps.iLabels ...</li>
 </ul>
 </div>
 
 
-                            <div id="Apps.FFT" class="classattr">
-                                        <input id="Apps.FFT-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
+                </section>
+                <section id="Apps.FFT">
+                            <input id="Apps.FFT-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
             
-        <span class="def">def</span>
-        <span class="name">FFT</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">img</span></span><span class="return-annotation">):</span></span>
+    <span class="def">class</span>
+    <span class="name">Apps.FFT</span><wbr>(<span class="base"><a href="apps/fft.html#FFT">myimg.apps.fft.FFT</a></span>):
 
                 <label class="view-source-button" for="Apps.FFT-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#Apps.FFT"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Apps.FFT-184"><a href="#Apps.FFT-184"><span class="linenos">184</span></a>    <span class="k">def</span> <span class="nf">FFT</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
-</span><span id="Apps.FFT-185"><a href="#Apps.FFT-185"><span class="linenos">185</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="Apps.FFT-186"><a href="#Apps.FFT-186"><span class="linenos">186</span></a><span class="sd">        Calculate FFT of img object + add it as img.FFT.</span>
-</span><span id="Apps.FFT-187"><a href="#Apps.FFT-187"><span class="linenos">187</span></a>
-</span><span id="Apps.FFT-188"><a href="#Apps.FFT-188"><span class="linenos">188</span></a><span class="sd">        Parameters</span>
-</span><span id="Apps.FFT-189"><a href="#Apps.FFT-189"><span class="linenos">189</span></a><span class="sd">        ----------</span>
-</span><span id="Apps.FFT-190"><a href="#Apps.FFT-190"><span class="linenos">190</span></a><span class="sd">        img : MyImage object</span>
-</span><span id="Apps.FFT-191"><a href="#Apps.FFT-191"><span class="linenos">191</span></a><span class="sd">            Object of myimg.api.MyImage class, created within this package.</span>
-</span><span id="Apps.FFT-192"><a href="#Apps.FFT-192"><span class="linenos">192</span></a>
-</span><span id="Apps.FFT-193"><a href="#Apps.FFT-193"><span class="linenos">193</span></a><span class="sd">        Returns</span>
-</span><span id="Apps.FFT-194"><a href="#Apps.FFT-194"><span class="linenos">194</span></a><span class="sd">        -------</span>
-</span><span id="Apps.FFT-195"><a href="#Apps.FFT-195"><span class="linenos">195</span></a><span class="sd">        None</span>
-</span><span id="Apps.FFT-196"><a href="#Apps.FFT-196"><span class="linenos">196</span></a><span class="sd">            The result is FFT object.</span>
-</span><span id="Apps.FFT-197"><a href="#Apps.FFT-197"><span class="linenos">197</span></a><span class="sd">            MyImage object aggregates the FFT object.</span>
-</span><span id="Apps.FFT-198"><a href="#Apps.FFT-198"><span class="linenos">198</span></a><span class="sd">            Therefore, the FFT object is accessible as img.FFT.</span>
-</span><span id="Apps.FFT-199"><a href="#Apps.FFT-199"><span class="linenos">199</span></a><span class="sd">            </span>
-</span><span id="Apps.FFT-200"><a href="#Apps.FFT-200"><span class="linenos">200</span></a><span class="sd">        Example</span>
-</span><span id="Apps.FFT-201"><a href="#Apps.FFT-201"><span class="linenos">201</span></a><span class="sd">        -------</span>
-</span><span id="Apps.FFT-202"><a href="#Apps.FFT-202"><span class="linenos">202</span></a><span class="sd">        &gt;&gt;&gt; import myimg.api as mi</span>
-</span><span id="Apps.FFT-203"><a href="#Apps.FFT-203"><span class="linenos">203</span></a><span class="sd">        &gt;&gt;&gt; img = mi.MyImage(&#39;someimage.png&#39;)</span>
-</span><span id="Apps.FFT-204"><a href="#Apps.FFT-204"><span class="linenos">204</span></a><span class="sd">        &gt;&gt;&gt; mi.Apps.FFT(img)  # add FFT to img object</span>
-</span><span id="Apps.FFT-205"><a href="#Apps.FFT-205"><span class="linenos">205</span></a><span class="sd">        &gt;&gt;&gt; img.FFT.show()    # show FFT (img object aggregates FFT object)</span>
-</span><span id="Apps.FFT-206"><a href="#Apps.FFT-206"><span class="linenos">206</span></a><span class="sd">        </span>
-</span><span id="Apps.FFT-207"><a href="#Apps.FFT-207"><span class="linenos">207</span></a><span class="sd">        For FFT object methods, see myimg.apps.fft sub-package.</span>
-</span><span id="Apps.FFT-208"><a href="#Apps.FFT-208"><span class="linenos">208</span></a><span class="sd">        &#39;&#39;&#39;</span>
-</span><span id="Apps.FFT-209"><a href="#Apps.FFT-209"><span class="linenos">209</span></a>        <span class="kn">import</span> <span class="nn">myimg.apps.fft</span>
-</span><span id="Apps.FFT-210"><a href="#Apps.FFT-210"><span class="linenos">210</span></a>        <span class="n">img</span><span class="o">.</span><span class="n">fft</span> <span class="o">=</span> <span class="n">myimg</span><span class="o">.</span><span class="n">apps</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">FFT</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Apps.FFT-190"><a href="#Apps.FFT-190"><span class="linenos">190</span></a>    <span class="k">class</span> <span class="nc">FFT</span><span class="p">(</span><span class="n">myimg</span><span class="o">.</span><span class="n">apps</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">FFT</span><span class="p">):</span>
+</span><span id="Apps.FFT-191"><a href="#Apps.FFT-191"><span class="linenos">191</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="Apps.FFT-192"><a href="#Apps.FFT-192"><span class="linenos">192</span></a><span class="sd">        Class providing FFT objects.</span>
+</span><span id="Apps.FFT-193"><a href="#Apps.FFT-193"><span class="linenos">193</span></a><span class="sd">        </span>
+</span><span id="Apps.FFT-194"><a href="#Apps.FFT-194"><span class="linenos">194</span></a><span class="sd">        * FFT object = Fast Fourier Transform of an image/array.</span>
+</span><span id="Apps.FFT-195"><a href="#Apps.FFT-195"><span class="linenos">195</span></a>
+</span><span id="Apps.FFT-196"><a href="#Apps.FFT-196"><span class="linenos">196</span></a><span class="sd">        &gt;&gt;&gt; # Simple usage of FFT objects</span>
+</span><span id="Apps.FFT-197"><a href="#Apps.FFT-197"><span class="linenos">197</span></a><span class="sd">        &gt;&gt;&gt; import myimg.api as mi        # standard import of myimg</span>
+</span><span id="Apps.FFT-198"><a href="#Apps.FFT-198"><span class="linenos">198</span></a><span class="sd">        &gt;&gt;&gt; img = mi.MyImage(&#39;some.png&#39;)  # open an image using myimg.api</span>
+</span><span id="Apps.FFT-199"><a href="#Apps.FFT-199"><span class="linenos">199</span></a><span class="sd">        &gt;&gt;&gt; fft = my.Apps.FFT(img)        # calculate FFT of the img object</span>
+</span><span id="Apps.FFT-200"><a href="#Apps.FFT-200"><span class="linenos">200</span></a><span class="sd">        &gt;&gt;&gt; fft.show(cmap=&#39;magma&#39;)        # show the result</span>
+</span><span id="Apps.FFT-201"><a href="#Apps.FFT-201"><span class="linenos">201</span></a><span class="sd">        </span>
+</span><span id="Apps.FFT-202"><a href="#Apps.FFT-202"><span class="linenos">202</span></a><span class="sd">        Parameters</span>
+</span><span id="Apps.FFT-203"><a href="#Apps.FFT-203"><span class="linenos">203</span></a><span class="sd">        ----------</span>
+</span><span id="Apps.FFT-204"><a href="#Apps.FFT-204"><span class="linenos">204</span></a><span class="sd">        img : image (array or str or path-like or MyImage object)</span>
+</span><span id="Apps.FFT-205"><a href="#Apps.FFT-205"><span class="linenos">205</span></a><span class="sd">            The 2D object, from which we will calculate FFT</span>
+</span><span id="Apps.FFT-206"><a href="#Apps.FFT-206"><span class="linenos">206</span></a><span class="sd">            = 2D-DFFT = 2D discrete fast Fourier transform.</span>
+</span><span id="Apps.FFT-207"><a href="#Apps.FFT-207"><span class="linenos">207</span></a>
+</span><span id="Apps.FFT-208"><a href="#Apps.FFT-208"><span class="linenos">208</span></a><span class="sd">        Returns</span>
+</span><span id="Apps.FFT-209"><a href="#Apps.FFT-209"><span class="linenos">209</span></a><span class="sd">        -------</span>
+</span><span id="Apps.FFT-210"><a href="#Apps.FFT-210"><span class="linenos">210</span></a><span class="sd">        FFT object.</span>
+</span><span id="Apps.FFT-211"><a href="#Apps.FFT-211"><span class="linenos">211</span></a><span class="sd">        </span>
+</span><span id="Apps.FFT-212"><a href="#Apps.FFT-212"><span class="linenos">212</span></a><span class="sd">        Technical details</span>
+</span><span id="Apps.FFT-213"><a href="#Apps.FFT-213"><span class="linenos">213</span></a><span class="sd">        -----------------</span>
+</span><span id="Apps.FFT-214"><a href="#Apps.FFT-214"><span class="linenos">214</span></a><span class="sd">        * FFT object, 3 basic attributes: FFT.fft (array of complex numbers),</span>
+</span><span id="Apps.FFT-215"><a href="#Apps.FFT-215"><span class="linenos">215</span></a><span class="sd">          FFT.intensity (array of intensities = magnitudes = real numbers)</span>
+</span><span id="Apps.FFT-216"><a href="#Apps.FFT-216"><span class="linenos">216</span></a><span class="sd">          and FFT.phase (array of phases = angles in range -pi:pi).</span>
+</span><span id="Apps.FFT-217"><a href="#Apps.FFT-217"><span class="linenos">217</span></a><span class="sd">        * FFT object is pre-processed in the sense that the intensity center</span>
+</span><span id="Apps.FFT-218"><a href="#Apps.FFT-218"><span class="linenos">218</span></a><span class="sd">          is shifted to the center of the array (using scipy.fftpack.fftshift).</span>
+</span><span id="Apps.FFT-219"><a href="#Apps.FFT-219"><span class="linenos">219</span></a><span class="sd">        * FFT object carries the information about calibration (pixel-size),</span>
+</span><span id="Apps.FFT-220"><a href="#Apps.FFT-220"><span class="linenos">220</span></a><span class="sd">          on condition it was created from MyImage object (the typical case).</span>
+</span><span id="Apps.FFT-221"><a href="#Apps.FFT-221"><span class="linenos">221</span></a><span class="sd">        &#39;&#39;&#39;</span>
+</span><span id="Apps.FFT-222"><a href="#Apps.FFT-222"><span class="linenos">222</span></a>        <span class="k">pass</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Calculate FFT of img object + add it as img.FFT.</p>
+            <div class="docstring"><p>Class providing FFT objects.</p>
+
+<ul>
+<li>FFT object = Fast Fourier Transform of an image/array.</li>
+</ul>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Simple usage of FFT objects</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn"><a href="">myimg.api</a></span> <span class="k">as</span> <span class="nn">mi</span>        <span class="c1"># standard import of myimg</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">img</span> <span class="o">=</span> <span class="n">mi</span><span class="o">.</span><span class="n">MyImage</span><span class="p">(</span><span class="s1">&#39;some.png&#39;</span><span class="p">)</span>  <span class="c1"># open an image using <a href="">myimg.api</a></span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fft</span> <span class="o">=</span> <span class="n">my</span><span class="o">.</span><span class="n">Apps</span><span class="o">.</span><span class="n">FFT</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>        <span class="c1"># calculate FFT of the img object</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fft</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;magma&#39;</span><span class="p">)</span>        <span class="c1"># show the result</span>
+</code></pre>
+</div>
 
 <h6 id="parameters">Parameters</h6>
 
 <ul>
-<li><strong>img</strong> (MyImage object):
-Object of <a href="#MyImage">myimg.api.MyImage</a> class, created within this package.</li>
+<li><strong>img</strong> (image (array or str or path-like or MyImage object)):
+The 2D object, from which we will calculate FFT
+= 2D-DFFT = 2D discrete fast Fourier transform.</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
 
 <ul>
-<li><strong>None</strong>: The result is FFT object.
-MyImage object aggregates the FFT object.
-Therefore, the FFT object is accessible as img.FFT.</li>
+<li><strong>FFT object.</strong></li>
 </ul>
 
-<h6 id="example">Example</h6>
+<h6 id="technical-details">Technical details</h6>
 
-<div class="pdoc-code codehilite">
-<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn"><a href="">myimg.api</a></span> <span class="k">as</span> <span class="nn">mi</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">img</span> <span class="o">=</span> <span class="n">mi</span><span class="o">.</span><span class="n">MyImage</span><span class="p">(</span><span class="s1">&#39;someimage.png&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mi</span><span class="o">.</span><span class="n">Apps</span><span class="o">.</span><span class="n">FFT</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>  <span class="c1"># add FFT to img object</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">img</span><span class="o">.</span><span class="n">FFT</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>    <span class="c1"># show FFT (img object aggregates FFT object)</span>
-</code></pre>
+<ul>
+<li>FFT object, 3 basic attributes: FFT.fft (array of complex numbers),
+FFT.intensity (array of intensities = magnitudes = real numbers)
+and FFT.phase (array of phases = angles in range -pi:pi).</li>
+<li>FFT object is pre-processed in the sense that the intensity center
+is shifted to the center of the array (using scipy.fftpack.fftshift).</li>
+<li>FFT object carries the information about calibration (pixel-size),
+on condition it was created from MyImage object (the typical case).</li>
+</ul>
 </div>
 
-<p>For FFT object methods, see <a href="apps/fft.html">myimg.apps.fft</a> sub-package.</p>
-</div>
 
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="apps/fft.html#FFT">myimg.apps.fft.FFT</a></dt>
+                                <dd id="Apps.FFT.__init__" class="function"><a href="apps/fft.html#FFT.__init__">FFT</a></dd>
+                <dd id="Apps.FFT.normalize" class="function"><a href="apps/fft.html#FFT.normalize">normalize</a></dd>
+                <dd id="Apps.FFT.show" class="function"><a href="apps/fft.html#FFT.show">show</a></dd>
+                <dd id="Apps.FFT.save" class="function"><a href="apps/fft.html#FFT.save">save</a></dd>
 
+            </div>
+                                </dl>
                             </div>
-                            <div id="Apps.iLabels" class="classattr">
-                                        <input id="Apps.iLabels-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
+                </section>
+                <section id="Apps.RadialProfile">
+                            <input id="Apps.RadialProfile-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
             
-        <span class="def">def</span>
-        <span class="name">iLabels</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">img</span>, </span><span class="param"><span class="n">df</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
+    <span class="def">class</span>
+    <span class="name">Apps.RadialProfile</span><wbr>(<span class="base"><a href="apps/profiles.html#RadialProfile">myimg.apps.profiles.RadialProfile</a></span>):
 
-                <label class="view-source-button" for="Apps.iLabels-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="Apps.RadialProfile-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#Apps.iLabels"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Apps.iLabels-213"><a href="#Apps.iLabels-213"><span class="linenos">213</span></a>    <span class="k">def</span> <span class="nf">iLabels</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="Apps.iLabels-214"><a href="#Apps.iLabels-214"><span class="linenos">214</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="Apps.iLabels-215"><a href="#Apps.iLabels-215"><span class="linenos">215</span></a><span class="sd">        Initialize iLabels object + add it as img.iLabels.</span>
-</span><span id="Apps.iLabels-216"><a href="#Apps.iLabels-216"><span class="linenos">216</span></a>
-</span><span id="Apps.iLabels-217"><a href="#Apps.iLabels-217"><span class="linenos">217</span></a><span class="sd">        Parameters</span>
-</span><span id="Apps.iLabels-218"><a href="#Apps.iLabels-218"><span class="linenos">218</span></a><span class="sd">        ----------</span>
-</span><span id="Apps.iLabels-219"><a href="#Apps.iLabels-219"><span class="linenos">219</span></a><span class="sd">        img : MyImage object</span>
-</span><span id="Apps.iLabels-220"><a href="#Apps.iLabels-220"><span class="linenos">220</span></a><span class="sd">            MyImage object, created within this app.</span>
-</span><span id="Apps.iLabels-221"><a href="#Apps.iLabels-221"><span class="linenos">221</span></a><span class="sd">        df : None or Pandas.DataFrame </span>
-</span><span id="Apps.iLabels-222"><a href="#Apps.iLabels-222"><span class="linenos">222</span></a><span class="sd">            If df is a Pandas.Dataframe object,</span>
-</span><span id="Apps.iLabels-223"><a href="#Apps.iLabels-223"><span class="linenos">223</span></a><span class="sd">            the iLabels are created from this object/dataframe.</span>
-</span><span id="Apps.iLabels-224"><a href="#Apps.iLabels-224"><span class="linenos">224</span></a><span class="sd">            Otherwise, the iLabels are created as empty object/dataframe.</span>
-</span><span id="Apps.iLabels-225"><a href="#Apps.iLabels-225"><span class="linenos">225</span></a>
-</span><span id="Apps.iLabels-226"><a href="#Apps.iLabels-226"><span class="linenos">226</span></a><span class="sd">        Returns</span>
-</span><span id="Apps.iLabels-227"><a href="#Apps.iLabels-227"><span class="linenos">227</span></a><span class="sd">        -------</span>
-</span><span id="Apps.iLabels-228"><a href="#Apps.iLabels-228"><span class="linenos">228</span></a><span class="sd">        None</span>
-</span><span id="Apps.iLabels-229"><a href="#Apps.iLabels-229"><span class="linenos">229</span></a><span class="sd">            The result is iLabels object.</span>
-</span><span id="Apps.iLabels-230"><a href="#Apps.iLabels-230"><span class="linenos">230</span></a><span class="sd">            MyImage object aggregates the iLabels object.</span>
-</span><span id="Apps.iLabels-231"><a href="#Apps.iLabels-231"><span class="linenos">231</span></a><span class="sd">            Therefore, the iLabels object is accessible as img.iLabels.</span>
-</span><span id="Apps.iLabels-232"><a href="#Apps.iLabels-232"><span class="linenos">232</span></a><span class="sd">            </span>
-</span><span id="Apps.iLabels-233"><a href="#Apps.iLabels-233"><span class="linenos">233</span></a><span class="sd">        Example</span>
-</span><span id="Apps.iLabels-234"><a href="#Apps.iLabels-234"><span class="linenos">234</span></a><span class="sd">        -------</span>
-</span><span id="Apps.iLabels-235"><a href="#Apps.iLabels-235"><span class="linenos">235</span></a><span class="sd">        &gt;&gt;&gt; # TODO =&gt; short example =&gt; Pavlina</span>
-</span><span id="Apps.iLabels-236"><a href="#Apps.iLabels-236"><span class="linenos">236</span></a><span class="sd">        &#39;&#39;&#39;</span>
-</span><span id="Apps.iLabels-237"><a href="#Apps.iLabels-237"><span class="linenos">237</span></a>        <span class="kn">import</span> <span class="nn">myimg.apps.iLabels.classPeaks</span>
-</span><span id="Apps.iLabels-238"><a href="#Apps.iLabels-238"><span class="linenos">238</span></a>        <span class="k">if</span> <span class="n">df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Apps.iLabels-239"><a href="#Apps.iLabels-239"><span class="linenos">239</span></a>            <span class="n">img</span><span class="o">.</span><span class="n">iLabels</span> <span class="o">=</span> <span class="n">myimg</span><span class="o">.</span><span class="n">apps</span><span class="o">.</span><span class="n">iLabels</span><span class="o">.</span><span class="n">classPeaks</span><span class="o">.</span><span class="n">Peaks</span><span class="p">(</span>
-</span><span id="Apps.iLabels-240"><a href="#Apps.iLabels-240"><span class="linenos">240</span></a>                <span class="n">img</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">img</span><span class="p">,</span> <span class="n">img_name</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-</span><span id="Apps.iLabels-241"><a href="#Apps.iLabels-241"><span class="linenos">241</span></a>        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>    
-</span><span id="Apps.iLabels-242"><a href="#Apps.iLabels-242"><span class="linenos">242</span></a>            <span class="n">img</span><span class="o">.</span><span class="n">iLabels</span> <span class="o">=</span> <span class="n">myimg</span><span class="o">.</span><span class="n">apps</span><span class="o">.</span><span class="n">iLabels</span><span class="o">.</span><span class="n">classPeaks</span><span class="o">.</span><span class="n">Peaks</span><span class="p">(</span>
-</span><span id="Apps.iLabels-243"><a href="#Apps.iLabels-243"><span class="linenos">243</span></a>                <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">img</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">img</span><span class="p">,</span> <span class="n">img_name</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-</span><span id="Apps.iLabels-244"><a href="#Apps.iLabels-244"><span class="linenos">244</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="Apps.iLabels-245"><a href="#Apps.iLabels-245"><span class="linenos">245</span></a>            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error initializing MyImage.iLabels!&#39;</span><span class="p">)</span>
-</span><span id="Apps.iLabels-246"><a href="#Apps.iLabels-246"><span class="linenos">246</span></a>            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Wrong type of </span><span class="si">{peaks}</span><span class="s1"> argument!&#39;</span><span class="p">)</span>
-</span><span id="Apps.iLabels-247"><a href="#Apps.iLabels-247"><span class="linenos">247</span></a>            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Empty </span><span class="si">{peaks}</span><span class="s1"> object created.&#39;</span><span class="p">)</span>
-</span><span id="Apps.iLabels-248"><a href="#Apps.iLabels-248"><span class="linenos">248</span></a>            <span class="n">img</span><span class="o">.</span><span class="n">iLabels</span> <span class="o">=</span> <span class="n">myimg</span><span class="o">.</span><span class="n">apps</span><span class="o">.</span><span class="n">iLabels</span><span class="o">.</span><span class="n">classPeaks</span><span class="o">.</span><span class="n">Peaks</span><span class="p">(</span>
-</span><span id="Apps.iLabels-249"><a href="#Apps.iLabels-249"><span class="linenos">249</span></a>                <span class="n">img</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">img</span><span class="p">,</span> <span class="n">img_name</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <a class="headerlink" href="#Apps.RadialProfile"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Apps.RadialProfile-225"><a href="#Apps.RadialProfile-225"><span class="linenos">225</span></a>    <span class="k">class</span> <span class="nc">RadialProfile</span><span class="p">(</span><span class="n">myimg</span><span class="o">.</span><span class="n">apps</span><span class="o">.</span><span class="n">profiles</span><span class="o">.</span><span class="n">RadialProfile</span><span class="p">):</span>
+</span><span id="Apps.RadialProfile-226"><a href="#Apps.RadialProfile-226"><span class="linenos">226</span></a>        <span class="k">pass</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Initialize iLabels object + add it as img.iLabels.</p>
-
-<h6 id="parameters">Parameters</h6>
-
-<ul>
-<li><strong>img</strong> (MyImage object):
-MyImage object, created within this app.</li>
-<li><strong>df</strong> (None or Pandas.DataFrame):
-If df is a Pandas.Dataframe object,
-the iLabels are created from this object/dataframe.
-Otherwise, the iLabels are created as empty object/dataframe.</li>
-</ul>
-
-<h6 id="returns">Returns</h6>
-
-<ul>
-<li><strong>None</strong>: The result is iLabels object.
-MyImage object aggregates the iLabels object.
-Therefore, the iLabels object is accessible as img.iLabels.</li>
-</ul>
-
-<h6 id="example">Example</h6>
-
-<div class="pdoc-code codehilite">
-<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="c1"># TODO =&gt; short example =&gt; Pavlina</span>
-</code></pre>
-</div>
+            <div class="docstring"><p>Class defining <em>RadialProfile</em> object.</p>
 </div>
 
 
-                            </div>
                 </section>
                 <section id="Settings">
                             <input id="Settings-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -999,33 +982,33 @@ Therefore, the iLabels object is accessible as img.iLabels.</li>
 
     </div>
     <a class="headerlink" href="#Settings"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Settings-253"><a href="#Settings-253"><span class="linenos">253</span></a><span class="k">class</span> <span class="nc">Settings</span><span class="p">:</span>
-</span><span id="Settings-254"><a href="#Settings-254"><span class="linenos">254</span></a><span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="Settings-255"><a href="#Settings-255"><span class="linenos">255</span></a><span class="sd">    Settings for myimg package.</span>
-</span><span id="Settings-256"><a href="#Settings-256"><span class="linenos">256</span></a><span class="sd">    </span>
-</span><span id="Settings-257"><a href="#Settings-257"><span class="linenos">257</span></a><span class="sd">    * This class (myimg.Settings)</span>
-</span><span id="Settings-258"><a href="#Settings-258"><span class="linenos">258</span></a><span class="sd">      imports all dataclasses from myimg.settings.</span>
-</span><span id="Settings-259"><a href="#Settings-259"><span class="linenos">259</span></a><span class="sd">    * Thanks to this import, we can use Settings myimg.api as follows:</span>
-</span><span id="Settings-260"><a href="#Settings-260"><span class="linenos">260</span></a><span class="sd">            </span>
-</span><span id="Settings-261"><a href="#Settings-261"><span class="linenos">261</span></a><span class="sd">    &gt;&gt;&gt; # Sample usage of Settings class</span>
-</span><span id="Settings-262"><a href="#Settings-262"><span class="linenos">262</span></a><span class="sd">    &gt;&gt;&gt; # (this is NOT a typical usage of Settings dataclasses</span>
-</span><span id="Settings-263"><a href="#Settings-263"><span class="linenos">263</span></a><span class="sd">    &gt;&gt;&gt; # (the settings are usually not changed and just used in myimg funcs</span>
-</span><span id="Settings-264"><a href="#Settings-264"><span class="linenos">264</span></a><span class="sd">    &gt;&gt;&gt; import myimg.api as mi</span>
-</span><span id="Settings-265"><a href="#Settings-265"><span class="linenos">265</span></a><span class="sd">    &gt;&gt;&gt; mi.Settings.Scalebar.position = (10,650)</span>
-</span><span id="Settings-266"><a href="#Settings-266"><span class="linenos">266</span></a><span class="sd">    &#39;&#39;&#39;</span>
-</span><span id="Settings-267"><a href="#Settings-267"><span class="linenos">267</span></a>    
-</span><span id="Settings-268"><a href="#Settings-268"><span class="linenos">268</span></a>    <span class="c1"># Technical notes:</span>
-</span><span id="Settings-269"><a href="#Settings-269"><span class="linenos">269</span></a>    <span class="c1"># * All settings/defaults are in separate data module {myimg.settings};</span>
-</span><span id="Settings-270"><a href="#Settings-270"><span class="linenos">270</span></a>    <span class="c1">#   this is better and cleaner (clear separation of code and settings).</span>
-</span><span id="Settings-271"><a href="#Settings-271"><span class="linenos">271</span></a>    <span class="c1"># * In this module we define class Settings,</span>
-</span><span id="Settings-272"><a href="#Settings-272"><span class="linenos">272</span></a>    <span class="c1">#   in which we import all necessary Setting subclasses.</span>
-</span><span id="Settings-273"><a href="#Settings-273"><span class="linenos">273</span></a>    <span class="c1"># Why is it done like this?</span>
-</span><span id="Settings-274"><a href="#Settings-274"><span class="linenos">274</span></a>    <span class="c1">#   =&gt; To have an easy access to Settings for the users of this module.</span>
-</span><span id="Settings-275"><a href="#Settings-275"><span class="linenos">275</span></a>    <span class="c1"># How does it work in real life?</span>
-</span><span id="Settings-276"><a href="#Settings-276"><span class="linenos">276</span></a>    <span class="c1">#   =&gt; Import myimg.api and use Settings as shown in the docstring above.</span>
-</span><span id="Settings-277"><a href="#Settings-277"><span class="linenos">277</span></a>    
-</span><span id="Settings-278"><a href="#Settings-278"><span class="linenos">278</span></a>    <span class="kn">from</span> <span class="nn">myimg.settings</span> <span class="kn">import</span> <span class="n">Scalebar</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> <span class="n">Caption</span>
-</span><span id="Settings-279"><a href="#Settings-279"><span class="linenos">279</span></a>    <span class="kn">from</span> <span class="nn">myimg.settings</span> <span class="kn">import</span> <span class="n">MicCalibrations</span><span class="p">,</span> <span class="n">MicDescriptionFiles</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Settings-254"><a href="#Settings-254"><span class="linenos">254</span></a><span class="k">class</span> <span class="nc">Settings</span><span class="p">:</span>
+</span><span id="Settings-255"><a href="#Settings-255"><span class="linenos">255</span></a><span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="Settings-256"><a href="#Settings-256"><span class="linenos">256</span></a><span class="sd">    Settings for myimg package.</span>
+</span><span id="Settings-257"><a href="#Settings-257"><span class="linenos">257</span></a><span class="sd">    </span>
+</span><span id="Settings-258"><a href="#Settings-258"><span class="linenos">258</span></a><span class="sd">    * This class (myimg.Settings)</span>
+</span><span id="Settings-259"><a href="#Settings-259"><span class="linenos">259</span></a><span class="sd">      imports all dataclasses from myimg.settings.</span>
+</span><span id="Settings-260"><a href="#Settings-260"><span class="linenos">260</span></a><span class="sd">    * Thanks to this import, we can use Settings myimg.api as follows:</span>
+</span><span id="Settings-261"><a href="#Settings-261"><span class="linenos">261</span></a><span class="sd">            </span>
+</span><span id="Settings-262"><a href="#Settings-262"><span class="linenos">262</span></a><span class="sd">    &gt;&gt;&gt; # Sample usage of Settings class</span>
+</span><span id="Settings-263"><a href="#Settings-263"><span class="linenos">263</span></a><span class="sd">    &gt;&gt;&gt; # (this is NOT a typical usage of Settings dataclasses</span>
+</span><span id="Settings-264"><a href="#Settings-264"><span class="linenos">264</span></a><span class="sd">    &gt;&gt;&gt; # (the settings are usually not changed and just used in myimg funcs</span>
+</span><span id="Settings-265"><a href="#Settings-265"><span class="linenos">265</span></a><span class="sd">    &gt;&gt;&gt; import myimg.api as mi</span>
+</span><span id="Settings-266"><a href="#Settings-266"><span class="linenos">266</span></a><span class="sd">    &gt;&gt;&gt; mi.Settings.Scalebar.position = (10,650)</span>
+</span><span id="Settings-267"><a href="#Settings-267"><span class="linenos">267</span></a><span class="sd">    &#39;&#39;&#39;</span>
+</span><span id="Settings-268"><a href="#Settings-268"><span class="linenos">268</span></a>    
+</span><span id="Settings-269"><a href="#Settings-269"><span class="linenos">269</span></a>    <span class="c1"># Technical notes:</span>
+</span><span id="Settings-270"><a href="#Settings-270"><span class="linenos">270</span></a>    <span class="c1"># * All settings/defaults are in separate data module {myimg.settings};</span>
+</span><span id="Settings-271"><a href="#Settings-271"><span class="linenos">271</span></a>    <span class="c1">#   this is better and cleaner (clear separation of code and settings).</span>
+</span><span id="Settings-272"><a href="#Settings-272"><span class="linenos">272</span></a>    <span class="c1"># * In this module we define class Settings,</span>
+</span><span id="Settings-273"><a href="#Settings-273"><span class="linenos">273</span></a>    <span class="c1">#   in which we import all necessary Setting subclasses.</span>
+</span><span id="Settings-274"><a href="#Settings-274"><span class="linenos">274</span></a>    <span class="c1"># Why is it done like this?</span>
+</span><span id="Settings-275"><a href="#Settings-275"><span class="linenos">275</span></a>    <span class="c1">#   =&gt; To have an easy access to Settings for the users of this module.</span>
+</span><span id="Settings-276"><a href="#Settings-276"><span class="linenos">276</span></a>    <span class="c1"># How does it work in real life?</span>
+</span><span id="Settings-277"><a href="#Settings-277"><span class="linenos">277</span></a>    <span class="c1">#   =&gt; Import myimg.api and use Settings as shown in the docstring above.</span>
+</span><span id="Settings-278"><a href="#Settings-278"><span class="linenos">278</span></a>    
+</span><span id="Settings-279"><a href="#Settings-279"><span class="linenos">279</span></a>    <span class="kn">from</span> <span class="nn">myimg.settings</span> <span class="kn">import</span> <span class="n">Scalebar</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> <span class="n">Caption</span>
+</span><span id="Settings-280"><a href="#Settings-280"><span class="linenos">280</span></a>    <span class="kn">from</span> <span class="nn">myimg.settings</span> <span class="kn">import</span> <span class="n">MicCalibrations</span><span class="p">,</span> <span class="n">MicDescriptionFiles</span>
 </span></pre></div>
 
 

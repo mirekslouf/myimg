@@ -39,14 +39,15 @@ Documentation, help and examples
 
 * [PyPI](https://pypi.org/project/myimg) repository.
 * [GitHub](https://github.com/mirekslouf/myimg) repository.
-* [GitHub Pages](https://mirekslouf.github.io/myimg)
-  with [documentation](https://mirekslouf.github.io/myimg/docs). 
+* [GitHub Pages](https://mirekslouf.github.io/myimg/)
+  with [help](https://mirekslouf.github.io/myimg/docs)
+  and [complete package documentation](https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg.html). 
 
 
 Versions of MyImg
 -----------------
 
-* Version 0.1 = 1st draft, too complex, later completely re-written 
-* Version 0.2 = 2nd draft, better concept; functions: cut, crop, label, scalebar
-* Version 0.3 = MyImage and MyReport modules Ok; FFT and iLabels semi-finished 
-* Version 0.4 = TODO: scalebar/stripes,border/shadow, improved FFT, iLabels ...
+* Version 0.1 = 1st draft: too complex, later completely re-written 
+* Version 0.2 = 2nd draft: MyImage object with cut, crop, label, scalebar
+* Version 0.3 = objects: MyImage, MyReport; apps: FFT, iLabels (semi-finished) 
+* Version 0.4 = TODO: add scalebar-stripes, mdistr + finalize FFT, iLabels
