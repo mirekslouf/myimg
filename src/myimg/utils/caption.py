@@ -63,7 +63,7 @@ def insert_caption(my_img, text, F, **kwargs):
     text_height_pix = text_height_rel * my_img.height
     
     # (3) Determine font size
-    fontsize = my_img.get_font_size(font, text_height_pix)
+    fontsize = my_img.set_font_size(font, text_height_pix)
     offset   = my_img.width * Settings.Caption.text_offset * F
     
     # (4) Create label
@@ -72,8 +72,8 @@ def insert_caption(my_img, text, F, **kwargs):
     # Initialize font
     my_font = ImageFont.truetype(font, fontsize)
     # Get height and width of current label
-    caption_text_height = my_img.font_height_pix(draw, my_font)
-    caption_bar_height  = int(round(caption_text_height + 1.45*offset))
+    caption_text_height = text_height_pix
+    caption_bar_height  = int(round(caption_text_height + 1.50*offset))
     # Add bottom bar at the bottom of an image
     my_img.border(border=(0,0,0,caption_bar_height), color=bcolor)
     # Draw the text into the bottom bar

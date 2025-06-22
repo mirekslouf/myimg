@@ -62,7 +62,7 @@ def insert_label(my_img, label, F, **kwargs):
     text_height_pix = text_height_rel * my_img.height
     
     # (3) Determine font size
-    fontsize = my_img.get_font_size(font, text_height_pix)
+    fontsize = my_img.set_font_size(font, text_height_pix)
     offset   = my_img.width * Settings.Label.text_offset * F
     
     # (4) Create label
@@ -72,7 +72,7 @@ def insert_label(my_img, label, F, **kwargs):
     my_font = ImageFont.truetype(font, fontsize)
     # ...get height and width of current label
     # my_label_height = fontsize
-    my_label_height = my_img.font_height_pix(draw, my_font)
+    my_label_height = text_height_pix
     my_label_width  = my_font.getlength(label)
     # ...draw background box if required
     # (constants around offset - empirical, to get a reasonable backround
