@@ -997,14 +997,14 @@ class MyReport:
         #    (channels ~ colors + transparency; usually the last dim/axis
         # 3) Rescale images/arrays if requested.
         #    (the images/arrays are rescaled if self.rescale != None
-        self.process_images()
+        self._process_images()
         
         # Process self.itypes
-        # 1) Check image tepes
+        # 1) Check image types
         #    (the only allowed image types are 'rgb' and 'gray'.
         # 2) Define additional parameters for montage:
         #    (the additional parameters will be saved within the self object
-        self.check_image_types()
+        self._check_image_types()
         
         # Rescale images if requested
         # (rescaleing can be performed AFTER...
@@ -1012,7 +1012,7 @@ class MyReport:
         # (...self.check_image_types => because this sets additional params:
         # (   self.montage_channel_axis
         # (   self.montage_number_of_channels
-        if self.rescale is not None: self.rescale_images()
+        if self.rescale is not None: self._rescale_images()
         
         # Adjust white/black colors according to image type and no-of-channels
         if (self.itype == 'rgb') or (self.itype == 'rgba'): 
@@ -1021,6 +1021,11 @@ class MyReport:
         elif self.itype == 'gray':
             image_black = 0
             image_white = 255
+        else:
+            # TODO: Add support for binary images.
+            print('MyReport: error during initialization!')
+            print('Unknown/unsupported image type.')
+            sys.exit()
                 
         # Analyze fill = fill_color and adjust acc.to image_type
         match fill:
@@ -1041,7 +1046,7 @@ class MyReport:
             self.montage = self.montage[my_crop:-my_crop, my_crop:-my_crop]
 
     
-    def process_images(self):
+    def _process_images(self):
         '''
         Check and prepare images before creating MyReport/montage.
         
@@ -1055,7 +1060,12 @@ class MyReport:
        * If the conerted images/arrays do not have the same dimension(=type),
          then this methods ends with an error
          and the user has to adjust images BEFORE calling the montage method.
-       
+
+        Parameters
+        ----------
+        None
+            Auxiliary method of MyReport object; the only argument is self.
+        
         Returns
         -------
         None
@@ -1065,12 +1075,14 @@ class MyReport:
             this method prints an error and the program quits.
         '''
         
-        # (0) Prepare variables
+        # (1) Check dimensions of all images.
+        
+        # (1a) Prepare empty list for image dimensions
         img_sizes = []
         
-        # (1) Go through the images (self.images) to create montage array.
+        # (1b) Go through the images (self.images) and save their dimensions 
         for i,image in enumerate(self.images):
-            # Case 1: NumPy array => just 
+            # Case 1: NumPy array => just append its dimension = array.shape 
             if type(image) == np.ndarray:
                 # self.images is not changed = we already have an array
                 # just save image size
@@ -1099,31 +1111,38 @@ class MyReport:
                     print('Error in: myimg.Montage.process_images')
                     print('Unknown input image type!')
                     sys.exit()
-                # Save image size
+                # Save image size = append it to img_sizes list
                 img_sizes.append(self.images[i].shape)
+        
+        # (1c) Check if all image sizes are the same
+        # Trick (a bit thorny, but verified): All-list-elements-are-the-same
+        #  if the number of the occurrences of the 1st (or 2nd, 3rd..) element
+        #  equals to the total number of elements in the list.
+        the_same_dimensions = img_sizes.count(img_sizes[0]) == len(img_sizes)
+        # Now the final check
+        if not(the_same_dimensions):
+            print('MyReport: error during initialization!')
+            print('The images do not have the same dimensions.')
+            sys.exit()
                 
         # (2) Additional adjustment for all grayscale images
-        # => if itype = 'gray', then normalize image to 8bit grayscale.
-        # (3-value gray-imgs normalized to 1, 8bit to 255, 16bit to 65535
-        # (moreover, we can have a combination of various grayscales
-        # (to get reproducible results, we ALWA&S normalize to 8-bit gray
+        # * if itype = 'gray', we should normalize image to 8bit grayscale
+        # * in ski.io.imread, the grayscale images may have different formats:
+        #   => 3-value gray-imgs normalized to 1, 8bit to 255, 16bit to 65535
+        # * moreover, we can have a combination of various grayscales
+        #   => to get reproducible results, we ALWAYS normalize to 8-bit gray
         for i,image in enumerate(self.images):
-            if 'gray' in self.itype:
+            if self.itype == 'gray':
                 arr_max = np.max(self.images[i])
                 self.images[i] = np.round(
                     self.images[i]/arr_max * 255).astype(np.uint8)
         
-        # (3) Final check if all images are of the same size
-        # Trick: All-list-elements-are-the-same
-        # if the number of the occurrences of the first elements
-        # equals to the total number of elements in the list.
-        all_the_same = img_sizes.count(img_sizes[0]) == len(img_sizes)
-        # Now the final check
-        if all_the_same:
-            return(self.images)
-        
+        # (3) If all tests/adjustments above were Ok,
+        # we can return the list of adjusted images in the form of arrays.
+        return(self.images)
     
-    def check_image_types(self):
+    
+    def _check_image_types(self):
         '''
         Check image/array types and prepare additional parametrs for montage.
         
@@ -1133,12 +1152,17 @@ class MyReport:
             - self.montage_channel_axis => the last axis of the array
             - self.montage_number_of_channels => gray ~ 1, rgb ~ 3, rgba ~ 4
         
+        Parameters
+        ----------
+        None
+            Auxiliary method of MyReport object; the only argument is self.
+        
         Returns
         -------
         None
             The additional montage parameters are are saved in
             self.montage_channel_axes and self.montage_number_of_channels.
-            These parameters are needed
+            These parameters are employed within MyReport object
             for correct treatement of rgb/gray images/arrays.
         '''
         
@@ -1161,13 +1185,18 @@ class MyReport:
             sys.exit()
             
     
-    def rescale_images(self):
+    def _rescale_images(self):
         '''
         Rescale input images/arrays if requested.
         
         * The images are rescaled if self.rescale != None.
         * This rescaling should be applied to each of self.images
           AFTER the images have been checked and converted to arrays.
+       
+        Parameters
+        ----------
+        None
+            Auxiliary method of MyReport object; the only argument is self.
        
         Returns
         -------
@@ -1198,6 +1227,45 @@ class MyReport:
                     ).astype(original_data_type)  # preserve original data type
 
 
+    def to_gray(self):
+        '''
+        Convert MyReport to grayscale image.
+        
+        Parameters
+        ----------
+        None
+            In fact, this method is rarely needed.
+            The MyReport image type (gray, rgb) is defined at initialization.
+            Nevertheless, we *might have used* color images for montage,
+            but we may want to convert the final report to grayscale.
+
+        Returns
+        -------
+        None
+            The MyReport is just converted
+            so that it can be saved as a grayscale image.
+        '''
+        
+        # (1) Auxiliary function to convert RGB images to grayscale.
+        # https://stackoverflow.com/q/12201577
+        def rgb2gray(arr):
+            return( np.dot(arr[...,:3], [0.2989, 0.5870, 0.1140]) )
+        
+        # (2) Main code of the method
+        # (convert image to grayscale, considering known image types
+        # (the image type should be saved in MyReport.itype = self.itype
+        if self.itype == 'gray':
+            pass
+        elif self.itype in ('rgb','rgba'):    
+            self.montage = rgb2gray(self.montage)
+            self.itype = 'gray'
+        else:
+            # TODO: Support for binary images.
+            print('MyReport: error when converting to grayscale!')
+            print('Unknown/unsupported image type.')
+            sys.exit()
+    
+        
     def show(self, cmap=None, axes=False):
         '''
         Show MyReport = rectangular montage of images.
@@ -1718,7 +1786,7 @@ class ScaleWithUnits(NumberWithUnits):
     def adjust_scalebar_size(self):
         '''
         Set scalebar to some reasonable lenght
-        and modify lenght-in-pixels accordingly.
+        and modify the lenght-in-pixels accordingly.
 
         Returns
         -------
