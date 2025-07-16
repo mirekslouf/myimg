@@ -150,12 +150,12 @@ def prep_data(fpath_img, fpath_peaks=None, min_xy=20, imID='im01', show=False):
     """
     # Load image and convert it to numpy.array
     # img_obj = mi.MyImage(fpath_img, peaks=True)
-    img_obj = mi.MyImage(fpath_img)
-    arr = np.array(img_obj.img)
+    img_obj = Image.open(fpath_img)
+    arr = np.array(img_obj)
    
     # Load coordinates of peaks from the image
     if fpath_peaks is not None:
-        peaks = mipks.Peaks(img=arr)
+        peaks = mipks.Peaks(img=fpath_img)
         pks = peaks.read(fpath_peaks)
     
         # Optionally show image with detected peaks
