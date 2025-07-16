@@ -12,8 +12,10 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.base import ClassifierMixin
-
+import numpy as np
 import myimg.apps.iLabels as milab
+from PIL import Image
+
 
 
 class Peaks:
@@ -57,7 +59,7 @@ class Peaks:
             sys.exit()
 
         # Initialize the image and image name
-        self.img = img
+        self.img = Image.open(img)
         self.cmap = cmap
         self.img_name = img_name
         self.file_name = file_name
@@ -92,21 +94,24 @@ class Peaks:
             # Print any other exceptions that occur
 
     
-    def show_as_text(self):
+    def show_as_text(self, num=5):
         '''
         Display the peak data as text.
     
+        Parameters
+        ----------
+        num : int
+            Number of rows to be printed in the console. Default is 5.
+        
         Returns
         -------
         None
         '''
-        if self.df is not None:
-            print(self.df.to_string(index=False)) 
-            # Print the DataFrame as a string without the index
+        if self.df is not None and not self.df.empty:
+            print(self.df.head(num).to_string(index=False))
         else:
             print("No data to display. Please read data from a file first.")
-            # Print message if no data is available
-    
+        
     
     def show_in_image(self):
         '''
@@ -233,23 +238,27 @@ class Peaks:
             self.masks = [self.masks[i] for i in range(1, 5)]
 
             # Proceed with detector-based correlation using the mask
-            self.detected = milab.detectors.detector_NCC(image=self.img, 
-                                                         masks=self.masks,
-                                                         threshold=thr,
-                                                         show=show,
-                                                         n_jobs=n_jobs,
-                                                         cmap=self.cmap,
-                                                         margin=margin,
-                                                         ext=ext)
+            img = np.array(self.img)
+            self.detected, self.im_masked = milab.detectors.detector_NCC(
+                image=img, 
+                masks=self.masks,
+                threshold=thr,
+                show=show,
+                n_jobs=n_jobs,
+                cmap=self.cmap,
+                margin=margin,
+                ext=ext)
+            
+            # Save coordinates to .pkl          
+            self.detected.to_csv('ncc_'+self.file_name+".txt", index=False)
+            self.detected.to_pickle('ncc_' + self.file_name + ".pkl")
+            print("All outputs saved successfully.")
+            # return self.detected
 
         else:
             raise ValueError("Invalid detection method. Use 'manual'/'ncc'.")
         
-        
-        return self.detected
-    
-    
-    
+
     def characterize(self, img_path, peak_path, mask_path, 
                      imID='im0x', preprocess=True, show=False):
         """
@@ -287,7 +296,8 @@ class Peaks:
             attributes such as self.features, self.selection, self.X_train, 
             self.X_test, etc.
         """
-        
+        self.img = np.array(self.img)
+            
         # (1) Load masks
         self.masks = {}
         for i in range(1, 5):
@@ -335,7 +345,7 @@ class Peaks:
                                                        self.masks,
                                                        show=False)
         
-        self.features = self.features.dropna()
+        # self.features = self.features.dropna()
         
         if show:
             milab.features.visualize_features(self.features, method="box")
@@ -391,7 +401,7 @@ class Peaks:
         return peaks
     
     
-    def classify(self, data, method='gauss_fit', target=None, estimator=None, param_dist=None, sfeatures=None):
+    def classify(self, data, method='rfc', target=None, estimator=None, param_dist=None, sfeatures=None):
         """
         Classifies input data using the specified classification method.
         
@@ -439,7 +449,7 @@ class Peaks:
             # If no estimator is provided, optimize and train a new Random Forest
             if estimator is None:
                 # Perform hyperparameter search and get an optimized classifier
-                rfc_opt = milab.classifiers.get_optimal_rfc(self.X_train,
+                rfc_opt, _ = milab.classifiers.get_optimal_rfc(self.X_train,
                                                   self.y_train, 
                                                   param_dist)
                 
