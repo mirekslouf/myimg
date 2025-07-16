@@ -23,4 +23,4 @@ List of key objects, modules, and sub-packages:
 * myimg.utils = sub-package with code for specific/more complex utils in myimg
 '''
 
-__version__ = '0.3.3'
+__version__ = '0.3.5'

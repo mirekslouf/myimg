@@ -3,8 +3,11 @@ MyImg :: Processing of micrographs
 
 * MyImg is a toolbox for the processing of micrographs, which can:
 	1. Process single micrographs (improve contrast, insert scalebars, etc.).
-	2. Prepare nice, publication-ready tiled images from processed micrographs.
-	3. Apply additional processing: FFT, size and shape distributions ...
+	2. Prepare high-quality tiled images from the processed micrographs.
+	3. Run additional processing and/or applications, such as:
+		- FFT = 2D Fourier transforms
+		- MDist = size distributions from series of micrographs
+		- iLabels = find and categorize nanoparticles on (S)TEM micrographs
 
 
 Principle
@@ -29,8 +32,8 @@ Quick start
       :: MyImage :: process single image(s)
 	- [Example 2](https://www.dropbox.com/scl/fi/x9nvbqr2epd2fms8k1qx8/ex2_tiled-images.nb.html.pdf?rlkey=qcjx8tcv3pjoxgs4kkjplo61m&st=ylwaxak1&dl=0)
 	  :: MyReport :: create nice, publication-ready image reports
-	- [Example 3]()
-	  :: Apps/FFT :: calculate Fourier transforms and use them in image analysis
+	- [Example 3](https://www.dropbox.com/scl/fi/u4brdkvufnb4hxn9p3z1w/ex3_2d-fft.nb.html.pdf?rlkey=sus0snlqfgmpvbtol2xojqizu&st=80ela7q3&dl=0)
+	  :: Apps/FFT :: calculate and analyze 2D Fourier transforms
 * Complete set of examples including testing data at
   [DropBox](https://www.dropbox.com/scl/fo/rdnhfl0eaiv3yueze2b24/APLqQqVV8BG8XC1_VDPbFxY?rlkey=pdzjibm35609oxtgfinxls3ga&st=qj8ul380&dl=0).
  
