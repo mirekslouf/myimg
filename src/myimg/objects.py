@@ -24,7 +24,7 @@ which is used in most image manipulations within myimg.api module.
 >>> img = mi.MyImage('some.bmp')  # open image: some.bmp
 >>> img.label('a')                # insert a label in the upper left corner
 >>> img.scalebar('rwi,100um')     # insert a scalebar to the lower right corner
->>> img.save_with_ext('_s.png')   # save the modified image to: some_ls.png
+>>> img.save_with_ext('_ls.png')  # save the modified image to: some_ls.png
 
 **MyReport** class creates the multi-image object,
 which contains several images arranged in a rectangular grid.
@@ -35,7 +35,7 @@ which contains several images arranged in a rectangular grid.
 >>> mrep = mi.MyReport(images,    # create montage image
 >>>     itype='gray', grid=(1,2), # ...grayscale, just two images in a row
 >>>     padding=10)               # ...padding/spacing between imgs = 10pixels
->>> mrep.save('mreport.png')      # save the final montage of (the two) images   
+>>> mrep.save('mreport.png')      # save the final montage of the two images   
 
 **Units**, **NumberWithUnits**, and **ScaleWithUnits** classes
 are used in myimg.utils.scalebar module
@@ -606,9 +606,7 @@ class MyImage:
         F : float, optional, default is None
             Multiplication coefficient/factor that changes the label size.
             If F = 1.2, then all label parameters are enlarged 1.2 times.
-        kwargs : list of keyword arguments
-            Allowed keyword arguments are:
-            color, bcolor, position, stripes, messages.
+        kwargs : keyword arguments
             See section *List of allowed kwargs* for detailed descriptions.
             
         Returns
@@ -660,9 +658,7 @@ class MyImage:
         F : float, optional, default is None
             Multiplication coefficient/factor that changes the text size.
             If F = 1.2, then all label parameters are enlarged 1.2 times.
-        kwargs : list of keyword arguments
-            Allowed keyword arguments are:
-            color, bcolor, messages.
+        kwargs : keyword arguments
             See section *List of allowed kwargs* for detailed descriptions.
             
         Returns
@@ -729,9 +725,7 @@ class MyImage:
         F : float, optional, the default is None
             Multiplication coefficient/factor that changes the scalebar size.
             If F = 1.2, then all scalebar parameters are enlarged 1.2 times.
-        kwargs : list of keyword arguments
-            Allowed keyword arguments are:
-            color, bcolor, position, stripes, messages.
+        kwargs : keyword arguments
             See section *List of allowed kwargs* below for more info. 
             
         Returns
@@ -831,7 +825,7 @@ class MyImage:
             If stripes = True or 1, draw scalebar with 5 stripes.
             If stripes = N, where N>=2, draw striped scalebar with N stripes.
         * messages : bool, default is False.
-            If messages=True, print info about program run.
+            If messages=True, print info about the program run.
         
         Technical notes
         ---------------
