@@ -680,12 +680,17 @@ class MyImage:
             Background color = color of the label background/box.
             The default is defined in myimg.settings.Caption
             (and that is why it does not have to be re-defined here).
-        * align : int or str
+        * align : int or str or None
             This parameter determines the alignment of the figure caption.
             If align = integer,
             x_position of the caption is {align} pixels from left.
             If align = string,
-            it can be either 'left' or 'Left' or ''
+            it can be either 'left' or 'center' or 'right'.
+            If align = None,
+            then it defaults to 'center'.
+            If align == int,
+            then the x-position of the caption will be aligned
+            *int* pixels from the left side of the image.
 
         Technical notes
         ---------------

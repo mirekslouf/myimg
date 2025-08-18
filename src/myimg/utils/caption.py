@@ -64,14 +64,14 @@ def insert_caption(my_img, text, F, **kwargs):
     
     # (3) Determine font size
     fontsize = my_img.set_font_size(font, text_height_pix)
-    offset   = my_img.width * Settings.Caption.text_offset * F
+    offset   = my_img.height * Settings.Caption.text_offset * F
     
     # (4) Create label
     # Initialize drawing
     draw = ImageDraw.Draw(my_img.img)
     # Initialize font
     my_font = ImageFont.truetype(font, fontsize)
-    # Get height and width of current label
+    # Get heights of caption-text and caption-bar
     caption_text_height = text_height_pix
     caption_bar_height  = int(round(caption_text_height + 1.50*offset))
     # Add bottom bar at the bottom of an image
@@ -82,9 +82,9 @@ def insert_caption(my_img, text, F, **kwargs):
     draw = ImageDraw.Draw(my_img.img)
     # (ii) prepare parameters for drawing: x_pos, x_anchor
     # (in draw.text, the single-line text alignment => anchor argument
-    if type(align) == int:
-        x_pos = align
-        x_anchor = 'la'
+    if (align is None) or (align in ('center','Center')):
+        x_pos = my_img.width // 2
+        x_anchor = 'ma'
     elif align in ('left','Left'):
         my_offset = (offset // 4) if align == 'Left' else offset
         x_pos = my_offset
@@ -93,9 +93,9 @@ def insert_caption(my_img, text, F, **kwargs):
         my_offset = (offset // 4) if align == 'Right' else offset
         x_pos = my_img.width - my_offset
         x_anchor = 'ra'
-    elif align == 'center':
-        x_pos = my_img.width // 2
-        x_anchor = 'ma'
+    elif type(align) == int:
+        x_pos = align
+        x_anchor = 'la'
     else:
         print('Image, figure caption - uknown alignment - setting default!')
         x_pos = my_img.width // 2
