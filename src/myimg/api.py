@@ -222,13 +222,135 @@ class Apps:
 
 
     class RadialProfile(myimg.apps.profiles.RadialProfile):
+        '''
+        Class providing RadialProfile objects.
+        
+        * RadialProfile object = intensity distribution as a function of radius.
+
+        >>> # Simple usage of RadialProfile objects
+        >>> import myimg.api as mi
+        >>> img = mi.MyImage('some.png')        # open an image
+        >>> rp = mi.Apps.RadialProfile(img)     # compute radial profile
+        >>> rp.show()                           # plot the result
+        >>> rp.save("radial.csv")               # save profile to file
+        
+        Parameters
+        ----------
+        img : image (array or str or path-like or MyImage object)
+            The 2D grayscale/binary image from which we calculate the profile.
+        center : tuple of two floats, optional
+            The (x, y) coordinates of the center. 
+            If None, the image center is used.
+
+        Returns
+        -------
+        RadialProfile object.
+        
+        Technical details
+        -----------------
+        * RadialProfile object has two main attributes:
+          RadialProfile.R (array of radii in pixels),
+          RadialProfile.I (array of mean intensities).
+        * RadialProfile is computed by averaging pixel intensities
+          in concentric circles around the center.
+        * Can be visualized with `.show()` or exported with `.save()`.
+        '''
         pass
 
+    class AzimuthalProfile (myimg.apps.profiles.AzimuthalProfile):
+        '''
+        Class providing AzimuthalProfile objects.
+        
+        * AzimuthalProfile object = intensity distribution as a function of angle.
+    
+        >>> # Simple usage of AzimuthalProfile objects
+        >>> import myimg.api as mi
+        >>> img = mi.MyImage('some.png')             # open an image
+        >>> ap = mi.Apps.AzimuthalProfile(img)       # compute azimuthal profile
+        >>> ap.show()                                # plot the result
+        >>> ap.save("azimuthal.csv")                 # save profile to file
+        
+        Parameters
+        ----------
+        img : image (array or str or path-like or MyImage object)
+            The 2D grayscale/binary image from which we calculate the profile.
+        center : tuple of two floats, optional
+            The (x, y) coordinates of the center. 
+            If None, the image center is used.
+        bins : int, optional
+            Number of angular bins (default = 360). Defines the resolution of
+            the profile in degrees.
+    
+        Returns
+        -------
+        AzimuthalProfile object.
+        
+        Technical details
+        -----------------
+        * AzimuthalProfile object has two main attributes:
+          AzimuthalProfile.Theta (array of angles in degrees),
+          AzimuthalProfile.I (array of mean intensities).
+        * AzimuthalProfile is computed by averaging pixel intensities
+          in angular sectors around the center.
+        * The angular range is 0–360 degrees.
+        * Can be visualized with `.show()` or exported with `.save()`.
+        '''
+        pass
 
-    class iLabels():
-        # NEW
-        # iLabels jsou zcela samostatny objekt
-        # mel by se pouzivat analogicky jako objekty FFT a RadialProfile vyse
+    class iLabels(myimg.apps.iLabels.classPeaks.Peaks):
+        '''
+        Class providing iLabels objects.
+
+        * iLabels object = peak annotation, detection, feature extraction,
+          and classification for immunolabelling data.
+        * Entry point: wraps `myimg.apps.iLabels.classPeaks.Peaks`.
+
+        >>> # Simple usage of iLabels objects
+        >>> import myimg.api as mi
+        >>> img = mi.MyImage("annotation_12_procc.tif")
+        >>> 
+        >>> # Initialize iLabels with image
+        >>> il = mi.Apps.iLabels(img=img.img, img_name="annotation_12_procc.tif")
+        >>> 
+        >>> # Load peaks (from pickle)
+        >>> il.read("annot12.pkl")
+        >>> 
+        >>> # Show peaks
+        >>> il.show_in_image()
+        >>> il.show_as_text(num=5)
+        >>> 
+        >>> # Detect peaks automatically
+        >>> il.find(method="ncc", mask_path="./masks", thr=0.2)
+        >>> 
+        >>> # Extract features
+        >>> il.characterize(img_path="annotation_12_procc.tif",
+        ...                 peak_path="annot12.pkl",
+        ...                 mask_path="./masks")
+        >>> 
+        >>> # Classify peaks
+        >>> il.classify(data=il.X_train, method="rfc", target=il.y_train)
+
+        Parameters
+        ----------
+        df : pandas.DataFrame, optional
+            Table with peak coordinates and labels.
+        img : str or array-like or PIL.Image.Image, optional
+            Input image associated with the peaks.
+        img_name : str, optional
+            Human-readable image name.
+        file_name : str, optional
+            Default filename for saving results.
+        cmap : str, optional
+            Colormap for display.
+        messages : bool, optional
+            If True, print progress messages.
+
+        Returns
+        -------
+        iLabels object
+            Provides methods for peak detection (`find`), feature extraction
+            (`characterize`), and classification (`classify`).
+        '''
         pass
         
         # OLD

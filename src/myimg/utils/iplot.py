@@ -424,23 +424,23 @@ def default_plot_params(image):
     Returns
     -------
     DefaultParams
-        An instance of DefaultParams containing default values for plot 
-        parameters.
-   '''
-    
+        An instance of DefaultParams containing default values for plot parameters.
+    '''
     # Get image size from PIL or NumPy
-    if hasattr(image, 'size'):  # PIL.Image
+    if hasattr(image, 'size') and isinstance(image.size, tuple):  # PIL.Image
         width, height = image.size
     elif hasattr(image, 'shape'):  # np.ndarray
         height, width = image.shape[:2]
     else:
-        raise TypeError("Unsupported image type. Provide a PIL.Image or NumPy array.")
+        raise TypeError(
+            "Unsupported image type. Provide a PIL.Image or NumPy array."
+        )
 
     class DefaultParams:
         xlim = [0, width]
         ylim = [height, 0]
         output_file = "output"
-        pdParticles = "particles"  # Add this line
+        pdParticles = "particles"
 
     return DefaultParams()
 

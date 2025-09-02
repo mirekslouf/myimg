@@ -47,28 +47,29 @@ def dataset(features, valid=False):
         The target variable (Class) for the validation set, returned only if 
         valid=True.
     """
-    # Drop columns that are not relevant for model training
-    X = features.drop(columns=['X', 'Y', 'Class', 'Note', 'imID'])
-    
-    # Target variable: 'Class'
+    # Drop metadata columns safely
+    X = features.drop(columns=['X', 'Y', 'Class', 'Note', 'imID'], errors='ignore')
     y = features['Class']
-    
-    # Split the data into training and test sets, maintaining class distribution 
-    # with stratify to ensure preservation of class distribution
-    X_train, X_test, y_train, y_test = train_test_split(X, y, 
-                                                        stratify=y, 
-                                                        random_state=42)
-    
-    # If valid is True, further split the test set into a validation set
+
+    # Only stratify if every class has >= 2 samples
+    class_counts = y.value_counts()
+    if (class_counts < 2).any():
+        print("Warning: some classes have <2 samples, skipping stratify.")
+        stratify = None
+    else:
+        stratify = y
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, stratify=stratify, random_state=42
+    )
+
     if valid:
-        X_test, X_valid, y_test, y_valid = train_test_split(X_test, y_test, 
-                                                            stratify=y, 
-                                                            random_state=42)
-        # Return training, test, and validation sets
+        X_test, X_valid, y_test, y_valid = train_test_split(
+            X_test, y_test, stratify=y_test if stratify is not None else None, random_state=42
+        )
         return X_train, X_test, y_train, y_test, X_valid, y_valid
-    else:      
-        # Return only training and testing sets
-        return  X_train, X_test, y_train, y_test
+    else:
+        return X_train, X_test, y_train, y_test
 
 
 def get_optimal_rfc(X_train, y_train, param_dist=None):
