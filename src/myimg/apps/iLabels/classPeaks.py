@@ -12,8 +12,8 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.base import ClassifierMixin
+import numpy as np
 import myimg.apps.iLabels as milab
-
 
 class Peaks:
     '''
@@ -52,8 +52,20 @@ class Peaks:
             print('WARNING: Empty dataframe created instead.')
             sys.exit()
 
-        # Initialize the image and image name
-        self.img = img
+        # --- FIX: ensure image is always numpy array ---
+        if img is not None:
+            try:
+                # If it's a PIL image, convert to numpy
+                if hasattr(img, "size") and not hasattr(img, "shape"):
+                    self.img = np.array(img)
+                else:
+                    self.img = img
+            except Exception as e:
+                print(f"Warning: could not convert image to array ({e})")
+                self.img = img
+        else:
+            self.img = None
+    
         self.img_name = img_name
         self.file_name = file_name
         self.messages = messages
@@ -166,7 +178,7 @@ class Peaks:
         plt.show()
 
 
-    def find(self, method='manual', ref=True, mask_path=None, midx=0, thr=0.5, show=True):
+    def find(self, method='manual', ref=True, mask_path=None, midx=0, thr=0.5, show=True, **kwargs):
         '''
         Create an interactive plot for particle classification.
     
@@ -297,8 +309,11 @@ class Peaks:
                                                normalize=True)
         
         # (3) Prepare data for ROI extraction
-        self.arr, self.df, _  = milab.roi.prep_data(img_path, peak_path, 
-                                             min_xy=20, imID=imID, show=show)
+        self.arr, self.df, peaks = milab.roi.prep_data(
+            img_path, peak_path, min_xy=20, imID=imID, show=show)
+        
+        # keep a reference to the Peaks object
+        self.peaks = peaks
         
         # (4) Extract ROIs from image
         self.rois, self.dfs = [], []

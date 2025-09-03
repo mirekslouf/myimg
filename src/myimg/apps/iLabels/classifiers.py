@@ -11,12 +11,6 @@ from sklearn.feature_selection import SequentialFeatureSelector
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
-<<<<<<< HEAD
-import matplotlib.pyplot as plt
-
-
-=======
->>>>>>> origin/main
 def dataset(features, valid=False):
     """
     Splits the input dataset into training, testing, and optionally validation 
@@ -53,28 +47,29 @@ def dataset(features, valid=False):
         The target variable (Class) for the validation set, returned only if 
         valid=True.
     """
-    # Drop columns that are not relevant for model training
-    X = features.drop(columns=['X', 'Y', 'Class', 'Note', 'imID'])
-    
-    # Target variable: 'Class'
+    # Drop metadata columns safely
+    X = features.drop(columns=['X', 'Y', 'Class', 'Note', 'imID'], errors='ignore')
     y = features['Class']
-    
-    # Split the data into training and test sets, maintaining class distribution 
-    # with stratify to ensure preservation of class distribution
-    X_train, X_test, y_train, y_test = train_test_split(X, y, 
-                                                        stratify=y, 
-                                                        random_state=42)
-    
-    # If valid is True, further split the test set into a validation set
+
+    # Only stratify if every class has >= 2 samples
+    class_counts = y.value_counts()
+    if (class_counts < 2).any():
+        print("Warning: some classes have <2 samples, skipping stratify.")
+        stratify = None
+    else:
+        stratify = y
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, stratify=stratify, random_state=42
+    )
+
     if valid:
-        X_test, X_valid, y_test, y_valid = train_test_split(X_test, y_test, 
-                                                            stratify=y, 
-                                                            random_state=42)
-        # Return training, test, and validation sets
+        X_test, X_valid, y_test, y_valid = train_test_split(
+            X_test, y_test, stratify=y_test if stratify is not None else None, random_state=42
+        )
         return X_train, X_test, y_train, y_test, X_valid, y_valid
-    else:      
-        # Return only training and testing sets
-        return  X_train, X_test, y_train, y_test
+    else:
+        return X_train, X_test, y_train, y_test
 
 
 def get_optimal_rfc(X_train, y_train, param_dist=None):
@@ -155,15 +150,9 @@ def get_optimal_rfc(X_train, y_train, param_dist=None):
 
     # Print the best parameters found and the accuracy on the training set
     print("Best parameters found:", random_search.best_params_)
-<<<<<<< HEAD
-    # print("Train set accuracy:", estimator.score(X_train, y_train))
-    
-    return estimator, random_search.best_params_
-=======
     print("Train set accuracy:", estimator.score(X_train, y_train))
     
     return estimator
->>>>>>> origin/main
 
 
 def select_features(X_train, y_train, num=5, estimator=None):
@@ -278,26 +267,8 @@ def fitting(X_train, y_train, estimator, reports=True, sfeatures=None):
     
         # Plot confusion matrix
         cm = confusion_matrix(y_train, y_pred)
-<<<<<<< HEAD
-        
-        disp = ConfusionMatrixDisplay(confusion_matrix=cm)
-        
-        fig, ax = plt.subplots(figsize=(4, 3))  # Set figure size here
-        disp.plot(cmap='Blues', ax=ax)          # Pass the custom axes to the plot
-        
-        # Adjust font sizes to better match Jupyter default display
-        plt.xticks(fontsize=8)
-        plt.yticks(fontsize=8)
-        ax.set_xlabel("Predicted label", fontsize=8)
-        ax.set_ylabel("True label", fontsize=8)
-
-        plt.tight_layout()
-        plt.show()
-
-=======
         disp = ConfusionMatrixDisplay(confusion_matrix=cm)
         disp.plot(cmap='Blues')
->>>>>>> origin/main
     
     return estimator, y_pred
 
@@ -348,28 +319,6 @@ def predicting(X_test, estimator, sfeatures=None, y_test=None):
         print("\nClassification test report:\n")
         print(classification_report(y_test, y_pred))
         
-<<<<<<< HEAD
-        # Plot confusion matrix with adjusted size and font
-        cm = confusion_matrix(y_test, y_pred)
-        disp = ConfusionMatrixDisplay(confusion_matrix=cm)
-        
-        fig, ax = plt.subplots(figsize=(4, 3))  # Set figure size
-        disp.plot(cmap='Greens', ax=ax)
-        
-        # Adjust font sizes to better match Jupyter default display
-        plt.xticks(fontsize=8)
-        plt.yticks(fontsize=8)
-        ax.set_xlabel("Predicted label", fontsize=8)
-        ax.set_ylabel("True label", fontsize=8)
-
-        plt.tight_layout()
-        plt.show()
-    
-    return y_pred
-
-
-         
-=======
         # Plot confusion matrix if requested
         cm = confusion_matrix(y_test, y_pred)
         disp = ConfusionMatrixDisplay(confusion_matrix=cm)
@@ -377,4 +326,3 @@ def predicting(X_test, estimator, sfeatures=None, y_test=None):
     
     return y_pred
             
->>>>>>> origin/main

@@ -13,10 +13,7 @@ import matplotlib.patches as patches
 import random
 import os
 import pickle
-import math
-import myimg.apps.iLabels.classPeaks as mipks
-
-
+from myimg.apps.iLabels.classPeaks import Peaks
 
 def load_myimg(image, cut_bottom=300, save_as="output.tif", show=False):
     """
@@ -122,53 +119,48 @@ def preprocess_image(image, apply_clahe=True, gamma=1.2, normalize=True):
     return gamma_corrected
 
 
-def prep_data(fpath_img, fpath_peaks, min_xy=20, imID='im01', show=False):
+def prep_data(fpath_img, fpath_peaks, min_xy=20, imID=None, show=False):
     """
-    Load an image and its peak annotations, and filter out low-X/Y points.
+    Prepare data for ROI extraction:
+      - load image
+      - load peaks
+      - return image array, peaks dataframe, and peaks object
 
-    Parameters:
-    -----------
-    fpath_img : str
-        Path to the image file (e.g., .tif).
-    fpath_peaks : str
-        Path to the associated peaks file (e.g., .pkl).
-    min_xy : int, optional
-        Minimum allowed value for X and Y coordinates (default is 20).
+    Parameters
+    ----------
+    fpath_img : str or path-like
+        Path to the image file.
+    fpath_peaks : str or path-like
+        Path to peaks file (pickle, csv, etc.).
+    min_xy : int, default=20
+        Minimum distance from image borders for valid peaks.
     imID : str, optional
-        Identifier to assign to all peaks (default is 'im01').
-    show : bool, optional
-        If True, shows the annotated image using `show_in_image`.
-   
-    Returns:
-    --------
+        Image ID for labeling.
+    show : bool, default=False
+        If True, display image with peaks overlay.
+
+    Returns
+    -------
     arr : np.ndarray
-        Image array.
-    df : pd.DataFrame
-        Filtered DataFrame with peak coordinates.
-    img_obj : MyImage
-        The loaded MyImage object.
+        Numpy array of the image.
+    df : pandas.DataFrame
+        DataFrame of peaks (coordinates + labels).
+    peaks : Peaks
+        Peaks object with loaded peaks.
     """
-    # Load image and convert it to numpy.array
-    img_obj = mi.MyImage(fpath_img, peaks=True)
+    # Load image using standard MyImage
+    img_obj = mi.MyImage(fpath_img)
     arr = np.array(img_obj.img)
-   
-    # Load coordinates of peaks from the image
-    img_obj.peaks.read(fpath_peaks)
-    
-    # Optionally show image with detected peaks
+
+    # Create Peaks object explicitly
+    peaks = Peaks(img=arr, img_name=str(fpath_img))
+    peaks.read(fpath_peaks)
+
+    # Show if requested
     if show:
-        img_obj.peaks.show_in_image()
-    
-    # Extract dataframe with coordinates
-    df = img_obj.peaks.df
-    
-    # Avoid peaks of which a ROI cannot be created
-    df = df[(df.X > min_xy) & (df.Y > min_xy)].reset_index(drop=True)
-    
-    # Assign data with an image ID
-    df['imID'] = imID    
-    
-    return arr, df, img_obj
+        peaks.show_in_image()
+
+    return arr, peaks.df, peaks
 
 
 def get_ROIs(im, df, s=20, norm=True, show=False):
