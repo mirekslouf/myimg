@@ -11,9 +11,12 @@ from sklearn.feature_selection import SequentialFeatureSelector
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
+<<<<<<< HEAD
 import matplotlib.pyplot as plt
 
 
+=======
+>>>>>>> origin/main
 def dataset(features, valid=False):
     """
     Splits the input dataset into training, testing, and optionally validation 
@@ -152,9 +155,15 @@ def get_optimal_rfc(X_train, y_train, param_dist=None):
 
     # Print the best parameters found and the accuracy on the training set
     print("Best parameters found:", random_search.best_params_)
+<<<<<<< HEAD
     # print("Train set accuracy:", estimator.score(X_train, y_train))
     
     return estimator, random_search.best_params_
+=======
+    print("Train set accuracy:", estimator.score(X_train, y_train))
+    
+    return estimator
+>>>>>>> origin/main
 
 
 def select_features(X_train, y_train, num=5, estimator=None):
@@ -269,6 +278,7 @@ def fitting(X_train, y_train, estimator, reports=True, sfeatures=None):
     
         # Plot confusion matrix
         cm = confusion_matrix(y_train, y_pred)
+<<<<<<< HEAD
         
         disp = ConfusionMatrixDisplay(confusion_matrix=cm)
         
@@ -284,6 +294,10 @@ def fitting(X_train, y_train, estimator, reports=True, sfeatures=None):
         plt.tight_layout()
         plt.show()
 
+=======
+        disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+        disp.plot(cmap='Blues')
+>>>>>>> origin/main
     
     return estimator, y_pred
 
@@ -334,6 +348,7 @@ def predicting(X_test, estimator, sfeatures=None, y_test=None):
         print("\nClassification test report:\n")
         print(classification_report(y_test, y_pred))
         
+<<<<<<< HEAD
         # Plot confusion matrix with adjusted size and font
         cm = confusion_matrix(y_test, y_pred)
         disp = ConfusionMatrixDisplay(confusion_matrix=cm)
@@ -354,3 +369,12 @@ def predicting(X_test, estimator, sfeatures=None, y_test=None):
 
 
          
+=======
+        # Plot confusion matrix if requested
+        cm = confusion_matrix(y_test, y_pred)
+        disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+        disp.plot(cmap='Greens')
+    
+    return y_pred
+            
+>>>>>>> origin/main

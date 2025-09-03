@@ -12,10 +12,7 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.base import ClassifierMixin
-import numpy as np
 import myimg.apps.iLabels as milab
-from PIL import Image
-
 
 
 class Peaks:
@@ -27,10 +24,7 @@ class Peaks:
     * More help: https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg.html
     '''
 
-    
-    def __init__(self, df=None, img=None, 
-                 img_name="", file_name="output", 
-                 cmap="viridis", messages=False):
+    def __init__(self, df=None, img=None, img_name="", file_name="output", messages=False):
         '''
         Initialize Peaks object.
 
@@ -59,8 +53,7 @@ class Peaks:
             sys.exit()
 
         # Initialize the image and image name
-        self.img = Image.open(img)
-        self.cmap = cmap
+        self.img = img
         self.img_name = img_name
         self.file_name = file_name
         self.messages = messages
@@ -94,24 +87,21 @@ class Peaks:
             # Print any other exceptions that occur
 
     
-    def show_as_text(self, num=5):
+    def show_as_text(self):
         '''
         Display the peak data as text.
     
-        Parameters
-        ----------
-        num : int
-            Number of rows to be printed in the console. Default is 5.
-        
         Returns
         -------
         None
         '''
-        if self.df is not None and not self.df.empty:
-            print(self.df.head(num).to_string(index=False))
+        if self.df is not None:
+            print(self.df.to_string(index=False)) 
+            # Print the DataFrame as a string without the index
         else:
             print("No data to display. Please read data from a file first.")
-        
+            # Print message if no data is available
+    
     
     def show_in_image(self):
         '''
@@ -170,17 +160,13 @@ class Peaks:
                         label=particle_type, 
                         s=25, marker='+')
         
-        plt.legend(title="Particle Type", 
-                   loc='center left', 
-                   bbox_to_anchor=(1.05, 0.5))
+        plt.legend(title="Particle Type", loc='center left', bbox_to_anchor=(1.05, 0.5))
         plt.axis("off")
         plt.title(f"Peaks on {self.img_name}")
         plt.show()
 
 
-   
-    def find(self, method='ncc', ref=True, mask_path=None, 
-             thr=0.5, n_jobs=-1, margin=30, ext=1.2, show=True):
+    def find(self, method='manual', ref=True, mask_path=None, midx=0, thr=0.5, show=True):
         '''
         Create an interactive plot for particle classification.
     
@@ -225,7 +211,7 @@ class Peaks:
             plt.show()
             
     
-        elif method == "ncc":
+        elif method == "ccorr":
             # Load masks
             self.masks = {}
             for i in range(1, 5):
@@ -234,30 +220,25 @@ class Peaks:
                     raise FileNotFoundError(f"Input file not found: {file_path}")
                 with open(file_path, 'rb') as f:
                     self.masks[i] = pickle.load(f)
-            
-            self.masks = [self.masks[i] for i in range(1, 5)]
 
+                    
             # Proceed with detector-based correlation using the mask
-            img = np.array(self.img)
-            self.detected, self.im_masked = milab.detectors.detector_NCC(
-                image=img, 
-                masks=self.masks,
-                threshold=thr,
-                show=show,
-                n_jobs=n_jobs,
-                cmap=self.cmap,
-                margin=margin,
-                ext=ext)
+            self.detected = milab.detectors.detector_correlation(self.img, 
+                                                     self.masks[midx], 
+                                                     thr, 
+                                                     show)
             
-            # Save coordinates to .pkl          
-            self.detected.to_csv('ncc_'+self.file_name+".txt", index=False)
-            self.detected.to_pickle('ncc_' + self.file_name + ".pkl")
-            print("All outputs saved successfully.")
-            # return self.detected
-
+            return self.detected
+    
         else:
-            raise ValueError("Invalid detection method. Use 'manual'/'ncc'.")
+            raise ValueError("Invalid detection method. Use 'manual'/'ccorr'.")
         
+        
+        # if ref:
+        #     # TODO: apply correct method
+        #     pass
+            
+    
 
     def characterize(self, img_path, peak_path, mask_path, 
                      imID='im0x', preprocess=True, show=False):
@@ -296,8 +277,6 @@ class Peaks:
             attributes such as self.features, self.selection, self.X_train, 
             self.X_test, etc.
         """
-        self.img = np.array(self.img)
-            
         # (1) Load masks
         self.masks = {}
         for i in range(1, 5):
@@ -344,8 +323,8 @@ class Peaks:
         self.features, _ = milab.features.get_features(self.rois, self.dfs, 
                                                        self.masks,
                                                        show=False)
-        
-        # self.features = self.features.dropna()
+
+        self.features = self.features.dropna()
         
         if show:
             milab.features.visualize_features(self.features, method="box")
@@ -401,7 +380,7 @@ class Peaks:
         return peaks
     
     
-    def classify(self, data, method='rfc', target=None, estimator=None, param_dist=None, sfeatures=None):
+    def classify(self, data, method='gauss_fit', target=None, estimator=None, param_dist=None, sfeatures=None):
         """
         Classifies input data using the specified classification method.
         
@@ -442,14 +421,14 @@ class Peaks:
             instance.
             
         """
-        # TODO: calculate only selected features for the testing data   
 
 
         if method == "rfc":
             # If no estimator is provided, optimize and train a new Random Forest
             if estimator is None:
                 # Perform hyperparameter search and get an optimized classifier
-                rfc_opt, _ = milab.classifiers.get_optimal_rfc(self.X_train,
+
+                rfc_opt = milab.classifiers.get_optimal_rfc(self.X_train,
                                                   self.y_train, 
                                                   param_dist)
                 
@@ -485,6 +464,3 @@ class Peaks:
                                                  y_test=target)
                 
         return self.y_pred
-    
-
-    

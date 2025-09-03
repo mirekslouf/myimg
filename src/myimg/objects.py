@@ -24,7 +24,11 @@ which is used in most image manipulations within myimg.api module.
 >>> img = mi.MyImage('some.bmp')  # open image: some.bmp
 >>> img.label('a')                # insert a label in the upper left corner
 >>> img.scalebar('rwi,100um')     # insert a scalebar to the lower right corner
+<<<<<<< HEAD
 >>> img.save_with_ext('_s.png')   # save the modified image to: some_ls.png
+=======
+>>> img.save_with_ext('_ls.png')  # save the modified image to: some_ls.png
+>>>>>>> origin/main
 
 **MyReport** class creates the multi-image object,
 which contains several images arranged in a rectangular grid.
@@ -35,7 +39,11 @@ which contains several images arranged in a rectangular grid.
 >>> mrep = mi.MyReport(images,    # create montage image
 >>>     itype='gray', grid=(1,2), # ...grayscale, just two images in a row
 >>>     padding=10)               # ...padding/spacing between imgs = 10pixels
+<<<<<<< HEAD
 >>> mrep.save('mreport.png')      # save the final montage of (the two) images   
+=======
+>>> mrep.save('mreport.png')      # save the final montage of the two images   
+>>>>>>> origin/main
 
 **Units**, **NumberWithUnits**, and **ScaleWithUnits** classes
 are used in myimg.utils.scalebar module
@@ -532,6 +540,43 @@ class MyImage:
         '''
         self.img = ImageOps.autocontrast(image = self.img, **kwargs)
 
+
+    def gamma(self, gamma):
+        '''
+        Apply gamma correction.
+
+        Parameters
+        ----------
+        gamma : float
+            Gamma parameter.
+
+        Returns
+        -------
+        None
+            The modified image is saved in self.img object.            
+        '''
+        
+        # If the image is grayscale, we can proceed with gamma corretion.
+        if self.itype in {'gray','gray16'}:
+            # Convert self.img object to np.array
+            arr = np.asarray(self.img)
+            # Save maximum intensity
+            max_intensity = np.max(arr)
+            # Perform the (max-intensity-aware) gamma correction
+            arr = (arr/max_intensity)**gamma * max_intensity
+            # Set correct type of the ouput (8bit x 16bit grayscale)
+            if self.itype=='gray':
+                arr = arr.astype(np.uint8)
+            else:
+                arr = arr.astype(np.uint16)
+            # Save the correcte dresult back to Myimg.img
+            self.img = Image.fromarray(arr)
+        
+        # If the image is not grayscale, do nothing and print warning!
+        else:
+            print('Error: Gamma correction works only for grayscale images!')
+            print('No action => original image was not changed!')
+    
         
     def border(self, border=1, color='black'):
         '''
@@ -622,9 +667,7 @@ class MyImage:
         F : float, optional, default is None
             Multiplication coefficient/factor that changes the text size.
             If F = 1.2, then all label parameters are enlarged 1.2 times.
-        kwargs : list of keyword arguments
-            Allowed keyword arguments are:
-            color, bcolor, messages.
+        kwargs : keyword arguments
             See section *List of allowed kwargs* for detailed descriptions.
             
         Returns
@@ -642,12 +685,17 @@ class MyImage:
             Background color = color of the label background/box.
             The default is defined in myimg.settings.Caption
             (and that is why it does not have to be re-defined here).
-        * align : int or str
+        * align : int or str or None
             This parameter determines the alignment of the figure caption.
             If align = integer,
             x_position of the caption is {align} pixels from left.
             If align = string,
-            it can be either 'left' or 'Left' or ''
+            it can be either 'left' or 'center' or 'right'.
+            If align = None,
+            then it defaults to 'center'.
+            If align == int,
+            then the x-position of the caption will be aligned
+            *int* pixels from the left side of the image.
 
         Technical notes
         ---------------
@@ -686,9 +734,7 @@ class MyImage:
         F : float, optional, the default is None
             Multiplication coefficient/factor that changes the scalebar size.
             If F = 1.2, then all scalebar parameters are enlarged 1.2 times.
-        kwargs : list of keyword arguments
-            Allowed keyword arguments are:
-            color, bcolor, position, stripes, messages.
+        kwargs : keyword arguments
             See section *List of allowed kwargs* below for more info. 
             
         Returns
@@ -788,7 +834,7 @@ class MyImage:
             If stripes = True or 1, draw scalebar with 5 stripes.
             If stripes = N, where N>=2, draw striped scalebar with N stripes.
         * messages : bool, default is False.
-            If messages=True, print info about program run.
+            If messages=True, print info about the program run.
         
         Technical notes
         ---------------
