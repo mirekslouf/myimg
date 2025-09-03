@@ -92,13 +92,13 @@ def get_features(rois, df, masks, show=False):
 def extended_features(rois, df, show=True):
     """
     Extracts and extends feature sets from a list of Region of Interest (ROI)
-    images and returns two DataFrames containing scalar and array-based features 
-    respectively.
+    images and returns two DataFrames containing scalar and array-based 
+    features respectively.
 
     The function computes basic ROI features via `roi_features()` and then 
     performs additional morphological and shape analysis on each ROI, including 
-    thresholding (Otsu), morphological filtering, region labeling, and extraction 
-    of geometric and moment-based properties. 
+    thresholding (Otsu), morphological filtering, region labeling, and 
+    extraction of geometric and moment-based properties. 
 
     Parameters
     ----------
@@ -129,8 +129,9 @@ def extended_features(rois, df, show=True):
     - For ROIs that are empty or contain uniform values, NaNs are assigned to 
       all extracted features.
     - Features extracted include:
-        - Scalar: area, convex area, eccentricity, solidity, equivalent diameter, 
-                  extent, number of pixels, orientation, and perimeter.
+        - Scalar: area, convex area, eccentricity, solidity, equivalent 
+                  diameter, extent, number of pixels, orientation, 
+                  and perimeter.
         - Array: raw spatial moments and central moments (both as 3x3 arrays).
     - The function assumes that the `df` DataFrame has the same number of rows 
       as the number of ROIs provided, and that it includes a 'Class' column for 
@@ -376,14 +377,15 @@ def extended_features(rois, df, show=True):
     
     if show:
         for feat in df1.columns[4:]:
-            if np.issubdtype(df1[feat].dtype, np.number) and np.isfinite(df1[feat]).all():
-                plt.figure(figsize=(6, 4))
-                sns.boxplot(x='Class', y=feat, data=df1, palette='Set2')
-                plt.title(f'Distribution of {feat} across classes')
-                plt.xlabel('Class')
-                plt.ylabel(feat)
-                plt.tight_layout()
-                plt.show()
+            if np.issubdtype(df1[feat].dtype, np.number) \
+                and np.isfinite(df1[feat]).all():
+                    plt.figure(figsize=(6, 4))
+                    sns.boxplot(x='Class', y=feat, data=df1, palette='Set2')
+                    plt.title(f'Distribution of {feat} across classes')
+                    plt.xlabel('Class')
+                    plt.ylabel(feat)
+                    plt.tight_layout()
+                    plt.show()
             else:
                 print(f"Skipping {feat} - non-numeric or contains inf/NaN.")
                 
@@ -398,8 +400,8 @@ def roi_features(rois, df, show=True, out=1):
     
     This function computes various intensity statistics such as max, min, mean,
     median, standard deviation, variance, skewness, and kurtosis for each
-    Region of Interest (ROI). It associates these features with the corresponding 
-    class labels from the input DataFrame.
+    Region of Interest (ROI). It associates these features with 
+    the corresponding class labels from the input DataFrame.
     
     Parameters
     ----------
@@ -546,7 +548,7 @@ def corr_features(rois, df, masks):
                 raise ValueError("ROI and mask shapes must match.")
 
             # Compute normalized cross-correlation using match_template
-            # Since the ROI and mask are same-sized, the result is a single value
+            # Since the ROI and mask are same-sized, result is a single value
             ncc_score = match_template(roi, mask, pad_input=False)[0][0]
             row.append(ncc_score)
         
@@ -563,7 +565,7 @@ def corr_features(rois, df, masks):
     corr_df["bestMatch"] = corr_df.iloc[:, :4].idxmax(axis=1)  
 
     # Extract the class number from the column name, e.g., 'ccorrCorrCL2' → 2
-    corr_df["bestMatch"] = corr_df["bestMatch"].str.extract(r'(\d)$').astype(int)
+    corr_df["bestMatch"]=corr_df["bestMatch"].str.extract(r'(\d)$').astype(int)
 
     # Drop intermediate maxCorr column (optional)
     corr_df = corr_df.drop(columns=["maxCorr"])
@@ -607,7 +609,7 @@ def gauss_features(df_params):
     df['area2'] = 2 * pi * df['sigma_x'] * df['sigma_y']
     
     # (3) Eccentricity (how elongated the shape is, 0 = circular, 1 = linear)
-    df['eccentricity2'] = np.sqrt(1-(np.minimum(df['sigma_x'],df['sigma_y'])**2/ 
+    df['eccentricity2']=np.sqrt(1-(np.minimum(df['sigma_x'],df['sigma_y'])**2/ 
                                 np.maximum(df['sigma_x'], df['sigma_y'])**2))
     
     # (4) Ellipticity (ratio of sigma_x to sigma_y)
@@ -627,7 +629,7 @@ def gauss_features(df_params):
     
     # (8) Integrated intensity (total intensity under the Gaussian, related to
     #     its area)
-    df['integrated_intensity'] = df['amplitude']*2*pi*df['sigma_x']*df['sigma_y']
+    df['integrated_intensity']=df['amplitude']*2*pi*df['sigma_x']*df['sigma_y']
     
     # Drop the 'x0' and 'y0' columns 
     # errors='ignore' to handle if 'x0' or 'y0' is missing
@@ -648,6 +650,7 @@ def gauss_params(image_list, df):
     image_list : list of np.ndarray
         A list of 2D NumPy arrays representing grayscale image regions (ROIs) 
         where a Gaussian-like spot is expected.
+        
     df : pandas.DataFrame
         DataFrame containing metadata for each ROI, including a 'Class' column 
         that assigns a label to each image.
@@ -775,14 +778,17 @@ def visualize_features(df, method="box", class_col=None):
     ----------
     df : pandas.DataFrame
         DataFrame containing feature columns and a class label column.
+        
     method : str, optional (default="box")
         Visualization method to use. Options are:
             - "box" : Individual box plots for each feature grouped by class.
             - "pair": Pairwise scatter plots between features, color-coded 
                       by class.
             - "heat": Heatmap of feature correlations.
+    
     show : bool, optional (default=True)
         If method is "box", show individual box plots for each feature.
+    
     class_col : str or None, optional (default=None)
         Name of the class label column. If None, the function tries to infer 
         the class column by looking for a column with <10 unique values and 
@@ -792,12 +798,6 @@ def visualize_features(df, method="box", class_col=None):
     -------
     df : pandas.DataFrame
         The original dataframe passed in, unchanged.
-    
-    Raises:
-    ------
-    ValueError
-        If class_col cannot be inferred or if method is invalid or insufficient 
-        features are present for plotting.
     """
     df = df.drop(columns=['X','Y'])
 
@@ -810,10 +810,10 @@ def visualize_features(df, method="box", class_col=None):
                 break
         if class_col is None:
             raise ValueError(
-                "Could not determine class column. Please specify 'class_col'.")
+                "Couldn't determine class column. Please specify 'class_col'.")
 
     # Filter numeric feature columns
-    feature_cols = [col for col in df.select_dtypes(include=[np.number]).columns\
+    feature_cols=[col for col in df.select_dtypes(include=[np.number]).columns\
                     if col != class_col]
 
     if method == "box":
@@ -876,7 +876,7 @@ def visualize_features(df, method="box", class_col=None):
   
               df_filtered = df[(df[feat]>=lower_bound)&(df[feat]<=upper_bound)]
             else:
-                print(f"Skipping outlier removal for {feat} (contains inf/NaN)")
+                print(f"Skipping outlier removal for {feat} (inf/NaN)")
     
         sns.pairplot(df_filtered[feature_cols + [class_col]], 
                      hue=class_col, 
@@ -914,7 +914,7 @@ def visualize_features(df, method="box", class_col=None):
                 df_filtered = df_filtered[(df_filtered[feat] >= lower_bound) & 
                                           (df_filtered[feat] <= upper_bound)]
             else:
-                print(f"Skipping outlier removal for {feat} (contains inf/NaN)")
+                print(f"Skipping outlier removal for {feat} (inf/NaN)")
             
         corr = df_filtered[feature_cols].corr()
 

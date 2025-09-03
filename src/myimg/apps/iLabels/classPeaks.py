@@ -16,31 +16,65 @@ import numpy as np
 import myimg.apps.iLabels as milab
 
 class Peaks:
-    '''
-    Class defining Peaks objects.
-    
-    * Peaks object = source image + list-of-its-peaks.
-    * See __init__ for more information about initial object parameters.
-    * More help: https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg.html
-    '''
+    """
+    Container for peak annotations tied to a single image.
 
-    def __init__(self, df=None, img=None, img_name="", file_name="output", messages=False):
-        '''
-        Initialize Peaks object.
+    A `Peaks` instance stores:
+      - the source image (as a NumPy array or PIL image), and
+      - a table of detected/annotated peak positions (and optional labels).
+
+    The peak table is expected to be a `pandas.DataFrame` with at least
+    coordinate columns (see `__init__` for details). Use this class as the
+    central object for manual/automatic labeling, visualization, and
+    feature extraction workflows.
+
+    Notes
+    -----
+    - See the constructor for required/optional columns in ``df``.
+    - For usage examples and API docs, see:
+      https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg.html
+    """
+
+    def __init__(self, 
+                 df=None, 
+                 img=None, 
+                 img_name="", 
+                 file_name="output", 
+                 messages=False):
+        """
+        Initialize a `Peaks` object.
 
         Parameters
         ----------
-        df : pandas.DataFrame object
-            DataFrame containing peak coordinates and types.
-        img : PIL Image object, optional
-            The image associated with the peaks.
+        df : pandas.DataFrame or None, optional
+            DataFrame containing peak information. If provided, it should
+            include at least coordinate columns (commonly ``'x'`` and ``'y'``,
+            float or int). Optional columns such as ``'label'``/``'class'``,
+            confidence scores, etc., are supported. If ``None``, an empty
+            DataFrame is created.
+            
+        img : numpy.ndarray or PIL.Image.Image or None, optional
+            The image associated with the peaks. If a PIL image is passed, it
+            is converted to a NumPy array. If ``None``, image-dependent
+            operations will be unavailable until an image is set.
+            
         img_name : str, optional
-            Name of the image file.
+            Name shown in logs/plots to identify the image (e.g., original
+            filename). Default is an empty string.
+            
+        file_name : str, optional
+            Base filename used when exporting figures/tables. 
+            Default ``"output"``.
+            
+        messages : bool, optional
+            If ``True``, enable verbose/diagnostic prints. Default ``False``.
 
         Returns
         -------
-        Peaks object
-        '''
+        None
+            Constructor initializes attributes in-place.
+
+        """
 
         if isinstance(df, pd.DataFrame):
             self.df = df
@@ -116,26 +150,19 @@ class Peaks:
     
     
     def show_in_image(self, cmap="viridis"):
-        '''
-        Display the image with the peak data overlay (if image and data exist),
-        with different colors for different particle types.
+        """
+        Overlay peak locations on the image, colored by class.
+    
+        Plots ``self.img`` and scatters the peak coordinates from ``self.df``.
+        Points are colored by the value in the ``'Class'`` column.
     
         Parameters
         ----------
-        self : object
-            The instance of the class containing the image and peak data.
+        cmap : str, optional
+            Matplotlib colormap used when displaying single-channel (grayscale)
+            images. Ignored for RGB/RGBA images. Default is ``"viridis"``.
     
-        Returns
-        -------
-        None
-            The method does not return a value but displays an image with
-                overlayed peak data.
-    
-        Raises
-        ------
-        ValueError
-            If the DataFrame does not contain the required columns.
-        '''
+        """
         if self.img is None:
             print("No image to display.")
             return
@@ -172,45 +199,63 @@ class Peaks:
                         label=particle_type, 
                         s=25, marker='+')
         
-        plt.legend(title="Particle Type", loc='center left', bbox_to_anchor=(1.05, 0.5))
+        plt.legend(title="Particle Type", 
+                   loc='center left', 
+                   bbox_to_anchor=(1.05, 0.5))
         plt.axis("off")
-     #   plt.title(f"Peaks on {self.img_name}", s=10)
         plt.show()
 
 
-    def find(self, method='manual', ref=True, mask_path=None, midx=0, thr=0.5, show=True, **kwargs):
-        '''
-        Create an interactive plot for particle classification.
+    def find(self, 
+             method='manual', 
+             ref=True, 
+             mask_path=None, 
+             midx=0, 
+             thr=0.5, 
+             show=True, 
+             **kwargs):
+        """
+        Find peaks either interactively (“manual”) or by norm. cross-correlation
+        (“ccorr”) against a reference mask.
     
         Parameters
         ----------
-        self : object
-            The instance of the class that contains the image
-            and associated methods.
-        method : str, optional
-            The method to use for finding peaks.
-            Options: 'manual' or 'ccorr'.
-            Default is 'manual'.
+        method : {"manual", "ccorr"}, optional
+            Detection mode. "manual" opens an interactive picker; "ccorr" 
+            performs normalized cross-correlation with a reference mask. 
+            Default "manual".
+            
         ref : bool, optional
-            Whether the nanoparticles' coordinates should be refined.
-            Default is True.
-        mask : array-like or str, optional
-            Either a NumPy array representing the mask or a string path
-            to a .pkl file containing the mask. Required if method='ccorr'.
+            Whether to refine detected coordinates after the initial pick 
+            (reserved for future use). Default True.
+            
+        mask_path : str, optional
+            Directory containing reference masks saved as ``mask1.pkl``,
+            ``mask2.pkl``,... Required when ``method="ccorr"``.
+            
+        midx : int, optional
+            Mask index to use. Default 0.
+            
+        thr : float, optional
+            NCC threshold in [0, 1]. Detections with correlation below this are
+            discarded. Default 0.5.
+            
+        show : bool, optional
+            Visualize the detections/overlay. Default True.
+            
+        **kwargs
+            Reserved for passing additional options to the interactive plotter
+            or detector implementation (e.g., debug flags).
     
         Returns
         -------
-        None
-            This method does not return a value
-            but displays an interactive plot for particle classification.
-    
-        Raises
-        ------
-        ValueError
-            If the specified method is not recognized.
-        FileNotFoundError
-            If the provided mask path does not exist.
-        '''
+        detected : Any or None
+            For ``method="ccorr"``, returns whatever 
+            ``milab.detectors.detector_correlation`` returns (e.g., a DataFrame 
+            of coordinates/scores). For ``method="manual"``, returns ``None`` 
+            after displaying the picker.
+
+        """
     
         if method == "manual":
             from myimg.utils.iplot import interactive_plot, default_plot_params
@@ -229,7 +274,8 @@ class Peaks:
             for i in range(1, 5):
                 file_path = os.path.join(mask_path, f"mask{i}.pkl")
                 if not os.path.exists(file_path):
-                    raise FileNotFoundError(f"Input file not found: {file_path}")
+                    raise FileNotFoundError(
+                        f"Input file not found: {file_path}")
                 with open(file_path, 'rb') as f:
                     self.masks[i] = pickle.load(f)
 
@@ -255,39 +301,57 @@ class Peaks:
     def characterize(self, img_path, peak_path, mask_path, 
                      imID='im0x', preprocess=True, show=False):
         """
-        Characterizes image peaks by extracting ROIs, computing features, and 
-        selecting the most informative ones for classification.
-        
+        Extract ROIs around peaks, compute features, and select the most 
+        informative subset for downstream classification.
+    
+        Pipeline
+        --------
+        1) Load class masks from ``mask_path`` (``mask1.pkl``..``mask4.pkl``).
+        2) (Optional) Preprocess the image (CLAHE, gamma, normalization).
+        3) Load peaks and prepare data for ROI extraction.
+        4) Extract ROIs (square windows) centered on peaks; ROI size is derived
+           from the mask size.
+        5) Compute features for each ROI (intensity, morphology, correlation,
+           Gaussian fit, etc.).
+        6) Split into train/test and perform forward feature selection (SFS).
+    
         Parameters
         ----------
         img_path : str
-            Path to the image file (e.g., '.tif') to analyze.
-        
+            Path to the source image (e.g., ``.tif``).
+            
         peak_path : str
-            Path to the pickled file containing detected peak coordinates 
-            (typically a DataFrame or array).
-        
+            Path to a pickled peaks file (e.g., a DataFrame with at least 
+            columns ``'X'``, ``'Y'``, and optionally class labels), consumed by
+            ``milab.roi.prep_data``.
+            
         mask_path : str
-            Directory containing class masks as 'mask1.pkl' to 'mask4.pkl'.
-        
+            Directory containing class masks saved as ``maskX.pkl``.
+            The first mask's size is used to derive the ROI half-size.
+            
         imID : str, optional
-            Identifier for the image, used for internal labeling
-            Default is 'im0x'
-        
+            Image identifier used for labeling/traceability of ROIs. 
+            Default "im0x".
+            
         preprocess : bool, optional
-            Whether to preprocess the input image (CLAHE, gamma correction, 
-            normalization). Default is True.
-        
+            If True, apply CLAHE, gamma correction, and normalization before 
+            ROI extraction. Default True.
+            
         show : bool, optional
-            If True, displays example ROIs and feature visualizations.
-            Dfault is False.
-        
+            If True, display example ROIs and/or intermediate visualizations.
+            Default False.
+    
         Returns
         -------
         None
-            This method modifies the internal state of the object by setting 
-            attributes such as self.features, self.selection, self.X_train, 
-            self.X_test, etc.
+            This method updates the object in-place with:
+            - ``self.masks``       : dict of loaded masks
+            - ``self.pimg``        : preprocessed image (if enabled)
+            - ``self.arr, self.df``: prepared data/peaks table
+            - ``self.rois``        : list of (roi_array, imID)
+            - ``self.features``    : feature table (NaNs dropped)
+            - ``self.selection``   : feature selector / chosen feature set
+            - ``self.X_train, self.X_test, self.y_train, self.y_test``
         """
         # (1) Load masks
         self.masks = {}
@@ -351,28 +415,45 @@ class Peaks:
     
     def correct(image, coords, s=20, method='intensity'):
         """
-        Refines or corrects peak coordinates based on a specified method.
-        
+        Refine peak coordinates by re-centering each peak to the local
+        intensity maximum within a square ROI.
+    
         Parameters
         ----------
-        image : np.ndarray
-            The input image in which the coordinates will be corrected
-        
+        image : numpy.ndarray
+            2D grayscale image (H×W) in which peaks were detected.
+            
         coords : pandas.DataFrame
-            DataFrame containing peak coordinates (e.g., 'X' and 'Y' columns).
-        
+            Table of peak locations with at least columns ``'X'`` and ``'Y'``.
+            (By convention, ``X`` is the column/index along width, ``Y`` is the
+            row/index along height.)
+            
         s : int, optional
-            Half-size of the square ROI to extract around each coordinate. 
-            Necessary for "intensity" method. Default is 20.
-        
-        method : str, optional
-            Correction method to use. Currently only 'intensity' is supported 
-            (uses intensity-based ROI extraction). Default is 'intensity'.
-        
+            Half-size of the square ROI (in pixels) extracted around each
+            (X, Y) location, i.e. the ROI side is ``2*s+1``. Default ``20``.
+            
+        method : {'intensity'}, optional
+            Refinement strategy. Currently only ``'intensity'`` is supported,
+            which recenters coordinates to the maximum-intensity pixel within
+            the ROI. Default ``'intensity'``.
+    
         Returns
         -------
         pandas.DataFrame
-            Updated coordinates DataFrame after correction.
+            A new DataFrame with corrected peak coordinates (and any 
+            accompanying metadata preserved by the underlying ROI routine).
+    
+        Raises
+        ------
+        ValueError
+            If an unsupported ``method`` is requested.
+    
+        Notes
+        -----
+        This function delegates ROI extraction and coordinate refinement to
+        ``milab.roi.get_ROIs`` and returns its updated coordinates table.
+        Make sure your coordinates are within image bounds; peaks too close
+        to the border may yield clipped ROIs depending on ``get_ROIs`` behavior
         """
 
         if method == "intensity":
@@ -385,51 +466,62 @@ class Peaks:
         return peaks
     
     
-    def classify(self, data, method='gauss_fit', target=None, estimator=None, param_dist=None, sfeatures=None):
+    def classify(self, 
+                 data, 
+                 method='gauss_fit', 
+                 target=None, 
+                 estimator=None, 
+                 param_dist=None, 
+                 sfeatures=None):
         """
-        Classifies input data using the specified classification method.
-        
+        Classify samples using the selected method.
+    
+        Currently implemented method(s)
+        --------------------------------
+        'rfc' : Random Forest Classifier
+            If no estimator is provided, an RFC is optimized via
+            `milab.classifiers.get_optimal_rfc` using `self.X_train` or
+            `self.y_train` and (optionally) `param_dist`. The optimized model 
+            is then fitted and used to predict on `data`. 
+            If `estimator` is provided (either a fitted classifier instance or 
+            a path to a .pkl file), it is used directly.
+    
         Parameters
         ----------
-        data : pandas.DataFrame or np.ndarray
-            The feature data to classify.
-        
+        data : pandas.DataFrame or numpy.ndarray
+            Feature matrix to classify. If feature selection is used, 
+            the columns should at least include `sfeatures` 
+            (or `self.selection` if omitted).
+            
         method : str, optional
-            The classification method to use. Currently, only 'rfc' (Random 
-            Forest Classifier) is supported. 
-            Default is 'gauss_fit' (placeholder for future extensions).
-        
+            Classification backend. Only 'rfc' is supported at present.
+            (The default 'gauss_fit' is a placeholder and not implemented.)
+            
         target : array-like, optional
-            Ground truth labels for the data (used for evaluation if provided).
-        
-        estimator : RandomForestClassifier or str, optional
-            A pre-trained classifier or a path to a saved estimator file (.pkl).
-            If None, a new RandomForestClassifier will be optimized and trained.
-        
+            Ground-truth labels (used for evaluation inside
+            `milab.classifiers.predicting` if supplied).
+            
+        estimator : sklearn.base.ClassifierMixin or str, optional
+            Either a fitted scikit-learn classifier instance or a filesystem 
+            path to a serialized estimator (.pkl) loadable via `joblib.load`. 
+            If None, a new RFC is optimized and trained.
+            
         param_dist : dict, optional
-            Hyperparameter search space for optimizing the RandomForestClassifier.
-            Used only when training a new estimator.
-        
+            Hyperparameter search space for optimizing the RFC.
+            Only used when `estimator` is None.
+            
         sfeatures : list of str, optional
-            List of selected feature names to use for classification. If None, 
-            uses `self.selection`.
-        
+            Explicit list of feature names to use for training/prediction. 
+            If None, falls back to `self.selection`.
+    
         Returns
         -------
-        y_pred : np.ndarray
-            Predicted class labels for the input data.
-        
-        Raises
-        ------
-        ValueError
-            If the provided estimator is neither a valid path nor a classifier 
-            instance.
-            
+        y_pred : numpy.ndarray
+            Predicted class labels for `data`.
+    
         """
-
-
         if method == "rfc":
-            # If no estimator is provided, optimize and train a new Random Forest
+            # If no estimator is provided, optimize and train a new RFC
             if estimator is None:
                 # Perform hyperparameter search and get an optimized classifier
 

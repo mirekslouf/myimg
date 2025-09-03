@@ -25,10 +25,13 @@ def load_myimg(image, cut_bottom=300, save_as="output.tif", show=False):
     -----------
     image : str or PIL.Image.Image
         File path or PIL image object.
+        
     cut_bottom : int
         Number of pixels to cut from the bottom.
+        
     save_as : str
         Filename to save the cropped image.
+        
     show : bool
         Whether to display the cropped image.
     
@@ -78,14 +81,18 @@ def preprocess_image(image, apply_clahe=True, gamma=1.2, normalize=True):
     -----------
     image : np.ndarray
         Input image (BGR, RGB, or grayscale).
+        
     apply_clahe : bool
         Whether to apply CLAHE for local contrast enhancement.
+        
     gamma : float
         Gamma value for gamma correction (1.0 = no change).
+        
     normalize : bool
         Whether to normalize intensity values to 0–255.
 
     Returns:
+    --------
     gamma_corrected : np.ndarray
         Preprocessed image (grayscale, uint8).
     """
@@ -107,7 +114,8 @@ def preprocess_image(image, apply_clahe=True, gamma=1.2, normalize=True):
 
     # Apply gamma correction
     inv_gamma = 1.0 / gamma
-    table = np.array([(i/255.0)**inv_gamma*255 for i in range(256)]).astype("uint8")
+    table=np.array([(i/255.0)**inv_gamma*255 \
+                    for i in range(256)]).astype("uint8")
     gamma_corrected = cv2.LUT(gray, table)
 
     # Normalize intensity to full 8-bit range if needed
@@ -130,12 +138,16 @@ def prep_data(fpath_img, fpath_peaks, min_xy=20, imID=None, show=False):
     ----------
     fpath_img : str or path-like
         Path to the image file.
+        
     fpath_peaks : str or path-like
         Path to peaks file (pickle, csv, etc.).
+    
     min_xy : int, default=20
         Minimum distance from image borders for valid peaks.
+    
     imID : str, optional
         Image ID for labeling.
+    
     show : bool, default=False
         If True, display image with peaks overlay.
 
@@ -143,8 +155,10 @@ def prep_data(fpath_img, fpath_peaks, min_xy=20, imID=None, show=False):
     -------
     arr : np.ndarray
         Numpy array of the image.
+    
     df : pandas.DataFrame
         DataFrame of peaks (coordinates + labels).
+    
     peaks : Peaks
         Peaks object with loaded peaks.
     """
@@ -319,7 +333,13 @@ def get_ROIs(im, df, s=20, norm=True, show=False):
         return arr_roi, corrected_df
 
 
-def create_masks(rois, df, class_col="class", n_per_class=10, show=True, save=False, save_path="."):
+def create_masks(rois, 
+                 df, 
+                 class_col="class", 
+                 n_per_class=10, 
+                 show=True, 
+                 save=False, 
+                 save_path="."):
     """
     Extracts n ROIs per class and computes average masks for each class.
     
@@ -375,7 +395,8 @@ def create_masks(rois, df, class_col="class", n_per_class=10, show=True, save=Fa
         class_indices = df[df[class_col] == lbl].index.tolist()
         
         if len(class_indices) < n_per_class:
-            print(f"Warning: class '{lbl}' has only {len(class_indices)} samples.")
+            print(
+                f"Class '{lbl}' has only {len(class_indices)} samples.")
             selected_indices = class_indices
         else:
             selected_indices = np.random.choice(class_indices,

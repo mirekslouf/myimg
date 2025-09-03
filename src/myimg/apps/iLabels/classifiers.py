@@ -48,7 +48,8 @@ def dataset(features, valid=False):
         valid=True.
     """
     # Drop metadata columns safely
-    X = features.drop(columns=['X', 'Y', 'Class', 'Note', 'imID'], errors='ignore')
+    X = features.drop(columns=['X', 'Y', 'Class', 'Note', 'imID'], 
+                      errors='ignore')
     y = features['Class']
 
     # Only stratify if every class has >= 2 samples
@@ -65,7 +66,8 @@ def dataset(features, valid=False):
 
     if valid:
         X_test, X_valid, y_test, y_valid = train_test_split(
-            X_test, y_test, stratify=y_test if stratify is not None else None, random_state=42
+            X_test, y_test, stratify=y_test if stratify is not None \
+                else None, random_state=42
         )
         return X_train, X_test, y_train, y_test, X_valid, y_valid
     else:
@@ -158,7 +160,7 @@ def get_optimal_rfc(X_train, y_train, param_dist=None):
 def select_features(X_train, y_train, num=5, estimator=None):
     """
     Selects the most important features using forward Sequential Feature 
-    Selection (SFS) based on a given estimator (default: RandomForestClassifier).
+    Selection (SFS) based on a given estimator (default: RFC).
 
     Parameters:
     -----------
@@ -172,8 +174,9 @@ def select_features(X_train, y_train, num=5, estimator=None):
         Number of features to be selected.
 
     estimator : sklearn estimator, optional (default=None)
-        The model used to evaluate feature importance during selection. If None,
-        a RandomForestClassifier with class_weight='balanced' will be used.
+        The model used to evaluate feature importance during selection.
+        If None, a RandomForestClassifier with class_weight='balanced' 
+        will be used.
 
     Returns:
     --------
@@ -287,7 +290,8 @@ def predicting(X_test, estimator, sfeatures=None, y_test=None):
         Trained model with a `.predict()` method.
         
     sfeatures : list of str or list of int, optional 
-        Subset of features to use for prediction. If None, all features are used.
+        Subset of features to use for prediction. If None, all features are 
+        used.
         
     y_test : array-like, optional
         Ground truth labels. If provided, accuracy and a classification report 

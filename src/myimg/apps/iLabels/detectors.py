@@ -32,6 +32,7 @@ def compute_local_variance(image, window_size=31):
     ----------
     image : 2D array-like
         Grayscale input image (e.g., float32 or float64).
+        
     window_size : int, optional
         Size of the sliding window over which variance is computed.
         Default is 31.
@@ -60,10 +61,13 @@ def match_mask_in_image(image, mask, type_idx, threshold):
     ----------
     image : 2D ndarray
         Input image (grayscale, float32 preferred).
+        
     mask : 2D ndarray
         Template to match against the image (same type as image).
+        
     type_idx : int
         Integer label identifying the type of template used.
+        
     threshold : float
         Minimum normalized cross-correlation score to consider a match valid.
 
@@ -119,6 +123,7 @@ def remove_duplicates(detections, min_dist=10):
     ----------
     detections : list of dict
         List of detections, each as a dictionary with keys 'x', 'y', and 'score'.
+        
     min_dist : float, optional
         Minimum distance (in pixels) to consider two detections as duplicates. 
         Default is 10.
@@ -166,23 +171,30 @@ def detector_NCC(image, masks, threshold=0.6, show=True,
     ----------
     image : ndarray
         Input grayscale image as a 2D NumPy array.
+        
     masks : list of ndarray
         List of template masks used for matching. Each mask is a 2D array.
+        
     threshold : float, optional
         NCC score threshold for accepting detections.
         Default is 0.6.
+        
     show : bool, optional
         If True, show visualizations of masked image and detections. 
         Default is True.
+        
     n_jobs : int, optional
         Number of parallel jobs to run. 
         Default is -1 (use all cores).
+        
     cmap : str, optional
         Colormap for displaying images. 
         Default is "viridis".
+        
     margin : int, optional
         Minimum distance (in pixels) from image border to keep a detection. 
         Default is 30.
+        
     ext : float, optional
         Extra scaling factor applied to minimum safe distance from low-variance 
         regions. Helps further reject detections near artefact edges.
@@ -193,6 +205,7 @@ def detector_NCC(image, masks, threshold=0.6, show=True,
     output : pandas.DataFrame
         Table of detected coordinates and classes with columns:
         ['X', 'Y', 'Class', 'Note'].
+        
     im_masked : ndarray
         Preprocessed image after low-variance masking
 
@@ -324,17 +337,21 @@ def detector_correlation(image, mask, threshold=0.5, show=True):
     """
     Detect nanoparticles by correlating mask over image.
 
-    Parameters:
-        image: 2D np.array
-            The input image where to detect nanoparticles.
-        mask: 2D np.array
-            The template mask (nanoparticle).
-        threshold: float
-            Minimum correlation score to consider a detection (default 0.5).
+    Parameters
+    ----------
+    image: 2D np.array
+        The input image where to detect nanoparticles.
+        
+    mask: 2D np.array
+        The template mask (nanoparticle).
+        
+    threshold: float
+        Minimum correlation score to consider a detection (default 0.5).
 
     Returns:
-        centers: list of (row, col) tuples
-            List of center coordinates of detected nanoparticles.
+    --------
+    centers: list of (row, col) tuples
+        List of center coordinates of detected nanoparticles.
     """
     cut_bottom=300
     
