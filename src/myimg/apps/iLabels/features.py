@@ -845,7 +845,7 @@ def visualize_features(df, method="box", class_col=None):
               plt.xlabel(class_col)
               plt.ylabel(feat)
               plt.tight_layout()
-              plt.show()
+              plt.show(block=False)
           else:
               print(f"Skipping {feat} - contains inf/NaN.")
 
@@ -884,7 +884,7 @@ def visualize_features(df, method="box", class_col=None):
         plt.suptitle("Feature pairwise relationships by class (no outliers)", 
                      y=1.02)
         plt.tight_layout()
-        plt.show()
+        plt.show(block=False)
 
 
     elif method == "heat":
@@ -928,7 +928,7 @@ def visualize_features(df, method="box", class_col=None):
                     cbar_kws={"shrink": .8})
         plt.title("Feature Correlation Heatmap")
         plt.tight_layout()
-        plt.show()
+        plt.show(block=False)
 
     else:
         raise ValueError("Unsupported method. Use 'box', 'pair', or 'heat'.")

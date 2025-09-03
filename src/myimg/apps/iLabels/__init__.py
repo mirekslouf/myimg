@@ -5,21 +5,12 @@ Created on Wed Apr 30 10:50:17 2025
 @author: p-sik
 """
 
-# Import submodules (so they can be accessed as myimg.apps.iLabels.roi, etc.)
-from . import roi
-from . import classPeaks
-from . import classifiers
-from . import detectors
-from . import features
+# src/myimg/apps/iLabels/__init__.py
+import importlib
 
-# Public API
-from .classPeaks import Peaks
+__all__ = ["features", "roi", "classPeaks", "classifiers", "detectors"]
 
-__all__ = [
-    "Peaks",
-    "roi",
-    "classPeaks",
-    "classifiers",
-    "detectors",
-    "features",
-]
+def __getattr__(name):
+    if name in __all__:
+        return importlib.import_module(f"{__name__}.{name}")
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

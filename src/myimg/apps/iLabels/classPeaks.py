@@ -115,7 +115,7 @@ class Peaks:
             # Print message if no data is available
     
     
-    def show_in_image(self):
+    def show_in_image(self, cmap="viridis"):
         '''
         Display the image with the peak data overlay (if image and data exist),
         with different colors for different particle types.
@@ -160,7 +160,7 @@ class Peaks:
         }
     
         # Plot the image
-        plt.imshow(self.img)
+        plt.imshow(self.img, cmap=cmap)
     
         # Loop through each unique particle type,
         # and plot the peaks with the corresponding color
@@ -174,7 +174,7 @@ class Peaks:
         
         plt.legend(title="Particle Type", loc='center left', bbox_to_anchor=(1.05, 0.5))
         plt.axis("off")
-        plt.title(f"Peaks on {self.img_name}")
+     #   plt.title(f"Peaks on {self.img_name}", s=10)
         plt.show()
 
 
@@ -310,7 +310,7 @@ class Peaks:
         
         # (3) Prepare data for ROI extraction
         self.arr, self.df, peaks = milab.roi.prep_data(
-            img_path, peak_path, min_xy=20, imID=imID, show=show)
+            img_path, peak_path, min_xy=20, imID=imID, show=False)
         
         # keep a reference to the Peaks object
         self.peaks = peaks
@@ -328,23 +328,13 @@ class Peaks:
         self.rois = [(roi, imID) for roi in rois]        
         self.dfs = pd.concat(self.dfs, ignore_index=True)
         
-        
-        # Show examples of extracted roi if show=True
-        if show:
-            milab.roi.show_random_rois(self.rois, self.dfs, n=5)
-            
-        
         # (5) Calculate features
         self.features, _ = milab.features.get_features(self.rois, self.dfs, 
                                                        self.masks,
                                                        show=False)
 
         self.features = self.features.dropna()
-        
-        if show:
-            milab.features.visualize_features(self.features, method="box")
-        milab.features.visualize_features(self.features, method="heat")
-        
+                
         # (6) Select features
         # Split dataset
         self.X_train, self.X_test, self.y_train, self.y_test = \

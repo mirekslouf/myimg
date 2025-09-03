@@ -152,7 +152,7 @@ def get_optimal_rfc(X_train, y_train, param_dist=None):
     print("Best parameters found:", random_search.best_params_)
     print("Train set accuracy:", estimator.score(X_train, y_train))
     
-    return estimator
+    return estimator, random_search.best_params_
 
 
 def select_features(X_train, y_train, num=5, estimator=None):

@@ -251,7 +251,7 @@ def get_ROIs(im, df, s=20, norm=True, show=False):
     
         # Check if preliminary ROI would go out of image bounds
         if x - s < 0 or x + s > h or y - s < 0 or y + s > w:
-            print(f"Skipping index {i}: original ROI out of bounds.")
+            # print(f"Skipping index {i}: original ROI out of bounds.")
             continue
     
         # Extract preliminary ROI
