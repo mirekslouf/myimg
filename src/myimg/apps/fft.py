@@ -16,7 +16,6 @@ from mpl_toolkits import axes_grid1  # to add nice colorbars
 import scipy.fftpack
 # Reading input images
 from PIL import Image
-import myimg.api
 
 
 class FFT:

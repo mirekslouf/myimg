@@ -53,7 +53,8 @@ import myimg.objects
 # >>> fft = mi.Apps.FFT(img)        # create FFT of the image using mi.Apps.FFT
 import myimg.apps.fft
 import myimg.apps.profiles
-import myimg.apps.iLabels 
+import myimg.apps.velox
+import myimg.apps.iLabels
 # (3) Auxiliary myimg module for plotting
 # myimg.io is used directly = imported to myimg.api + used for function calls
 # >>> import myimg.api as mi          # standard myimg import
@@ -257,18 +258,19 @@ class Apps:
         '''
         pass
 
-    class AzimuthalProfile (myimg.apps.profiles.AzimuthalProfile):
+    class AzimuthalProfile(myimg.apps.profiles.AzimuthalProfile):
         '''
         Class providing AzimuthalProfile objects.
         
-        * AzimuthalProfile object = intensity distribution as a function of angle.
+        * AzimuthalProfile object = 
+          intensity distribution as a function of angle.
     
         >>> # Simple usage of AzimuthalProfile objects
         >>> import myimg.api as mi
-        >>> img = mi.MyImage('some.png')             # open an image
-        >>> ap = mi.Apps.AzimuthalProfile(img)       # compute azimuthal profile
-        >>> ap.show()                                # plot the result
-        >>> ap.save("azimuthal.csv")                 # save profile to file
+        >>> img = mi.MyImage('some.png')         # open an image
+        >>> ap = mi.Apps.AzimuthalProfile(img)   # compute azimuthal profile
+        >>> ap.show()                            # plot the result
+        >>> ap.save("azimuthal.csv")             # save profile to file
         
         Parameters
         ----------
@@ -296,6 +298,46 @@ class Apps:
         * Can be visualized with `.show()` or exported with `.save()`.
         '''
         pass
+
+
+    class Velox:
+        '''
+        Class with utilities for Velox EMD files.
+        
+        >>> # Simple usage of Velox class.
+        >>> import myimg.api as mi
+        >>> # (1) EMDfiles class = renaming and describing EMD files.
+        >>> vdir = r'd:\data.sh\velox'
+        >>> mi.Apps.Velox.EMDfiles.rename(vdir)
+        >>> mi.Apps.Velox.EMDfiles.describe(vdir)
+        >>> # (2) EMDobject class = working with individual EMD files.
+        >>> vfile = vdir + '\' + '016_h66_650kx.emd'
+        >>> d = mi.Apps.Velox.EMDobject(vfile)
+        >>> print(d.pixelsize())
+        >>> # (3) Note: mi.Apps.Velox.EMDmetadata is usually not used directly.
+        '''
+        
+        
+        class EMDfiles(myimg.apps.velox.EMDfiles):
+            '''
+            EMDfiles class - rename and/or describe Velox EMD files.
+            '''
+            pass
+        
+        
+        class EMDmetadata(myimg.apps.velox.EMDmetadata):
+            '''
+            EMDmetadata class - access to metadata of Velox EMD files.
+            '''
+            pass
+        
+        
+        class EMDobject(myimg.apps.velox.EMDobject):
+            '''
+            Class providing EMDobjects.
+            '''
+            pass
+
 
     class iLabels(myimg.apps.iLabels.classPeaks.Peaks):
         '''

@@ -64,7 +64,7 @@
 <div class="pdoc-code codehilite">
 <pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Import of MyImg + open some image</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># (the next command is the standard import of MyImg package</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">myimage.api</span> <span class="k">as</span> <span class="nn">mi</span>     
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">myimage.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mi</span>     
 <span class="gp">&gt;&gt;&gt; </span><span class="n">img</span> <span class="o">=</span> <span class="n">mi</span><span class="o">.</span><span class="n">MyImage</span><span class="p">(</span><span class="s1">&#39;some.png&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Insert scalebar + save the result</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># (the next command employs myimg.utils.scalebar.insert_scalebar function</span>
@@ -120,14 +120,14 @@ the usaage of the scalebar method is shown in the example above.</p>
 </span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="sd">the usaage of the scalebar method is shown in the example above.</span>
 </span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a><span class="sd">&#39;&#39;&#39;</span>
 </span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>
-</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">glob</span><span class="o">,</span> <span class="nn">re</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">ImageFont</span><span class="p">,</span> <span class="n">ImageDraw</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="kn">import</span> <span class="nn">myimg.settings</span> <span class="k">as</span> <span class="nn">Settings</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="kn">from</span> <span class="nn">myimg.objects</span> <span class="kn">import</span> <span class="n">NumberWithUnits</span><span class="p">,</span> <span class="n">ScaleWithUnits</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span><span class="o">,</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">glob</span><span class="o">,</span><span class="w"> </span><span class="nn">re</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImageFont</span><span class="p">,</span> <span class="n">ImageDraw</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">myimg.settings</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">Settings</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">myimg.objects</span><span class="w"> </span><span class="kn">import</span> <span class="n">NumberWithUnits</span><span class="p">,</span> <span class="n">ScaleWithUnits</span>
 </span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a> 
 </span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>           
-</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="k">def</span> <span class="nf">insert_scalebar</span><span class="p">(</span><span class="n">my_img</span><span class="p">,</span> <span class="n">pixsize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">F</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="k">def</span><span class="w"> </span><span class="nf">insert_scalebar</span><span class="p">(</span><span class="n">my_img</span><span class="p">,</span> <span class="n">pixsize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">F</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 </span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>    <span class="c1"># Objective: To insert scalebar in a micrograph.</span>
 </span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>    <span class="c1"># Note: this function is usually called by MyImg.scalebar method.</span>
 </span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>    <span class="c1"># =&gt; see the original myimg.api.MyImg.scalebar method for more info.</span>
@@ -295,7 +295,7 @@ the usaage of the scalebar method is shown in the example above.</p>
 </span><span id="L-203"><a href="#L-203"><span class="linenos">203</span></a>    <span class="c1"># (No return value; the scalebar is drawn in my_img.img object</span>
 </span><span id="L-204"><a href="#L-204"><span class="linenos">204</span></a>
 </span><span id="L-205"><a href="#L-205"><span class="linenos">205</span></a>
-</span><span id="L-206"><a href="#L-206"><span class="linenos">206</span></a><span class="k">def</span> <span class="nf">get_pixel_size</span><span class="p">(</span><span class="n">my_img</span><span class="p">,</span> <span class="n">pixsize</span><span class="p">):</span>
+</span><span id="L-206"><a href="#L-206"><span class="linenos">206</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_pixel_size</span><span class="p">(</span><span class="n">my_img</span><span class="p">,</span> <span class="n">pixsize</span><span class="p">):</span>
 </span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a>    <span class="c1"># Objective: to get pixel size from pixsize argument + my_img object props.</span>
 </span><span id="L-208"><a href="#L-208"><span class="linenos">208</span></a>    <span class="c1">#-----</span>
 </span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a>    
@@ -319,7 +319,7 @@ the usaage of the scalebar method is shown in the example above.</p>
 </span><span id="L-227"><a href="#L-227"><span class="linenos">227</span></a>    <span class="k">return</span><span class="p">(</span><span class="n">pixel_size</span><span class="p">)</span>
 </span><span id="L-228"><a href="#L-228"><span class="linenos">228</span></a>
 </span><span id="L-229"><a href="#L-229"><span class="linenos">229</span></a>
-</span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a><span class="k">def</span> <span class="nf">pixel_size_from_rwi</span><span class="p">(</span><span class="n">my_img</span><span class="p">,</span> <span class="n">pixsize_args</span><span class="p">):</span>
+</span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a><span class="k">def</span><span class="w"> </span><span class="nf">pixel_size_from_rwi</span><span class="p">(</span><span class="n">my_img</span><span class="p">,</span> <span class="n">pixsize_args</span><span class="p">):</span>
 </span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a>    <span class="c1"># Objective: to get pixel size from RWI + image_width.</span>
 </span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a>    <span class="c1">#-----</span>
 </span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a>    
@@ -333,7 +333,7 @@ the usaage of the scalebar method is shown in the example above.</p>
 </span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a>    <span class="k">return</span><span class="p">(</span><span class="n">pixel</span><span class="p">)</span>
 </span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a>
 </span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a>
-</span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a><span class="k">def</span> <span class="nf">pixel_size_from_knl</span><span class="p">(</span><span class="n">my_img</span><span class="p">,</span> <span class="n">pixsize_args</span><span class="p">):</span>
+</span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a><span class="k">def</span><span class="w"> </span><span class="nf">pixel_size_from_knl</span><span class="p">(</span><span class="n">my_img</span><span class="p">,</span> <span class="n">pixsize_args</span><span class="p">):</span>
 </span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a>    <span class="c1"># Objective: to get pixel size from KNL.</span>
 </span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a>    <span class="c1"># (my_img is just a formal argument here</span>
 </span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a>    <span class="c1"># (my_img may be used in the future for beter error messages</span>
@@ -356,7 +356,7 @@ the usaage of the scalebar method is shown in the example above.</p>
 </span><span id="L-264"><a href="#L-264"><span class="linenos">264</span></a>    <span class="k">return</span><span class="p">(</span><span class="n">pixel</span><span class="p">)</span>
 </span><span id="L-265"><a href="#L-265"><span class="linenos">265</span></a>
 </span><span id="L-266"><a href="#L-266"><span class="linenos">266</span></a>
-</span><span id="L-267"><a href="#L-267"><span class="linenos">267</span></a><span class="k">def</span> <span class="nf">pixel_size_from_mag</span><span class="p">(</span><span class="n">my_img</span><span class="p">,</span> <span class="n">pixelsize_args</span><span class="p">):</span>
+</span><span id="L-267"><a href="#L-267"><span class="linenos">267</span></a><span class="k">def</span><span class="w"> </span><span class="nf">pixel_size_from_mag</span><span class="p">(</span><span class="n">my_img</span><span class="p">,</span> <span class="n">pixelsize_args</span><span class="p">):</span>
 </span><span id="L-268"><a href="#L-268"><span class="linenos">268</span></a>    <span class="c1"># Objective: to get pixel size from pixsize=&#39;mag...&#39; argument.</span>
 </span><span id="L-269"><a href="#L-269"><span class="linenos">269</span></a>    <span class="c1"># Note: this works only for the calibrated microscopes</span>
 </span><span id="L-270"><a href="#L-270"><span class="linenos">270</span></a>    <span class="c1"># (calibrated microscope = a dataclass in myimg.settings.MicCalibrations</span>
@@ -417,7 +417,7 @@ the usaage of the scalebar method is shown in the example above.</p>
 </span><span id="L-325"><a href="#L-325"><span class="linenos">325</span></a>    <span class="k">return</span><span class="p">(</span><span class="n">pixel</span><span class="p">)</span>
 </span><span id="L-326"><a href="#L-326"><span class="linenos">326</span></a>    
 </span><span id="L-327"><a href="#L-327"><span class="linenos">327</span></a>
-</span><span id="L-328"><a href="#L-328"><span class="linenos">328</span></a><span class="k">def</span> <span class="nf">pixel_size_from_txt</span><span class="p">(</span><span class="n">my_img</span><span class="p">,</span> <span class="n">pixelsize_args</span><span class="p">):</span>
+</span><span id="L-328"><a href="#L-328"><span class="linenos">328</span></a><span class="k">def</span><span class="w"> </span><span class="nf">pixel_size_from_txt</span><span class="p">(</span><span class="n">my_img</span><span class="p">,</span> <span class="n">pixelsize_args</span><span class="p">):</span>
 </span><span id="L-329"><a href="#L-329"><span class="linenos">329</span></a>    <span class="c1"># Objective: to get pixel size from  pixsize=&#39;txt...&#39; argument.</span>
 </span><span id="L-330"><a href="#L-330"><span class="linenos">330</span></a>    <span class="c1"># Note: this works only for microscopes with known description files.</span>
 </span><span id="L-331"><a href="#L-331"><span class="linenos">331</span></a>    <span class="c1"># (known descr.file = a dataclass in myimg.settings.MicDescriptionFiles</span>
@@ -486,7 +486,7 @@ the usaage of the scalebar method is shown in the example above.</p>
 </span><span id="L-394"><a href="#L-394"><span class="linenos">394</span></a>    <span class="k">return</span><span class="p">(</span><span class="n">pixel</span><span class="p">)</span>
 </span><span id="L-395"><a href="#L-395"><span class="linenos">395</span></a>
 </span><span id="L-396"><a href="#L-396"><span class="linenos">396</span></a>
-</span><span id="L-397"><a href="#L-397"><span class="linenos">397</span></a><span class="k">def</span> <span class="nf">calculate_scalebar_length</span><span class="p">(</span><span class="n">my_img</span><span class="p">,</span> <span class="n">pixel_size</span><span class="p">,</span> <span class="n">F</span><span class="p">):</span>
+</span><span id="L-397"><a href="#L-397"><span class="linenos">397</span></a><span class="k">def</span><span class="w"> </span><span class="nf">calculate_scalebar_length</span><span class="p">(</span><span class="n">my_img</span><span class="p">,</span> <span class="n">pixel_size</span><span class="p">,</span> <span class="n">F</span><span class="p">):</span>
 </span><span id="L-398"><a href="#L-398"><span class="linenos">398</span></a>    <span class="c1"># Objective: to calculate suitable scalebar length,</span>
 </span><span id="L-399"><a href="#L-399"><span class="linenos">399</span></a>    <span class="c1"># based on image size, pixel size, Settings.Scalebar.length and factor F.</span>
 </span><span id="L-400"><a href="#L-400"><span class="linenos">400</span></a>    <span class="c1"># (Note: we calculate just length+units;</span>
@@ -513,7 +513,7 @@ the usaage of the scalebar method is shown in the example above.</p>
 </span><span id="L-421"><a href="#L-421"><span class="linenos">421</span></a>    <span class="k">return</span><span class="p">(</span><span class="n">nwu</span><span class="p">)</span>
 </span><span id="L-422"><a href="#L-422"><span class="linenos">422</span></a>    
 </span><span id="L-423"><a href="#L-423"><span class="linenos">423</span></a>    
-</span><span id="L-424"><a href="#L-424"><span class="linenos">424</span></a><span class="k">def</span> <span class="nf">calculate_scalebar_length_in_pixels</span><span class="p">(</span><span class="n">length_of_scalebar</span><span class="p">,</span> <span class="n">pixel_size</span><span class="p">):</span>
+</span><span id="L-424"><a href="#L-424"><span class="linenos">424</span></a><span class="k">def</span><span class="w"> </span><span class="nf">calculate_scalebar_length_in_pixels</span><span class="p">(</span><span class="n">length_of_scalebar</span><span class="p">,</span> <span class="n">pixel_size</span><span class="p">):</span>
 </span><span id="L-425"><a href="#L-425"><span class="linenos">425</span></a>    <span class="c1"># Objective: to calculate scalebar length-in-pixels</span>
 </span><span id="L-426"><a href="#L-426"><span class="linenos">426</span></a>    <span class="c1"># (using two NumberWithUnits objects: length_of_scalebar + pixel_size</span>
 </span><span id="L-427"><a href="#L-427"><span class="linenos">427</span></a>    <span class="c1">#-----   </span>

@@ -92,17 +92,17 @@
 </span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="sd">@author: p-sik</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a>
-</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">import</span> <span class="nn">sys</span> 
-</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">import</span> <span class="nn">pickle</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="kn">import</span> <span class="nn">joblib</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="kn">import</span> <span class="nn">os</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="n">ClassifierMixin</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="kn">import</span> <span class="nn">myimg.apps.iLabels</span> <span class="k">as</span> <span class="nn">milab</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span> 
+</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">joblib</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClassifierMixin</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">myimg.apps.iLabels</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">milab</span>
 </span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>
-</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="k">class</span> <span class="nc">Peaks</span><span class="p">:</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Peaks</span><span class="p">:</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="sd">    Container for peak annotations tied to a single image.</span>
 </span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>
@@ -122,7 +122,7 @@
 </span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="sd">      https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg.html</span>
 </span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>
-</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
 </span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>                 <span class="n">df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
 </span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>                 <span class="n">img</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
 </span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>                 <span class="n">img_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> 
@@ -193,7 +193,7 @@
 </span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>            
 </span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>    
 </span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>    
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 </span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 </span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">        Load the peak data from a .pkl file.</span>
 </span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="sd">    </span>
@@ -220,7 +220,7 @@
 </span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>            <span class="c1"># Print any other exceptions that occur</span>
 </span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>
 </span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>    
-</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>    <span class="k">def</span> <span class="nf">show_as_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">show_as_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 </span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a><span class="sd">        Display the peak data as text.</span>
 </span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a><span class="sd">    </span>
@@ -236,7 +236,7 @@
 </span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>            <span class="c1"># Print message if no data is available</span>
 </span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>    
 </span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>    
-</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>    <span class="k">def</span> <span class="nf">show_in_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">):</span>
+</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">show_in_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">):</span>
 </span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="sd">        Overlay peak locations on the image, colored by class.</span>
 </span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a><span class="sd">    </span>
@@ -293,7 +293,7 @@
 </span><span id="L-206"><a href="#L-206"><span class="linenos">206</span></a>        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a>
 </span><span id="L-208"><a href="#L-208"><span class="linenos">208</span></a>
-</span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a>    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+</span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
 </span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a>             <span class="n">method</span><span class="o">=</span><span class="s1">&#39;manual&#39;</span><span class="p">,</span> 
 </span><span id="L-211"><a href="#L-211"><span class="linenos">211</span></a>             <span class="n">ref</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
 </span><span id="L-212"><a href="#L-212"><span class="linenos">212</span></a>             <span class="n">mask_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
@@ -345,7 +345,7 @@
 </span><span id="L-258"><a href="#L-258"><span class="linenos">258</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-259"><a href="#L-259"><span class="linenos">259</span></a>    
 </span><span id="L-260"><a href="#L-260"><span class="linenos">260</span></a>        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;manual&quot;</span><span class="p">:</span>
-</span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a>            <span class="kn">from</span> <span class="nn">myimg.utils.iplot</span> <span class="kn">import</span> <span class="n">interactive_plot</span><span class="p">,</span> <span class="n">default_plot_params</span>
+</span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a>            <span class="kn">from</span><span class="w"> </span><span class="nn">myimg.utils.iplot</span><span class="w"> </span><span class="kn">import</span> <span class="n">interactive_plot</span><span class="p">,</span> <span class="n">default_plot_params</span>
 </span><span id="L-262"><a href="#L-262"><span class="linenos">262</span></a>    
 </span><span id="L-263"><a href="#L-263"><span class="linenos">263</span></a>            <span class="c1"># Generate and display the interactive plot for manual annotation</span>
 </span><span id="L-264"><a href="#L-264"><span class="linenos">264</span></a>            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">interactive_plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">img</span><span class="p">,</span> 
@@ -385,7 +385,7 @@
 </span><span id="L-298"><a href="#L-298"><span class="linenos">298</span></a>            
 </span><span id="L-299"><a href="#L-299"><span class="linenos">299</span></a>    
 </span><span id="L-300"><a href="#L-300"><span class="linenos">300</span></a>
-</span><span id="L-301"><a href="#L-301"><span class="linenos">301</span></a>    <span class="k">def</span> <span class="nf">characterize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img_path</span><span class="p">,</span> <span class="n">peak_path</span><span class="p">,</span> <span class="n">mask_path</span><span class="p">,</span> 
+</span><span id="L-301"><a href="#L-301"><span class="linenos">301</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">characterize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img_path</span><span class="p">,</span> <span class="n">peak_path</span><span class="p">,</span> <span class="n">mask_path</span><span class="p">,</span> 
 </span><span id="L-302"><a href="#L-302"><span class="linenos">302</span></a>                     <span class="n">imID</span><span class="o">=</span><span class="s1">&#39;im0x&#39;</span><span class="p">,</span> <span class="n">preprocess</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </span><span id="L-303"><a href="#L-303"><span class="linenos">303</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-304"><a href="#L-304"><span class="linenos">304</span></a><span class="sd">        Extract ROIs around peaks, compute features, and select the most </span>
@@ -500,7 +500,7 @@
 </span><span id="L-413"><a href="#L-413"><span class="linenos">413</span></a>        <span class="k">return</span> 
 </span><span id="L-414"><a href="#L-414"><span class="linenos">414</span></a>    
 </span><span id="L-415"><a href="#L-415"><span class="linenos">415</span></a>    
-</span><span id="L-416"><a href="#L-416"><span class="linenos">416</span></a>    <span class="k">def</span> <span class="nf">correct</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;intensity&#39;</span><span class="p">):</span>
+</span><span id="L-416"><a href="#L-416"><span class="linenos">416</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">correct</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;intensity&#39;</span><span class="p">):</span>
 </span><span id="L-417"><a href="#L-417"><span class="linenos">417</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-418"><a href="#L-418"><span class="linenos">418</span></a><span class="sd">        Refine peak coordinates by re-centering each peak to the local</span>
 </span><span id="L-419"><a href="#L-419"><span class="linenos">419</span></a><span class="sd">        intensity maximum within a square ROI.</span>
@@ -553,7 +553,7 @@
 </span><span id="L-466"><a href="#L-466"><span class="linenos">466</span></a>        <span class="k">return</span> <span class="n">peaks</span>
 </span><span id="L-467"><a href="#L-467"><span class="linenos">467</span></a>    
 </span><span id="L-468"><a href="#L-468"><span class="linenos">468</span></a>    
-</span><span id="L-469"><a href="#L-469"><span class="linenos">469</span></a>    <span class="k">def</span> <span class="nf">classify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+</span><span id="L-469"><a href="#L-469"><span class="linenos">469</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">classify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
 </span><span id="L-470"><a href="#L-470"><span class="linenos">470</span></a>                 <span class="n">data</span><span class="p">,</span> 
 </span><span id="L-471"><a href="#L-471"><span class="linenos">471</span></a>                 <span class="n">method</span><span class="o">=</span><span class="s1">&#39;gauss_fit&#39;</span><span class="p">,</span> 
 </span><span id="L-472"><a href="#L-472"><span class="linenos">472</span></a>                 <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
@@ -663,7 +663,7 @@
 
     </div>
     <a class="headerlink" href="#Peaks"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Peaks-19"><a href="#Peaks-19"><span class="linenos"> 19</span></a><span class="k">class</span> <span class="nc">Peaks</span><span class="p">:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Peaks-19"><a href="#Peaks-19"><span class="linenos"> 19</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Peaks</span><span class="p">:</span>
 </span><span id="Peaks-20"><a href="#Peaks-20"><span class="linenos"> 20</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="Peaks-21"><a href="#Peaks-21"><span class="linenos"> 21</span></a><span class="sd">    Container for peak annotations tied to a single image.</span>
 </span><span id="Peaks-22"><a href="#Peaks-22"><span class="linenos"> 22</span></a>
@@ -683,7 +683,7 @@
 </span><span id="Peaks-36"><a href="#Peaks-36"><span class="linenos"> 36</span></a><span class="sd">      https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg.html</span>
 </span><span id="Peaks-37"><a href="#Peaks-37"><span class="linenos"> 37</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="Peaks-38"><a href="#Peaks-38"><span class="linenos"> 38</span></a>
-</span><span id="Peaks-39"><a href="#Peaks-39"><span class="linenos"> 39</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+</span><span id="Peaks-39"><a href="#Peaks-39"><span class="linenos"> 39</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
 </span><span id="Peaks-40"><a href="#Peaks-40"><span class="linenos"> 40</span></a>                 <span class="n">df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
 </span><span id="Peaks-41"><a href="#Peaks-41"><span class="linenos"> 41</span></a>                 <span class="n">img</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
 </span><span id="Peaks-42"><a href="#Peaks-42"><span class="linenos"> 42</span></a>                 <span class="n">img_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> 
@@ -754,7 +754,7 @@
 </span><span id="Peaks-107"><a href="#Peaks-107"><span class="linenos">107</span></a>            
 </span><span id="Peaks-108"><a href="#Peaks-108"><span class="linenos">108</span></a>    
 </span><span id="Peaks-109"><a href="#Peaks-109"><span class="linenos">109</span></a>    
-</span><span id="Peaks-110"><a href="#Peaks-110"><span class="linenos">110</span></a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+</span><span id="Peaks-110"><a href="#Peaks-110"><span class="linenos">110</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 </span><span id="Peaks-111"><a href="#Peaks-111"><span class="linenos">111</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 </span><span id="Peaks-112"><a href="#Peaks-112"><span class="linenos">112</span></a><span class="sd">        Load the peak data from a .pkl file.</span>
 </span><span id="Peaks-113"><a href="#Peaks-113"><span class="linenos">113</span></a><span class="sd">    </span>
@@ -781,7 +781,7 @@
 </span><span id="Peaks-134"><a href="#Peaks-134"><span class="linenos">134</span></a>            <span class="c1"># Print any other exceptions that occur</span>
 </span><span id="Peaks-135"><a href="#Peaks-135"><span class="linenos">135</span></a>
 </span><span id="Peaks-136"><a href="#Peaks-136"><span class="linenos">136</span></a>    
-</span><span id="Peaks-137"><a href="#Peaks-137"><span class="linenos">137</span></a>    <span class="k">def</span> <span class="nf">show_as_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="Peaks-137"><a href="#Peaks-137"><span class="linenos">137</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">show_as_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="Peaks-138"><a href="#Peaks-138"><span class="linenos">138</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 </span><span id="Peaks-139"><a href="#Peaks-139"><span class="linenos">139</span></a><span class="sd">        Display the peak data as text.</span>
 </span><span id="Peaks-140"><a href="#Peaks-140"><span class="linenos">140</span></a><span class="sd">    </span>
@@ -797,7 +797,7 @@
 </span><span id="Peaks-150"><a href="#Peaks-150"><span class="linenos">150</span></a>            <span class="c1"># Print message if no data is available</span>
 </span><span id="Peaks-151"><a href="#Peaks-151"><span class="linenos">151</span></a>    
 </span><span id="Peaks-152"><a href="#Peaks-152"><span class="linenos">152</span></a>    
-</span><span id="Peaks-153"><a href="#Peaks-153"><span class="linenos">153</span></a>    <span class="k">def</span> <span class="nf">show_in_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">):</span>
+</span><span id="Peaks-153"><a href="#Peaks-153"><span class="linenos">153</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">show_in_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">):</span>
 </span><span id="Peaks-154"><a href="#Peaks-154"><span class="linenos">154</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="Peaks-155"><a href="#Peaks-155"><span class="linenos">155</span></a><span class="sd">        Overlay peak locations on the image, colored by class.</span>
 </span><span id="Peaks-156"><a href="#Peaks-156"><span class="linenos">156</span></a><span class="sd">    </span>
@@ -854,7 +854,7 @@
 </span><span id="Peaks-207"><a href="#Peaks-207"><span class="linenos">207</span></a>        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </span><span id="Peaks-208"><a href="#Peaks-208"><span class="linenos">208</span></a>
 </span><span id="Peaks-209"><a href="#Peaks-209"><span class="linenos">209</span></a>
-</span><span id="Peaks-210"><a href="#Peaks-210"><span class="linenos">210</span></a>    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+</span><span id="Peaks-210"><a href="#Peaks-210"><span class="linenos">210</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
 </span><span id="Peaks-211"><a href="#Peaks-211"><span class="linenos">211</span></a>             <span class="n">method</span><span class="o">=</span><span class="s1">&#39;manual&#39;</span><span class="p">,</span> 
 </span><span id="Peaks-212"><a href="#Peaks-212"><span class="linenos">212</span></a>             <span class="n">ref</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
 </span><span id="Peaks-213"><a href="#Peaks-213"><span class="linenos">213</span></a>             <span class="n">mask_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
@@ -906,7 +906,7 @@
 </span><span id="Peaks-259"><a href="#Peaks-259"><span class="linenos">259</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="Peaks-260"><a href="#Peaks-260"><span class="linenos">260</span></a>    
 </span><span id="Peaks-261"><a href="#Peaks-261"><span class="linenos">261</span></a>        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;manual&quot;</span><span class="p">:</span>
-</span><span id="Peaks-262"><a href="#Peaks-262"><span class="linenos">262</span></a>            <span class="kn">from</span> <span class="nn">myimg.utils.iplot</span> <span class="kn">import</span> <span class="n">interactive_plot</span><span class="p">,</span> <span class="n">default_plot_params</span>
+</span><span id="Peaks-262"><a href="#Peaks-262"><span class="linenos">262</span></a>            <span class="kn">from</span><span class="w"> </span><span class="nn">myimg.utils.iplot</span><span class="w"> </span><span class="kn">import</span> <span class="n">interactive_plot</span><span class="p">,</span> <span class="n">default_plot_params</span>
 </span><span id="Peaks-263"><a href="#Peaks-263"><span class="linenos">263</span></a>    
 </span><span id="Peaks-264"><a href="#Peaks-264"><span class="linenos">264</span></a>            <span class="c1"># Generate and display the interactive plot for manual annotation</span>
 </span><span id="Peaks-265"><a href="#Peaks-265"><span class="linenos">265</span></a>            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">interactive_plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">img</span><span class="p">,</span> 
@@ -946,7 +946,7 @@
 </span><span id="Peaks-299"><a href="#Peaks-299"><span class="linenos">299</span></a>            
 </span><span id="Peaks-300"><a href="#Peaks-300"><span class="linenos">300</span></a>    
 </span><span id="Peaks-301"><a href="#Peaks-301"><span class="linenos">301</span></a>
-</span><span id="Peaks-302"><a href="#Peaks-302"><span class="linenos">302</span></a>    <span class="k">def</span> <span class="nf">characterize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img_path</span><span class="p">,</span> <span class="n">peak_path</span><span class="p">,</span> <span class="n">mask_path</span><span class="p">,</span> 
+</span><span id="Peaks-302"><a href="#Peaks-302"><span class="linenos">302</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">characterize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img_path</span><span class="p">,</span> <span class="n">peak_path</span><span class="p">,</span> <span class="n">mask_path</span><span class="p">,</span> 
 </span><span id="Peaks-303"><a href="#Peaks-303"><span class="linenos">303</span></a>                     <span class="n">imID</span><span class="o">=</span><span class="s1">&#39;im0x&#39;</span><span class="p">,</span> <span class="n">preprocess</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </span><span id="Peaks-304"><a href="#Peaks-304"><span class="linenos">304</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="Peaks-305"><a href="#Peaks-305"><span class="linenos">305</span></a><span class="sd">        Extract ROIs around peaks, compute features, and select the most </span>
@@ -1061,7 +1061,7 @@
 </span><span id="Peaks-414"><a href="#Peaks-414"><span class="linenos">414</span></a>        <span class="k">return</span> 
 </span><span id="Peaks-415"><a href="#Peaks-415"><span class="linenos">415</span></a>    
 </span><span id="Peaks-416"><a href="#Peaks-416"><span class="linenos">416</span></a>    
-</span><span id="Peaks-417"><a href="#Peaks-417"><span class="linenos">417</span></a>    <span class="k">def</span> <span class="nf">correct</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;intensity&#39;</span><span class="p">):</span>
+</span><span id="Peaks-417"><a href="#Peaks-417"><span class="linenos">417</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">correct</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;intensity&#39;</span><span class="p">):</span>
 </span><span id="Peaks-418"><a href="#Peaks-418"><span class="linenos">418</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="Peaks-419"><a href="#Peaks-419"><span class="linenos">419</span></a><span class="sd">        Refine peak coordinates by re-centering each peak to the local</span>
 </span><span id="Peaks-420"><a href="#Peaks-420"><span class="linenos">420</span></a><span class="sd">        intensity maximum within a square ROI.</span>
@@ -1114,7 +1114,7 @@
 </span><span id="Peaks-467"><a href="#Peaks-467"><span class="linenos">467</span></a>        <span class="k">return</span> <span class="n">peaks</span>
 </span><span id="Peaks-468"><a href="#Peaks-468"><span class="linenos">468</span></a>    
 </span><span id="Peaks-469"><a href="#Peaks-469"><span class="linenos">469</span></a>    
-</span><span id="Peaks-470"><a href="#Peaks-470"><span class="linenos">470</span></a>    <span class="k">def</span> <span class="nf">classify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+</span><span id="Peaks-470"><a href="#Peaks-470"><span class="linenos">470</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">classify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
 </span><span id="Peaks-471"><a href="#Peaks-471"><span class="linenos">471</span></a>                 <span class="n">data</span><span class="p">,</span> 
 </span><span id="Peaks-472"><a href="#Peaks-472"><span class="linenos">472</span></a>                 <span class="n">method</span><span class="o">=</span><span class="s1">&#39;gauss_fit&#39;</span><span class="p">,</span> 
 </span><span id="Peaks-473"><a href="#Peaks-473"><span class="linenos">473</span></a>                 <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
@@ -1246,7 +1246,7 @@ feature extraction workflows.</p>
 
     </div>
     <a class="headerlink" href="#Peaks.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Peaks.__init__-39"><a href="#Peaks.__init__-39"><span class="linenos"> 39</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Peaks.__init__-39"><a href="#Peaks.__init__-39"><span class="linenos"> 39</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
 </span><span id="Peaks.__init__-40"><a href="#Peaks.__init__-40"><span class="linenos"> 40</span></a>                 <span class="n">df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
 </span><span id="Peaks.__init__-41"><a href="#Peaks.__init__-41"><span class="linenos"> 41</span></a>                 <span class="n">img</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
 </span><span id="Peaks.__init__-42"><a href="#Peaks.__init__-42"><span class="linenos"> 42</span></a>                 <span class="n">img_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> 
@@ -1362,7 +1362,7 @@ If <code>True</code>, enable verbose/diagnostic prints. Default <code>False</cod
 
     </div>
     <a class="headerlink" href="#Peaks.read"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Peaks.read-110"><a href="#Peaks.read-110"><span class="linenos">110</span></a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Peaks.read-110"><a href="#Peaks.read-110"><span class="linenos">110</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 </span><span id="Peaks.read-111"><a href="#Peaks.read-111"><span class="linenos">111</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 </span><span id="Peaks.read-112"><a href="#Peaks.read-112"><span class="linenos">112</span></a><span class="sd">        Load the peak data from a .pkl file.</span>
 </span><span id="Peaks.read-113"><a href="#Peaks.read-113"><span class="linenos">113</span></a><span class="sd">    </span>
@@ -1419,7 +1419,7 @@ The path to the .pkl file containing the peak data.</li>
 
     </div>
     <a class="headerlink" href="#Peaks.show_as_text"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Peaks.show_as_text-137"><a href="#Peaks.show_as_text-137"><span class="linenos">137</span></a>    <span class="k">def</span> <span class="nf">show_as_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Peaks.show_as_text-137"><a href="#Peaks.show_as_text-137"><span class="linenos">137</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">show_as_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="Peaks.show_as_text-138"><a href="#Peaks.show_as_text-138"><span class="linenos">138</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 </span><span id="Peaks.show_as_text-139"><a href="#Peaks.show_as_text-139"><span class="linenos">139</span></a><span class="sd">        Display the peak data as text.</span>
 </span><span id="Peaks.show_as_text-140"><a href="#Peaks.show_as_text-140"><span class="linenos">140</span></a><span class="sd">    </span>
@@ -1458,7 +1458,7 @@ The path to the .pkl file containing the peak data.</li>
 
     </div>
     <a class="headerlink" href="#Peaks.show_in_image"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Peaks.show_in_image-153"><a href="#Peaks.show_in_image-153"><span class="linenos">153</span></a>    <span class="k">def</span> <span class="nf">show_in_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Peaks.show_in_image-153"><a href="#Peaks.show_in_image-153"><span class="linenos">153</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">show_in_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">):</span>
 </span><span id="Peaks.show_in_image-154"><a href="#Peaks.show_in_image-154"><span class="linenos">154</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="Peaks.show_in_image-155"><a href="#Peaks.show_in_image-155"><span class="linenos">155</span></a><span class="sd">        Overlay peak locations on the image, colored by class.</span>
 </span><span id="Peaks.show_in_image-156"><a href="#Peaks.show_in_image-156"><span class="linenos">156</span></a><span class="sd">    </span>
@@ -1543,7 +1543,7 @@ images. Ignored for RGB/RGBA images. Default is <code>"viridis"</code>.</li>
 
     </div>
     <a class="headerlink" href="#Peaks.find"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Peaks.find-210"><a href="#Peaks.find-210"><span class="linenos">210</span></a>    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Peaks.find-210"><a href="#Peaks.find-210"><span class="linenos">210</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
 </span><span id="Peaks.find-211"><a href="#Peaks.find-211"><span class="linenos">211</span></a>             <span class="n">method</span><span class="o">=</span><span class="s1">&#39;manual&#39;</span><span class="p">,</span> 
 </span><span id="Peaks.find-212"><a href="#Peaks.find-212"><span class="linenos">212</span></a>             <span class="n">ref</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
 </span><span id="Peaks.find-213"><a href="#Peaks.find-213"><span class="linenos">213</span></a>             <span class="n">mask_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
@@ -1595,7 +1595,7 @@ images. Ignored for RGB/RGBA images. Default is <code>"viridis"</code>.</li>
 </span><span id="Peaks.find-259"><a href="#Peaks.find-259"><span class="linenos">259</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="Peaks.find-260"><a href="#Peaks.find-260"><span class="linenos">260</span></a>    
 </span><span id="Peaks.find-261"><a href="#Peaks.find-261"><span class="linenos">261</span></a>        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;manual&quot;</span><span class="p">:</span>
-</span><span id="Peaks.find-262"><a href="#Peaks.find-262"><span class="linenos">262</span></a>            <span class="kn">from</span> <span class="nn">myimg.utils.iplot</span> <span class="kn">import</span> <span class="n">interactive_plot</span><span class="p">,</span> <span class="n">default_plot_params</span>
+</span><span id="Peaks.find-262"><a href="#Peaks.find-262"><span class="linenos">262</span></a>            <span class="kn">from</span><span class="w"> </span><span class="nn">myimg.utils.iplot</span><span class="w"> </span><span class="kn">import</span> <span class="n">interactive_plot</span><span class="p">,</span> <span class="n">default_plot_params</span>
 </span><span id="Peaks.find-263"><a href="#Peaks.find-263"><span class="linenos">263</span></a>    
 </span><span id="Peaks.find-264"><a href="#Peaks.find-264"><span class="linenos">264</span></a>            <span class="c1"># Generate and display the interactive plot for manual annotation</span>
 </span><span id="Peaks.find-265"><a href="#Peaks.find-265"><span class="linenos">265</span></a>            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">interactive_plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">img</span><span class="p">,</span> 
@@ -1686,7 +1686,7 @@ after displaying the picker.</li>
 
     </div>
     <a class="headerlink" href="#Peaks.characterize"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Peaks.characterize-302"><a href="#Peaks.characterize-302"><span class="linenos">302</span></a>    <span class="k">def</span> <span class="nf">characterize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img_path</span><span class="p">,</span> <span class="n">peak_path</span><span class="p">,</span> <span class="n">mask_path</span><span class="p">,</span> 
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Peaks.characterize-302"><a href="#Peaks.characterize-302"><span class="linenos">302</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">characterize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img_path</span><span class="p">,</span> <span class="n">peak_path</span><span class="p">,</span> <span class="n">mask_path</span><span class="p">,</span> 
 </span><span id="Peaks.characterize-303"><a href="#Peaks.characterize-303"><span class="linenos">303</span></a>                     <span class="n">imID</span><span class="o">=</span><span class="s1">&#39;im0x&#39;</span><span class="p">,</span> <span class="n">preprocess</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </span><span id="Peaks.characterize-304"><a href="#Peaks.characterize-304"><span class="linenos">304</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="Peaks.characterize-305"><a href="#Peaks.characterize-305"><span class="linenos">305</span></a><span class="sd">        Extract ROIs around peaks, compute features, and select the most </span>
@@ -1868,7 +1868,7 @@ Default False.</li>
 
     </div>
     <a class="headerlink" href="#Peaks.correct"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Peaks.correct-417"><a href="#Peaks.correct-417"><span class="linenos">417</span></a>    <span class="k">def</span> <span class="nf">correct</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;intensity&#39;</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Peaks.correct-417"><a href="#Peaks.correct-417"><span class="linenos">417</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">correct</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;intensity&#39;</span><span class="p">):</span>
 </span><span id="Peaks.correct-418"><a href="#Peaks.correct-418"><span class="linenos">418</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="Peaks.correct-419"><a href="#Peaks.correct-419"><span class="linenos">419</span></a><span class="sd">        Refine peak coordinates by re-centering each peak to the local</span>
 </span><span id="Peaks.correct-420"><a href="#Peaks.correct-420"><span class="linenos">420</span></a><span class="sd">        intensity maximum within a square ROI.</span>
@@ -1977,7 +1977,7 @@ to the border may yield clipped ROIs depending on <code>get_ROIs</code> behavior
 
     </div>
     <a class="headerlink" href="#Peaks.classify"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Peaks.classify-470"><a href="#Peaks.classify-470"><span class="linenos">470</span></a>    <span class="k">def</span> <span class="nf">classify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Peaks.classify-470"><a href="#Peaks.classify-470"><span class="linenos">470</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">classify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
 </span><span id="Peaks.classify-471"><a href="#Peaks.classify-471"><span class="linenos">471</span></a>                 <span class="n">data</span><span class="p">,</span> 
 </span><span id="Peaks.classify-472"><a href="#Peaks.classify-472"><span class="linenos">472</span></a>                 <span class="n">method</span><span class="o">=</span><span class="s1">&#39;gauss_fit&#39;</span><span class="p">,</span> 
 </span><span id="Peaks.classify-473"><a href="#Peaks.classify-473"><span class="linenos">473</span></a>                 <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 

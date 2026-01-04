@@ -4,9 +4,9 @@ MyImg :: Processing of micrographs
 * MyImg is a toolbox for the processing of micrographs, which can:
 	1. Process single micrographs (improve contrast, insert scalebars, etc.).
 	2. Prepare high-quality tiled images from the processed micrographs.
-	3. Run additional processing and/or applications, such as:
+	3. Run additional applications such as:
 		- FFT = 2D Fourier transforms
-		- MDist = size distributions from series of micrographs
+		- MDistr = size distributions from series of micrographs
 		- iLabels = find and categorize nanoparticles on (S)TEM micrographs
 
 
@@ -52,5 +52,6 @@ Versions of MyImg
 
 * Version 0.1 = 1st draft: too complex, later completely re-written 
 * Version 0.2 = 2nd draft: MyImage object with cut, crop, label, scalebar
-* Version 0.3 = objects: MyImage, MyReport; apps: FFT, iLabels (semi-finished) 
-* Version 0.4 = TODO: add scalebar-stripes, mdistr + finalize FFT, iLabels
+* Version 0.3 = objects: MyImage, MyReport; apps: FFT, iLabels (semi-finished)
+* Version 0.4 = apps.velox: utilities to process Velox EMD files 
+* Version 0.5 = TODO: add scalebar-stripes, mdistr + finalize FFT, iLabels

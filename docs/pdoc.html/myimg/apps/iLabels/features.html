@@ -85,19 +85,19 @@
 </span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a>
 </span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="sd">@author: p-sik</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">import</span> <span class="nn">scipy.stats</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="kn">from</span> <span class="nn">skimage.measure</span> <span class="kn">import</span> <span class="n">label</span><span class="p">,</span> <span class="n">regionprops</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="kn">from</span> <span class="nn">skimage.filters</span> <span class="kn">import</span> <span class="n">threshold_otsu</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="kn">from</span> <span class="nn">skimage.morphology</span> <span class="kn">import</span> <span class="n">opening</span><span class="p">,</span> <span class="n">disk</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">curve_fit</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="kn">from</span> <span class="nn">skimage.feature</span> <span class="kn">import</span> <span class="n">match_template</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">scipy.stats</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">skimage.measure</span><span class="w"> </span><span class="kn">import</span> <span class="n">label</span><span class="p">,</span> <span class="n">regionprops</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">skimage.filters</span><span class="w"> </span><span class="kn">import</span> <span class="n">threshold_otsu</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">skimage.morphology</span><span class="w"> </span><span class="kn">import</span> <span class="n">opening</span><span class="p">,</span> <span class="n">disk</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">curve_fit</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">skimage.feature</span><span class="w"> </span><span class="kn">import</span> <span class="n">match_template</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 </span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>
 </span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>
-</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="k">def</span> <span class="nf">get_features</span><span class="p">(</span><span class="n">rois</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">masks</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_features</span><span class="p">(</span><span class="n">rois</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">masks</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="sd">    Extracts and combines multiple types of features from ROI images:</span>
 </span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="sd">        - statistical</span>
@@ -170,7 +170,7 @@
 </span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>    <span class="k">return</span> <span class="n">combined_props</span><span class="p">,</span> <span class="n">propsArr</span>
 </span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>
 </span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="k">def</span> <span class="nf">extended_features</span><span class="p">(</span><span class="n">rois</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="k">def</span><span class="w"> </span><span class="nf">extended_features</span><span class="p">(</span><span class="n">rois</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 </span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="sd">    Extracts and extends feature sets from a list of Region of Interest (ROI)</span>
 </span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">    images and returns two DataFrames containing scalar and array-based </span>
@@ -474,7 +474,7 @@
 </span><span id="L-393"><a href="#L-393"><span class="linenos">393</span></a>    <span class="k">return</span> <span class="n">df1</span><span class="p">,</span> <span class="n">df2</span> 
 </span><span id="L-394"><a href="#L-394"><span class="linenos">394</span></a>        
 </span><span id="L-395"><a href="#L-395"><span class="linenos">395</span></a>
-</span><span id="L-396"><a href="#L-396"><span class="linenos">396</span></a><span class="k">def</span> <span class="nf">roi_features</span><span class="p">(</span><span class="n">rois</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+</span><span id="L-396"><a href="#L-396"><span class="linenos">396</span></a><span class="k">def</span><span class="w"> </span><span class="nf">roi_features</span><span class="p">(</span><span class="n">rois</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 </span><span id="L-397"><a href="#L-397"><span class="linenos">397</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-398"><a href="#L-398"><span class="linenos">398</span></a><span class="sd">    Extracts intensity-based statistical features from a list of ROI images and </span>
 </span><span id="L-399"><a href="#L-399"><span class="linenos">399</span></a><span class="sd">    optionally visualizes feature distributions across classes.</span>
@@ -575,7 +575,7 @@
 </span><span id="L-494"><a href="#L-494"><span class="linenos">494</span></a>        <span class="k">return</span> <span class="n">df</span>
 </span><span id="L-495"><a href="#L-495"><span class="linenos">495</span></a>
 </span><span id="L-496"><a href="#L-496"><span class="linenos">496</span></a>
-</span><span id="L-497"><a href="#L-497"><span class="linenos">497</span></a><span class="k">def</span> <span class="nf">corr_features</span><span class="p">(</span><span class="n">rois</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">masks</span><span class="p">):</span>
+</span><span id="L-497"><a href="#L-497"><span class="linenos">497</span></a><span class="k">def</span><span class="w"> </span><span class="nf">corr_features</span><span class="p">(</span><span class="n">rois</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">masks</span><span class="p">):</span>
 </span><span id="L-498"><a href="#L-498"><span class="linenos">498</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-499"><a href="#L-499"><span class="linenos">499</span></a><span class="sd">    Calculates image-based correlation (normalized cross-correlation)</span>
 </span><span id="L-500"><a href="#L-500"><span class="linenos">500</span></a><span class="sd">    between each ROI and each class-average mask using template matching.</span>
@@ -654,7 +654,7 @@
 </span><span id="L-573"><a href="#L-573"><span class="linenos">573</span></a>    <span class="k">return</span> <span class="n">corr_df</span>
 </span><span id="L-574"><a href="#L-574"><span class="linenos">574</span></a>
 </span><span id="L-575"><a href="#L-575"><span class="linenos">575</span></a>
-</span><span id="L-576"><a href="#L-576"><span class="linenos">576</span></a><span class="k">def</span> <span class="nf">gauss_features</span><span class="p">(</span><span class="n">df_params</span><span class="p">):</span>
+</span><span id="L-576"><a href="#L-576"><span class="linenos">576</span></a><span class="k">def</span><span class="w"> </span><span class="nf">gauss_features</span><span class="p">(</span><span class="n">df_params</span><span class="p">):</span>
 </span><span id="L-577"><a href="#L-577"><span class="linenos">577</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-578"><a href="#L-578"><span class="linenos">578</span></a><span class="sd">    Computes derived features from 2D Gaussian parameters.</span>
 </span><span id="L-579"><a href="#L-579"><span class="linenos">579</span></a>
@@ -721,7 +721,7 @@
 </span><span id="L-640"><a href="#L-640"><span class="linenos">640</span></a>    <span class="k">return</span> <span class="n">df</span>
 </span><span id="L-641"><a href="#L-641"><span class="linenos">641</span></a>
 </span><span id="L-642"><a href="#L-642"><span class="linenos">642</span></a>
-</span><span id="L-643"><a href="#L-643"><span class="linenos">643</span></a><span class="k">def</span> <span class="nf">gauss_params</span><span class="p">(</span><span class="n">image_list</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+</span><span id="L-643"><a href="#L-643"><span class="linenos">643</span></a><span class="k">def</span><span class="w"> </span><span class="nf">gauss_params</span><span class="p">(</span><span class="n">image_list</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
 </span><span id="L-644"><a href="#L-644"><span class="linenos">644</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-645"><a href="#L-645"><span class="linenos">645</span></a><span class="sd">    Fits a 2D Gaussian function to each image (ROI) in the given list and </span>
 </span><span id="L-646"><a href="#L-646"><span class="linenos">646</span></a><span class="sd">    returns the estimated parameters for each fit in a DataFrame.</span>
@@ -792,7 +792,7 @@
 </span><span id="L-711"><a href="#L-711"><span class="linenos">711</span></a>    <span class="k">return</span> <span class="n">df_params</span>
 </span><span id="L-712"><a href="#L-712"><span class="linenos">712</span></a>
 </span><span id="L-713"><a href="#L-713"><span class="linenos">713</span></a>
-</span><span id="L-714"><a href="#L-714"><span class="linenos">714</span></a><span class="k">def</span> <span class="nf">gauss2D</span><span class="p">(</span><span class="n">xy</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">xo</span><span class="p">,</span> <span class="n">yo</span><span class="p">,</span> <span class="n">sigma_x</span><span class="p">,</span> <span class="n">sigma_y</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">offset</span><span class="p">):</span>
+</span><span id="L-714"><a href="#L-714"><span class="linenos">714</span></a><span class="k">def</span><span class="w"> </span><span class="nf">gauss2D</span><span class="p">(</span><span class="n">xy</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">xo</span><span class="p">,</span> <span class="n">yo</span><span class="p">,</span> <span class="n">sigma_x</span><span class="p">,</span> <span class="n">sigma_y</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">offset</span><span class="p">):</span>
 </span><span id="L-715"><a href="#L-715"><span class="linenos">715</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-716"><a href="#L-716"><span class="linenos">716</span></a><span class="sd">    Computes a 2D Gaussian function with elliptical shape and rotation.</span>
 </span><span id="L-717"><a href="#L-717"><span class="linenos">717</span></a><span class="sd">    </span>
@@ -851,7 +851,7 @@
 </span><span id="L-770"><a href="#L-770"><span class="linenos">770</span></a>    <span class="k">return</span> <span class="n">g</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>  <span class="c1"># Flatten for compatibility with curve_fit</span>
 </span><span id="L-771"><a href="#L-771"><span class="linenos">771</span></a>
 </span><span id="L-772"><a href="#L-772"><span class="linenos">772</span></a>
-</span><span id="L-773"><a href="#L-773"><span class="linenos">773</span></a><span class="k">def</span> <span class="nf">visualize_features</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="p">,</span> <span class="n">class_col</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="L-773"><a href="#L-773"><span class="linenos">773</span></a><span class="k">def</span><span class="w"> </span><span class="nf">visualize_features</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="p">,</span> <span class="n">class_col</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span><span id="L-774"><a href="#L-774"><span class="linenos">774</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-775"><a href="#L-775"><span class="linenos">775</span></a><span class="sd">    Visualize features in the dataframe using various methods.</span>
 </span><span id="L-776"><a href="#L-776"><span class="linenos">776</span></a>
@@ -1028,7 +1028,7 @@
 
     </div>
     <a class="headerlink" href="#get_features"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="get_features-20"><a href="#get_features-20"><span class="linenos">20</span></a><span class="k">def</span> <span class="nf">get_features</span><span class="p">(</span><span class="n">rois</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">masks</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="get_features-20"><a href="#get_features-20"><span class="linenos">20</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_features</span><span class="p">(</span><span class="n">rois</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">masks</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </span><span id="get_features-21"><a href="#get_features-21"><span class="linenos">21</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="get_features-22"><a href="#get_features-22"><span class="linenos">22</span></a><span class="sd">    Extracts and combines multiple types of features from ROI images:</span>
 </span><span id="get_features-23"><a href="#get_features-23"><span class="linenos">23</span></a><span class="sd">        - statistical</span>
@@ -1167,7 +1167,7 @@
 
     </div>
     <a class="headerlink" href="#extended_features"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="extended_features-93"><a href="#extended_features-93"><span class="linenos"> 93</span></a><span class="k">def</span> <span class="nf">extended_features</span><span class="p">(</span><span class="n">rois</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="extended_features-93"><a href="#extended_features-93"><span class="linenos"> 93</span></a><span class="k">def</span><span class="w"> </span><span class="nf">extended_features</span><span class="p">(</span><span class="n">rois</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 </span><span id="extended_features-94"><a href="#extended_features-94"><span class="linenos"> 94</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="extended_features-95"><a href="#extended_features-95"><span class="linenos"> 95</span></a><span class="sd">    Extracts and extends feature sets from a list of Region of Interest (ROI)</span>
 </span><span id="extended_features-96"><a href="#extended_features-96"><span class="linenos"> 96</span></a><span class="sd">    images and returns two DataFrames containing scalar and array-based </span>
@@ -1544,7 +1544,7 @@ grouping.</li>
 
     </div>
     <a class="headerlink" href="#roi_features"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="roi_features-397"><a href="#roi_features-397"><span class="linenos">397</span></a><span class="k">def</span> <span class="nf">roi_features</span><span class="p">(</span><span class="n">rois</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="roi_features-397"><a href="#roi_features-397"><span class="linenos">397</span></a><span class="k">def</span><span class="w"> </span><span class="nf">roi_features</span><span class="p">(</span><span class="n">rois</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 </span><span id="roi_features-398"><a href="#roi_features-398"><span class="linenos">398</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="roi_features-399"><a href="#roi_features-399"><span class="linenos">399</span></a><span class="sd">    Extracts intensity-based statistical features from a list of ROI images and </span>
 </span><span id="roi_features-400"><a href="#roi_features-400"><span class="linenos">400</span></a><span class="sd">    optionally visualizes feature distributions across classes.</span>
@@ -1709,7 +1709,7 @@ convertible to scalar.</li>
 
     </div>
     <a class="headerlink" href="#corr_features"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="corr_features-498"><a href="#corr_features-498"><span class="linenos">498</span></a><span class="k">def</span> <span class="nf">corr_features</span><span class="p">(</span><span class="n">rois</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">masks</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="corr_features-498"><a href="#corr_features-498"><span class="linenos">498</span></a><span class="k">def</span><span class="w"> </span><span class="nf">corr_features</span><span class="p">(</span><span class="n">rois</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">masks</span><span class="p">):</span>
 </span><span id="corr_features-499"><a href="#corr_features-499"><span class="linenos">499</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="corr_features-500"><a href="#corr_features-500"><span class="linenos">500</span></a><span class="sd">    Calculates image-based correlation (normalized cross-correlation)</span>
 </span><span id="corr_features-501"><a href="#corr_features-501"><span class="linenos">501</span></a><span class="sd">    between each ROI and each class-average mask using template matching.</span>
@@ -1830,7 +1830,7 @@ between each ROI and each class-average mask using template matching.</p>
 
     </div>
     <a class="headerlink" href="#gauss_features"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="gauss_features-577"><a href="#gauss_features-577"><span class="linenos">577</span></a><span class="k">def</span> <span class="nf">gauss_features</span><span class="p">(</span><span class="n">df_params</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="gauss_features-577"><a href="#gauss_features-577"><span class="linenos">577</span></a><span class="k">def</span><span class="w"> </span><span class="nf">gauss_features</span><span class="p">(</span><span class="n">df_params</span><span class="p">):</span>
 </span><span id="gauss_features-578"><a href="#gauss_features-578"><span class="linenos">578</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="gauss_features-579"><a href="#gauss_features-579"><span class="linenos">579</span></a><span class="sd">    Computes derived features from 2D Gaussian parameters.</span>
 </span><span id="gauss_features-580"><a href="#gauss_features-580"><span class="linenos">580</span></a>
@@ -1931,7 +1931,7 @@ contrast, integrated_intensity</li>
 
     </div>
     <a class="headerlink" href="#gauss_params"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="gauss_params-644"><a href="#gauss_params-644"><span class="linenos">644</span></a><span class="k">def</span> <span class="nf">gauss_params</span><span class="p">(</span><span class="n">image_list</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="gauss_params-644"><a href="#gauss_params-644"><span class="linenos">644</span></a><span class="k">def</span><span class="w"> </span><span class="nf">gauss_params</span><span class="p">(</span><span class="n">image_list</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
 </span><span id="gauss_params-645"><a href="#gauss_params-645"><span class="linenos">645</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="gauss_params-646"><a href="#gauss_params-646"><span class="linenos">646</span></a><span class="sd">    Fits a 2D Gaussian function to each image (ROI) in the given list and </span>
 </span><span id="gauss_params-647"><a href="#gauss_params-647"><span class="linenos">647</span></a><span class="sd">    returns the estimated parameters for each fit in a DataFrame.</span>
@@ -2045,7 +2045,7 @@ the row contains NaNs.</p>
 
     </div>
     <a class="headerlink" href="#gauss2D"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="gauss2D-715"><a href="#gauss2D-715"><span class="linenos">715</span></a><span class="k">def</span> <span class="nf">gauss2D</span><span class="p">(</span><span class="n">xy</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">xo</span><span class="p">,</span> <span class="n">yo</span><span class="p">,</span> <span class="n">sigma_x</span><span class="p">,</span> <span class="n">sigma_y</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">offset</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="gauss2D-715"><a href="#gauss2D-715"><span class="linenos">715</span></a><span class="k">def</span><span class="w"> </span><span class="nf">gauss2D</span><span class="p">(</span><span class="n">xy</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">xo</span><span class="p">,</span> <span class="n">yo</span><span class="p">,</span> <span class="n">sigma_x</span><span class="p">,</span> <span class="n">sigma_y</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">offset</span><span class="p">):</span>
 </span><span id="gauss2D-716"><a href="#gauss2D-716"><span class="linenos">716</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="gauss2D-717"><a href="#gauss2D-717"><span class="linenos">717</span></a><span class="sd">    Computes a 2D Gaussian function with elliptical shape and rotation.</span>
 </span><span id="gauss2D-718"><a href="#gauss2D-718"><span class="linenos">718</span></a><span class="sd">    </span>
@@ -2156,7 +2156,7 @@ like <code>scipy.optimize.curve_fit</code>.</li>
 
     </div>
     <a class="headerlink" href="#visualize_features"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="visualize_features-774"><a href="#visualize_features-774"><span class="linenos">774</span></a><span class="k">def</span> <span class="nf">visualize_features</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="p">,</span> <span class="n">class_col</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="visualize_features-774"><a href="#visualize_features-774"><span class="linenos">774</span></a><span class="k">def</span><span class="w"> </span><span class="nf">visualize_features</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="p">,</span> <span class="n">class_col</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span><span id="visualize_features-775"><a href="#visualize_features-775"><span class="linenos">775</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="visualize_features-776"><a href="#visualize_features-776"><span class="linenos">776</span></a><span class="sd">    Visualize features in the dataframe using various methods.</span>
 </span><span id="visualize_features-777"><a href="#visualize_features-777"><span class="linenos">777</span></a>
