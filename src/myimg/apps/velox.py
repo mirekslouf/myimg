@@ -33,10 +33,16 @@ class EMDfiles:
     '''
     Utilities to work with Velox EMD files.
     
-    This non-OO class contains two key methods:
+    This non-OO class contains two key functions:
         
     * rename = rename Velox EMD files (shorter names without whitespace)
     * describe = describe Velox EMD files (file, signal, apertures, detectors)
+    
+    Technical notes
+    ---------------
+    
+    * The *rename* function renames also the exported files (PNG, TIFF...)
+    * The *describe* function describes only the original EMD files.
     '''
 
         
@@ -51,7 +57,8 @@ class EMDfiles:
         # If vdir is string, convert it to Path object.
         if isinstance(vdir, str): vdir = Path(vdir)
         # Define EMD files withing {vdir} directory.
-        emd_files = vdir.rglob('*.emd')
+        # (only Velox EMD files of type: 0001 - something.emd
+        emd_files = vdir.rglob('???? - ?*.emd')
         # Go through EMD files, and rename them.
         for file in sorted(emd_files):
             new_name = cls.short_name(file, fullpath=True)
@@ -66,9 +73,11 @@ class EMDfiles:
         # If vdir is string, convert it to Path object.
         if isinstance(vdir, str): vdir = Path(vdir)
         # Define image files within {vdir} directory.
+        # (only Velox exported files of type: 0001 - something.png|tif|txt
         img_files = itertools.chain(
-            vdir.rglob('*.png'),
-            vdir.rglob('*.tif'))
+            vdir.rglob('???? - ?*.png'),
+            vdir.rglob('???? - ?*.tif'),
+            vdir.rglob('???? - ?*.txt'))
         # Go through EMD files, and rename them.
         for file in sorted(img_files):
             new_name = cls.short_name( 
@@ -86,6 +95,7 @@ class EMDfiles:
         # Convert file argument to Path object - for the sake of consistency
         if isinstance(file, str): file = Path(file)
         # Get stem of the filename
+        # (this will be gradually changed to new_name
         orig_name = file.stem
         # Convert the initial separator between file number and the rest
         new_name = orig_name.replace(' - ','_')
@@ -103,7 +113,11 @@ class EMDfiles:
         # New name contains only the first three elements
         name_elements = all_elements[0:3]
         # Add the last element (detector name) if requested
-        if last_part_of_name: name_elements.append(all_elements[-1])
+        if last_part_of_name:
+            # We sould add the last element only if it exists!
+            # (the name can have just 3 elements: {number} {jobID} {mag/CC}
+            if len(all_elements) > 3:
+                name_elements.append(all_elements[-1])
         # Redefine the number of digits in the first element
         name_elements[0] = f'{int(name_elements[0]):0{idigits}d}'
         # Combine all requested element
@@ -355,8 +369,8 @@ class EMDobject:
     
     * EMDobject is a HyperSpy object with a few additional methods/properties.
     
-    Technical note
-    --------------
+    Technical notes
+    ---------------
     
     EMDobject is build by means of three principal components.
     
@@ -369,7 +383,7 @@ class EMDobject:
         * __iter__ = access to iteration (in case of list-of-HyperSpy objects)
         * __len__ = access to len func (in case of list-of-HyperSpy objects)
     * Additional methods/props defined within this class, such as:
-        * pixelsize = pixel size for images, diffractograms, and spectra
+        * pixel_size = pixel size for images, diffractograms, and spectra
     '''
     
     def __init__(self, source_data):
@@ -445,9 +459,9 @@ class EMDobject:
         return len(self.hsObject)
 
 
-    def pixelsize(self, compact=False):
+    def pixel_size(self, compact=False):
         '''
-        Return pixel size from metadata.
+        Return pixel size from the object metadata.
         '''
         # (1) Get hsObject, which is saved in self.hsObject
         hsObject = self.hsObject
@@ -466,3 +480,29 @@ class EMDobject:
             return(compact_result)
         else:
             return(number, units)
+    
+    
+    def close(self):
+        '''
+        Close EMDobject = release its links and prepare for destruction.
+        
+        Returns
+        -------
+        None
+            The object is now empty.
+            Its complete destruction must be done in the main code, 
+            by calling `del(object)`.
+        
+        Technical notes
+        ---------------
+        * General rule: In Python, the objects don't kill themselves -
+          they just drop what they own.
+        * Therefore, this is just a *preparation* for object destruction,
+          which must be done manually, in main program,
+          using del(object).
+        * Nevertheless, the object destruction may be useful
+          in Spyder or Jupyter, where the opened EMD objects occupy memory
+          and/or they may lock EMD files during repeated runs of a script.
+        '''
+        self.hsObject = None
+        
