@@ -261,10 +261,10 @@ class Apps:
             
         >>> import myimg.api as mi  # ............... standard import of MyImg
         >>>
-        >>> mi.Apps.import_iLabels()  # ............. 1st way to access Velox 
+        >>> mi.Apps.import_iLabels()  # ............. 1st way to access iLabels
         >>> mi.Apps.iLabels.something(...)
         >>>
-        >>> iLabels = mi.Apps.import_iLabels()  # ... 2nd way to access Velox
+        >>> iLabels = mi.Apps.import_iLabels()  # ... 2nd way to access iLabels
         >>> iLabels.something(...)
         '''
         # Import iLabels into the *local function namespace*.
