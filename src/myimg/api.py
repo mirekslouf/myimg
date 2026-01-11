@@ -185,10 +185,10 @@ class Apps:
             
         >>> import myimg.api as mi  # ........... standard import of MyImg
         >>>
-        >>> mi.Apps.import_FFT_utils()  # ....... 1st way, how to access fft
+        >>> mi.Apps.import_FFT_utils()  # ....... 1st way to access fft
         >>> mi.Apps.fft.FFT('some.png')
         >>>
-        >>> fft = mi.Apps.import_FFT_utils  # ... 2nd way how to access fft
+        >>> fft = mi.Apps.import_FFT_utils  # ... 2nd way to access fft
         >>> fft.FFT('some.png')
         '''
         # Import fft into the *local function namespace*.
