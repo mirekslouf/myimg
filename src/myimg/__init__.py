@@ -18,9 +18,9 @@ List of key objects, modules, and sub-packages:
     - myimg.objects.MyReport = multi-images = tiled images
 * myimg.settings = default settings employed by MyImg objects
 * myimg.apps = sub-package containing additional tools and/or applications
+    - myimg.apps = list of available additional applications
     - myimg.api.Apps = practical access to additional applications
-    - myimg.api.Apps.FFT = sample additional application = Fourier transform
 * myimg.utils = sub-package with code for specific/more complex utils in myimg
 '''
 
-__version__ = '0.4.1'
+__version__ = '0.5'

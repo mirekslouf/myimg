@@ -59,11 +59,11 @@ def insert_label(my_img, label, F, **kwargs):
     # (all can be changed in code, such as: Settings.Label.text_height=1/10
     font            = Settings.Label.font
     text_height_rel = Settings.Label.text_height * F
-    text_height_pix = text_height_rel * my_img.height
+    text_height_pix = text_height_rel * my_img.img.height
     
     # (3) Determine font size
     fontsize = my_img.set_font_size(font, text_height_pix)
-    offset   = my_img.width * Settings.Label.text_offset * F
+    offset   = my_img.img.width * Settings.Label.text_offset * F
     
     # (4) Create label
     # ...initialize drawing

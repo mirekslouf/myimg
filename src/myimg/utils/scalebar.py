@@ -46,7 +46,7 @@ def insert_scalebar(my_img, pixsize=None, F=None, **kwargs):
     if messages:
         print('Insert scalebar, start of function:')
         print(f'  Image  : {my_img.name}')
-        print(f'  Pixels : {my_img.width}x{my_img.height}')
+        print(f'  Pixels : {my_img.img.width}x{my_img.img.height}')
     
     # (1) Determine pixelsize.
     # => analyze the {pixelsize} argument
@@ -126,7 +126,7 @@ def insert_scalebar(my_img, pixsize=None, F=None, **kwargs):
     # (4) Calculate font size + prepare font
     font_name = Settings.Scalebar.font
     text_height_rel = Settings.Scalebar.text_height * F
-    text_height_pix = round(text_height_rel * my_img.height) 
+    text_height_pix = round(text_height_rel * my_img.img.height) 
     font_size = my_img.set_font_size(font_name, text_height_pix)
     font_object = ImageFont.truetype(font_name, font_size)
     ImageDraw.fontmode = 'L'
@@ -149,11 +149,11 @@ def insert_scalebar(my_img, pixsize=None, F=None, **kwargs):
     text_x, text_y = scalebar_text_size
     # ... xy-size of bar = scalebar line
     bar_x = swu.pixels
-    bar_y = my_img.height * Settings.Scalebar.line_height * F
+    bar_y = my_img.img.height * Settings.Scalebar.line_height * F
     # ... xy-size of box = scalebar background
     box_x = max(text_x,bar_x) + \
-        my_img.height * (2 * Settings.Scalebar.edge_x * F) 
-    box_y = text_y + my_img.height * (
+        my_img.img.height * (2 * Settings.Scalebar.edge_x * F) 
+    box_y = text_y + my_img.img.height * (
         2 * Settings.Scalebar.edge_y * F +
         Settings.Scalebar.line_height * F + 
         Settings.Scalebar.separator * F)
@@ -163,13 +163,13 @@ def insert_scalebar(my_img, pixsize=None, F=None, **kwargs):
         y1 = position[1]
     else:
         # x1,y1 = position of the upper left corner of the box
-        x1 = my_img.height * Settings.Scalebar.offset_x * F + box_x
-        y1 = my_img.height * Settings.Scalebar.offset_y * F + box_y
-        x1 = round(my_img.width  - x1)
-        y1 = round(my_img.height - y1)
+        x1 = my_img.img.height * Settings.Scalebar.offset_x * F + box_x
+        y1 = my_img.img.height * Settings.Scalebar.offset_y * F + box_y
+        x1 = round(my_img.img.width  - x1)
+        y1 = round(my_img.img.height - y1)
     # (5c) (x2,y2) position of the upper left corner of the bar/line
-    x2 = round(x1 + my_img.height * Settings.Scalebar.edge_x * F)
-    y2 = round(y1 + box_y - my_img.height * (
+    x2 = round(x1 + my_img.img.height * Settings.Scalebar.edge_x * F)
+    y2 = round(y1 + box_y - my_img.img.height * (
         Settings.Scalebar.edge_y * F +
         Settings.Scalebar.line_height * F)) 
     if text_x > bar_x:
@@ -179,7 +179,7 @@ def insert_scalebar(my_img, pixsize=None, F=None, **kwargs):
     # (x3 => anchor 'm' => in the middle of the box
     # (y3 => anchor 'b' => y-position of the bar/line - separator
     x3 = round(np.mean([x1, x1 + box_x]))
-    y3 = round(y2 - my_img.height * Settings.Scalebar.separator * F)
+    y3 = round(y2 - my_img.img.height * Settings.Scalebar.separator * F)
     # (5e) Print info if requested
     if messages:
         print('Calculated scalebar geometry:')
@@ -235,7 +235,7 @@ def pixel_size_from_rwi(my_img, pixsize_args):
     rwi   = NumberWithUnits(pixsize_args[0])
     # (2) Pixel size = rwi / image_width_in_pixels (units = rwi.units)
     pixel = NumberWithUnits(
-        number = rwi.number/my_img.width,
+        number = rwi.number/my_img.img.width,
         units  = rwi.units)
     # (3) Return pixel_size (as pixel variable with type: NumberWithUnits)
     return(pixel)
@@ -318,7 +318,7 @@ def pixel_size_from_mag(my_img, pixelsize_args):
     rwi.set_correct_units()
     # Recalculate RWI to pixel_size
     pixel = NumberWithUnits(
-        number = rwi.number/my_img.width,
+        number = rwi.number/my_img.img.width,
         units  = rwi.units)
     
     # (4) Return pixel_size (as pixel variable with type: NumberWithUnits)
@@ -405,7 +405,7 @@ def calculate_scalebar_length(my_img, pixel_size, F):
     
     # (1) Determine RWI from image size and pixel size.
     rwi = NumberWithUnits(
-        number = my_img.width * pixel_size.number,
+        number = my_img.img.width * pixel_size.number,
         units  = pixel_size.units)
     
     # (2) Determine suitable lenght of scalebar

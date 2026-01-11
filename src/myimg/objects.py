@@ -13,8 +13,8 @@ Key classes/objects for myimg package:
 3. *Units*, *NumberWithUnits* and *ScaleWithUnits* classes
    defines allowed units, number-with-units and scale-with-units, respectively.
 
-Examples = how does it work?
-----------------------------
+Examples: how does it work?
+---------------------------
 
 **MyImage** class creates the basic object,
 which is used in most image manipulations within myimg.api module.
@@ -24,11 +24,7 @@ which is used in most image manipulations within myimg.api module.
 >>> img = mi.MyImage('some.bmp')  # open image: some.bmp
 >>> img.label('a')                # insert a label in the upper left corner
 >>> img.scalebar('rwi,100um')     # insert a scalebar to the lower right corner
-<<<<<<< HEAD
->>> img.save_with_ext('_s.png')   # save the modified image to: some_ls.png
-=======
 >>> img.save_with_ext('_ls.png')  # save the modified image to: some_ls.png
->>>>>>> origin/main
 
 **MyReport** class creates the multi-image object,
 which contains several images arranged in a rectangular grid.
@@ -39,11 +35,7 @@ which contains several images arranged in a rectangular grid.
 >>> mrep = mi.MyReport(images,    # create montage image
 >>>     itype='gray', grid=(1,2), # ...grayscale, just two images in a row
 >>>     padding=10)               # ...padding/spacing between imgs = 10pixels
-<<<<<<< HEAD
->>> mrep.save('mreport.png')      # save the final montage of (the two) images   
-=======
 >>> mrep.save('mreport.png')      # save the final montage of the two images   
->>>>>>> origin/main
 
 **Units**, **NumberWithUnits**, and **ScaleWithUnits** classes
 are used in myimg.utils.scalebar module
@@ -67,7 +59,7 @@ class MyImage:
     '''
 
 
-    def __init__(self, img, pixsize=None):
+    def __init__(self, img, pixsize=None, name=None):
         '''
         Initialize MyImage object.
 
@@ -78,11 +70,30 @@ class MyImage:
         pixsize : str, optional, default is None
             Description how to determine pixel size.
             Pixel size is needed to calculate the scalebar length.
-            See docs of myimg.objects.MyImage.scalebar for more details.
+            See docs of myimg.objects.MyImage.scalebar
+            about the possibilities how to use pixsize argument.
+        name : str, optional, default is None
+            Name of the MyImage object.
+            If MyImage is created from file, the *name* is the filename.
+            If MyImage is created from array, the *name* can be user-defined.
+            The name is employed by MyImg.save_with_extension method.
 
         Returns
         -------
         MyImage object
+        
+        Technical notes
+        ---------------
+        * Properties and methods of MyImage object are as follows.
+        * {img} = the *img* argument/object used during initialization
+          is saved as Pillow image object; this implies that Pillow methods
+          can be called by means of `img.some_method`.
+        * {pixsize} = the *pixsize* argument/string set during initialization
+          is saved as myimg.objects.NumberWithUnits object;
+          the {pixsize} is used for image calibration.
+        * {itype} = the *itype* property gives the type of the {img};
+          we allow the most common image types: binary, grayscale, RGB, RGBA,
+          as specified in the docs of myimg.objects.determine_image_type.
         '''
         
         # (1) Open the image and define/save its name
@@ -96,7 +107,7 @@ class MyImage:
             # (b) img is a numpy array
             # => convert the file to PIL.Image and create profisional name
             self.img = MyImage.img_from_array(img)
-            self.name = 'image_from_array'
+            self.name = name or 'image_from_array'
         elif type(img) == MyImage:
             # (c) img is an existing MyImage object
             # => create a copy of the object
@@ -111,24 +122,28 @@ class MyImage:
         # (again, we have to considet the type of the input img argument
         if type(img) == MyImage:
             # (a) MyImage object
-            # => copy all relevant parameters
-            self.width     = img.width
-            self.height    = img.height
-            self.itype     = img.itype
-            self.pixsize = img.pixsize
+            # (itype => ALWAYS defined in MyImage object
+            # (pixsize => MAYBE defined in MyImage object OR taken the argument
+            self.itype   = img.itype
+            self.pixsize = img.pixsize or pixsize
         else:
             # (b) array or filename
-            # => determine the basic parameters
-            self.width, self.height = self.img.size
-            self.itype = self.set_image_type()
-            self.pixsize = None
+            # (itype => must be determined
+            # (pixsize => taken from the argument, whose default value is None
+            self.itype = self.determine_image_type()
+            self.pixsize = pixsize
+            
         
-        # (3) Redefine pixsize attribute if requested
-        # (pixel size can be defined
-        # (during initialization of MyImage
-        # (by means of optional pixsize argument
-        if pixsize is not None: self.set_scale(pixsize)
-        
+        # (3) Recalculate {pixsize}, if needed.
+        # If self.pixsize is not undefined
+        # (which is not a problem, as it can be defined later),
+        # and pixsize is not already converted to NumberWithUnits object,
+        # (which might have happened if img was a calibrated MyImage object),
+        # then self.pixsize should be converted now to NumberWithUnits object.
+        if self.pixsize is not None:
+            if not isinstance(self.pixsize, NumberWithUnits):
+                self.pixsize = self.set_scale(pixsize)        
+    
     
     @staticmethod
     def img_from_file(filename):
@@ -185,7 +200,7 @@ class MyImage:
             sys.exit()
             
         
-    def set_image_type(self):
+    def determine_image_type(self):
         '''
         Set the image type.
         
@@ -448,9 +463,7 @@ class MyImage:
         '''
         # Cut off lower bar
         self.img = self.img.crop(
-            (0,0, self.width, self.height - height_of_bar))
-        # Update image size
-        self.width, self.height = self.img.size
+            (0,0, self.img.width, self.img.height - height_of_bar))
     
     
     def crop(self, rectangle):
@@ -471,8 +484,6 @@ class MyImage:
         '''
         # Crop image
         self.img = self.img.crop(rectangle)
-        # Update image size
-        self.width, self.height = self.img.size
     
     
     def resize(self, width=None, height=None, resample=None):
@@ -502,7 +513,7 @@ class MyImage:
             The output is saved in *self.img*
         '''
         # (0) Calculate AR = aspect_ratio
-        aspect_ratio = self.height/self.width
+        aspect_ratio = self.img.height/self.img.width
         
         # (1) Calculate new dimensions while keeping aspect_ratio
         if width is not None:     # New dimensions if the width is given
@@ -514,10 +525,6 @@ class MyImage:
         else:
             print('Image resize: width or height was not given - no action!')
             return
-        
-        # (2) Update image dimensions
-        self.width  = new_width
-        self.height = new_height 
         
         # (2) Resize the image
         self.img = self.img.resize(
@@ -591,16 +598,12 @@ class MyImage:
         color : PIL color specification, default is 'black'
             A short text that will be inserted at the bottom of an image.
         '''        
-        # (0) In the future, we may add border with shadow
+        # Note: In the future, we may add border with shadow
         # Now we add just simple border using PIL.ImageOps.expand.
         
-        # (1) Add border
+        # Add border
         self.img = ImageOps.expand(self.img, border=border, fill=color)
         
-        # (2) Update MyImage properties = width and height
-        self.width  = self.img.size[0]
-        self.height = self.img.size[1]
-
                  
     def label(self, label, F=None, **kwargs):
         '''

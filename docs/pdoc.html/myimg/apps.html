@@ -26,14 +26,18 @@
             <input type="search" placeholder="Search..." role="searchbox" aria-label="search"
                    pattern=".+" required>
 
+            <h2>Contents</h2>
+            <ul>
+  <li><a href="#subpackage-myimgapps">Subpackage myimg.apps</a></li>
+</ul>
+
 
             <h2>Submodules</h2>
             <ul>
                     <li><a href="apps/fft.html">fft</a></li>
                     <li><a href="apps/iLabels.html">iLabels</a></li>
-                    <li><a href="apps/profiles.html">profiles</a></li>
                     <li><a href="apps/simuParticles.html">simuParticles</a></li>
-                    <li><a href="apps/velox.html">velox</a></li>
+                    <li><a href="apps/velox_utils.html">velox_utils</a></li>
             </ul>
 
 
@@ -50,21 +54,54 @@
                     <h1 class="modulename">
 <a href="./../myimg.html">myimg</a><wbr>.apps    </h1>
 
-                        <div class="docstring"><p>Created on Wed Apr 30 11:18:32 2025</p>
+                        <div class="docstring"><h2 id="subpackage-myimgapps">Subpackage <a href="">myimg.apps</a></h2>
 
-<p>@author: p-sik</p>
+<p>The collection of additional applications for MyImage.</p>
+
+<ul>
+<li><a href="apps/iLabels.html">myimg.apps.iLabels</a> = process STEM images with nanoparticles</li>
+<li><a href="apps/fft.html">myimg.apps.fft</a> = FFT utilities = calculate and process 2D-DFFT of images</li>
+<li><a href="apps/velox_utils.html">myimg.apps.velox_utils</a> = processing of Velox EMD files</li>
+</ul>
+
+<p>The applications can be imported to <a href="api.html">myimg.api</a> as follows:</p>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn"><a href="api.html">myimg.api</a></span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mi</span>                   <span class="c1"># standard import of MyImg</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iLabels</span> <span class="o">=</span> <span class="n">myimg</span><span class="o">.</span><span class="n">Apps</span><span class="o">.</span><span class="n">import_iLabels</span><span class="p">()</span>    <span class="c1"># add iLabels package if needed</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fft</span> <span class="o">=</span> <span class="n">myimg</span><span class="o">.</span><span class="n">Apps</span><span class="o">.</span><span class="n">import_fft_utils</span><span class="p">()</span>      <span class="c1"># add FFT processing if needed</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Velox</span> <span class="o">=</span> <span class="n">myimg</span><span class="o">.</span><span class="n">Apps</span><span class="o">.</span><span class="n">import_Velox_utils</span><span class="p">()</span>  <span class="c1"># add Velox EMD files procesing ...</span>
+</code></pre>
+</div>
+
+<p>More details can be found in the documentation
+of the above-listed individual applications.</p>
 </div>
 
                         <input id="mod-apps-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 
                         <label class="view-source-button" for="mod-apps-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">1</span></a><span class="c1"># -*- coding: utf-8 -*-</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos">2</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-3"><a href="#L-3"><span class="linenos">3</span></a><span class="sd">Created on Wed Apr 30 11:18:32 2025</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos">4</span></a>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">5</span></a><span class="sd">@author: p-sik</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos">6</span></a><span class="sd">&quot;&quot;&quot;</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="sd">Subpackage myimg.apps</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="sd">---------------------</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="sd">The collection of additional applications for MyImage.</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="sd">* myimg.apps.iLabels = process STEM images with nanoparticles</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="sd">* myimg.apps.fft = FFT utilities = calculate and process 2D-DFFT of images</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="sd">* myimg.apps.velox_utils = processing of Velox EMD files</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="sd">The applications can be imported to myimg.api as follows:</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="sd">&gt;&gt;&gt; import myimg.api as mi                   # standard import of MyImg</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="sd">&gt;&gt;&gt; iLabels = myimg.Apps.import_iLabels()    # add iLabels package if needed</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="sd">&gt;&gt;&gt; fft = myimg.Apps.import_fft_utils()      # add FFT processing if needed</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="sd">&gt;&gt;&gt; Velox = myimg.Apps.import_Velox_utils()  # add Velox EMD files procesing ...</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="sd">More details can be found in the documentation</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="sd">of the above-listed individual applications.</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="sd">&#39;&#39;&#39;</span>
 </span></pre></div>
 
 

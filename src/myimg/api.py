@@ -20,22 +20,13 @@ A simple interface to MyImg package.
 
 More examples are spread all over the documentation.
     
-1. How to use myimg.objects:
+1. MyImage key objects:
     - myimg.api.MyImage = single image = an image with additional methods
     - myimg.api.MyReport = multi-image = a rectangular grid of images
-2. MyImage objects - frequent methods:
-    - myimg.objects.MyImage.scalebar = a method to insert scalebar
-    - myimg.objects.MyImage.caption = a method to add figure caption
-    - myimg.objects.MyImage.label = a method to insert label in the corner
-3. MyImage objects - additional applications:
-    - myimg.api.Apps = class for adding additional utils/apps to MyImage
-    - myimg.api.Apps.FFT = an example of one utility = Fourier transform
-4. Additional utilities and applications:
-    - myimg.plots = sub-package with auxiliary functions for plotting
-    - myimg.utils = sub-package with code for specific/more complex methods
-    - myimg.apps = sub-package with code for additional applications
-    - myimg.apps.iLabels = app for immunolabelling
-      (detection, classification, collocalization)
+2. MyImage additional applications:
+    - myimg.apps = list of available applications
+    - myimg.api.Apps = adding additional utils/apps to MyImage
+
 '''
 
 
@@ -46,17 +37,8 @@ More examples are spread all over the documentation.
 # >>> import myimg.api as mi        # standard myimg.api import
 # >>> img = mi.MyImage('some.png')  # read image as mi.MyImage object
 import myimg.objects
-# (2) Additional MyImage applications
-# (additional applications can be added within myimg.api.Apps
-# >>> import myimg.api as mi        # standard myimg.api import
-# >>> img = mi.MyImage('some.png')  # read image as mi.MyImage object
-# >>> fft = mi.Apps.FFT(img)        # create FFT of the image using mi.Apps.FFT
-import myimg.apps.fft
-import myimg.apps.profiles
-import myimg.apps.velox
-import myimg.apps.iLabels
-# (3) Auxiliary myimg module for plotting
-# myimg.io is used directly = imported to myimg.api + used for function calls
+# (2) Auxiliary myimg module for plotting
+# myimg.plots is used directly = imported to myimg.api + used for function calls
 # >>> import myimg.api as mi          # standard myimg import
 # >>> mi.plots.set_plot_parameters()  # direct call of myimg.plots function
 import myimg.plots   # this imports plots module to myimg.api
@@ -82,7 +64,13 @@ class MyImage(myimg.objects.MyImage):
     pixsize : str, optional, default is None
         Description how to determine pixel size.
         Pixel size is needed to calculate the scalebar length.
-        See docs of myimg.objects.MyImage.scalebar for more details.
+        See docs of myimg.objects.MyImage.scalebar
+        about the possibilities how to use pixsize argument.
+    name : str, optional, default is None
+        Name of the MyImage object.
+        If MyImage is created from file, the *name* is the filename.
+        If MyImage is created from array, the *name* can be user-defined.
+        The name is employed by MyImg.save_with_extension method.
         
     Returns
     -------
@@ -182,236 +170,121 @@ class Apps:
     Additional applications for MyImg package.
     
     * Additional features/apps can be added using this myimg.api.Apps class.
-    * More help and examples can be found in the available applications below.
-    * Links to available apps: myimg.api.Apps.FFT, myimg.api.Apps.iLabels ...
+    * More help and examples can be found in the subclasses below.
     '''
-
-
-    class FFT(myimg.apps.fft.FFT):
-        '''
-        Class providing FFT objects.
-        
-        * FFT object = Fast Fourier Transform of an image/array.
-
-        >>> # Simple usage of FFT objects
-        >>> import myimg.api as mi        # standard import of myimg
-        >>> img = mi.MyImage('some.png')  # open an image using myimg.api
-        >>> fft = my.Apps.FFT(img)        # calculate FFT of the img object
-        >>> fft.show(cmap='magma')        # show the result
-        
-        Parameters
-        ----------
-        img : image (array or str or path-like or MyImage object)
-            The 2D object, from which we will calculate FFT
-            = 2D-DFFT = 2D discrete fast Fourier transform.
-
-        Returns
-        -------
-        FFT object.
-        
-        Technical details
-        -----------------
-        * FFT object, 3 basic attributes: FFT.fft (array of complex numbers),
-          FFT.intensity (array of intensities = magnitudes = real numbers)
-          and FFT.phase (array of phases = angles in range -pi:pi).
-        * FFT object is pre-processed in the sense that the intensity center
-          is shifted to the center of the array (using scipy.fftpack.fftshift).
-        * FFT object carries the information about calibration (pixel-size),
-          on condition it was created from MyImage object (the typical case).
-        '''
-        pass
-
-
-    class RadialProfile(myimg.apps.profiles.RadialProfile):
-        '''
-        Class providing RadialProfile objects.
-        
-        * RadialProfile object = intensity distribution as a function of radius.
-
-        >>> # Simple usage of RadialProfile objects
-        >>> import myimg.api as mi
-        >>> img = mi.MyImage('some.png')        # open an image
-        >>> rp = mi.Apps.RadialProfile(img)     # compute radial profile
-        >>> rp.show()                           # plot the result
-        >>> rp.save("radial.csv")               # save profile to file
-        
-        Parameters
-        ----------
-        img : image (array or str or path-like or MyImage object)
-            The 2D grayscale/binary image from which we calculate the profile.
-        center : tuple of two floats, optional
-            The (x, y) coordinates of the center. 
-            If None, the image center is used.
-
-        Returns
-        -------
-        RadialProfile object.
-        
-        Technical details
-        -----------------
-        * RadialProfile object has two main attributes:
-          RadialProfile.R (array of radii in pixels),
-          RadialProfile.I (array of mean intensities).
-        * RadialProfile is computed by averaging pixel intensities
-          in concentric circles around the center.
-        * Can be visualized with `.show()` or exported with `.save()`.
-        '''
-        pass
-
-    class AzimuthalProfile(myimg.apps.profiles.AzimuthalProfile):
-        '''
-        Class providing AzimuthalProfile objects.
-        
-        * AzimuthalProfile object = 
-          intensity distribution as a function of angle.
     
-        >>> # Simple usage of AzimuthalProfile objects
-        >>> import myimg.api as mi
-        >>> img = mi.MyImage('some.png')         # open an image
-        >>> ap = mi.Apps.AzimuthalProfile(img)   # compute azimuthal profile
-        >>> ap.show()                            # plot the result
-        >>> ap.save("azimuthal.csv")             # save profile to file
+    @classmethod
+    def import_FFT_utils(cls):
+        '''
+        Import Fast Fourier Transform utilities.
         
-        Parameters
-        ----------
-        img : image (array or str or path-like or MyImage object)
-            The 2D grayscale/binary image from which we calculate the profile.
-        center : tuple of two floats, optional
-            The (x, y) coordinates of the center. 
-            If None, the image center is used.
-        bins : int, optional
-            Number of angular bins (default = 360). Defines the resolution of
-            the profile in degrees.
+        * The function gives access to myimg.apps.fft.fft module.
+        * https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg/apps.html
+        
+        The function can be called and used in two ways:
+            
+        >>> import myimg.api as mi  # ........... standard import of MyImg
+        >>>
+        >>> mi.Apps.import_FFT_utils()  # ....... 1st way, how to access fft
+        >>> mi.Apps.fft.FFT('some.png')
+        >>>
+        >>> fft = mi.Apps.import_FFT_utils  # ... 2nd way how to access fft
+        >>> fft.FFT('some.png')
+        '''
+        # Import fft into the *local function namespace*.
+        # (The module is loaded once and cached in sys.modules by Python;
+        # (the name `fft` is local to this func unless we store return it.
+        import myimg.apps.fft as fft
     
-        Returns
-        -------
-        AzimuthalProfile object.
-        
-        Technical details
-        -----------------
-        * AzimuthalProfile object has two main attributes:
-          AzimuthalProfile.Theta (array of angles in degrees),
-          AzimuthalProfile.I (array of mean intensities).
-        * AzimuthalProfile is computed by averaging pixel intensities
-          in angular sectors around the center.
-        * The angular range is 0–360 degrees.
-        * Can be visualized with `.show()` or exported with `.save()`.
+        # Save fft as a *class attribute*.
+        # (This enables the following usage:
+        # >>> import myimg.api as mi
+        # >>> mi.Apps.import_FFT_utils()
+        # >>> mi.Apps.fft.something(...)
+        cls.fft = fft
+    
+        # Return the fft module.
+        # (This additionally enables:
+        # >>> import myimg.api as mi
+        # >>> fft = mi.Apps.import_FFT_utils()
+        # >>> fft.something(...)
+        return fft
+
+
+    @classmethod        
+    def import_Velox_utils(cls):
         '''
-        pass
-
-
-    class Velox:
+        Import utilities for processing Velox EMD files.
+        
+        * The function gives access to myimg.apps.velox_util module.
+        * https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg/apps.html
+        
+        The function can be called and used in two ways:
+            
+        >>> import myimg.api as mi  # ................ standard import of MyImg
+        >>>
+        >>> mi.Apps.import_Velox_utils()  # .......... 1st way to access Velox 
+        >>> mi.Apps.Velox.EMDfiles.describe(r'./')
+        >>>
+        >>> Velox = mi.Apps.import_Velox_utils  # .... 2nd way to access Velox
+        >>> Velox.EMDfiles.describe(r'./')
         '''
-        Class with utilities for Velox EMD files.
+        # Import Velox into the *local function namespace*.
+        # (The module is loaded once and cached in sys.modules by Python;
+        # (the name `Velox` is local to this func unless we store return it.
+        import myimg.apps.velox_utils as Velox
+
+        # Save Velox as a *class attribute*.
+        # (This enables the following usage:
+        # >>> import myimg.api as mi
+        # >>> mi.Apps.import_Velox_utils()
+        # >>> mi.Apps.Velox.something(...)
+        cls.Velox = Velox
         
-        >>> # Simple usage of Velox class.
-        >>> import myimg.api as mi
-        >>> # (1) EMDfiles class = renaming and describing EMD files.
-        >>> vdir = r'd:\data.sh\velox'
-        >>> mi.Apps.Velox.EMDfiles.rename(vdir)
-        >>> mi.Apps.Velox.EMDfiles.describe(vdir)
-        >>> # (2) EMDobject class = working with individual EMD files.
-        >>> vfile = vdir + '\' + '016_h66_650kx.emd'
-        >>> d = mi.Apps.Velox.EMDobject(vfile)
-        >>> print(d.pixelsize())
-        >>> # (3) Note: mi.Apps.Velox.EMDmetadata is usually not used directly.
+        # Return the Velox module.
+        # (This additionally enables:
+        # >>> import myimg.api as mi
+        # >>> Velox = mi.Apps.import_Velox_utils()
+        # >>> Velox.something(...)        
+        return Velox
+    
+    
+    @classmethod
+    def import_iLabels(cls):
         '''
-        
-        
-        class EMDfiles(myimg.apps.velox.EMDfiles):
-            '''
-            EMDfiles class - rename and/or describe Velox EMD files.
-            '''
-            pass
-        
-        
-        class EMDmetadata(myimg.apps.velox.EMDmetadata):
-            '''
-            EMDmetadata class - access to metadata of Velox EMD files.
-            '''
-            pass
-        
-        
-        class EMDobject(myimg.apps.velox.EMDobject):
-            '''
-            Class providing EMDobjects.
-            '''
-            pass
+        Import iLabels package = process STEM images with nanoparticles.
 
-
-    class iLabels(myimg.apps.iLabels.classPeaks.Peaks):
+        * The function gives access to myimg.apps.iLabels package.
+        * https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg/apps.html
+        
+        The function can be called and used in two ways:
+            
+        >>> import myimg.api as mi  # ............... standard import of MyImg
+        >>>
+        >>> mi.Apps.import_iLabels()  # ............. 1st way to access Velox 
+        >>> mi.Apps.iLabels.something(...)
+        >>>
+        >>> iLabels = mi.Apps.import_iLabels()  # ... 2nd way to access Velox
+        >>> iLabels.something(...)
         '''
-        Class providing iLabels objects.
+        # Import iLabels into the *local function namespace*.
+        # (The package is loaded once and cached in sys.modules by Python;
+        # (the name `iLabels` is local to this func unless we store return it.        
+        import myimg.apps.iLabels as iLabels
 
-        * iLabels object = peak annotation, detection, feature extraction,
-          and classification for immunolabelling data.
-        * Entry point: wraps `myimg.apps.iLabels.classPeaks.Peaks`.
-
-        >>> # Simple usage of iLabels objects
-        >>> import myimg.api as mi
-        >>> img = mi.MyImage("annotation_12_procc.tif")
-        >>> 
-        >>> # Initialize iLabels with image
-        >>> il = mi.Apps.iLabels(img=img.img, img_name="annotation_12_procc.tif")
-        >>> 
-        >>> # Load peaks (from pickle)
-        >>> il.read("annot12.pkl")
-        >>> 
-        >>> # Show peaks
-        >>> il.show_in_image()
-        >>> il.show_as_text(num=5)
-        >>> 
-        >>> # Detect peaks automatically
-        >>> il.find(method="ncc", mask_path="./masks", thr=0.2)
-        >>> 
-        >>> # Extract features
-        >>> il.characterize(img_path="annotation_12_procc.tif",
-        ...                 peak_path="annot12.pkl",
-        ...                 mask_path="./masks")
-        >>> 
-        >>> # Classify peaks
-        >>> il.classify(data=il.X_train, method="rfc", target=il.y_train)
-
-        Parameters
-        ----------
-        df : pandas.DataFrame, optional
-            Table with peak coordinates and labels.
-        img : str or array-like or PIL.Image.Image, optional
-            Input image associated with the peaks.
-        img_name : str, optional
-            Human-readable image name.
-        file_name : str, optional
-            Default filename for saving results.
-        cmap : str, optional
-            Colormap for display.
-        messages : bool, optional
-            If True, print progress messages.
-
-        Returns
-        -------
-        iLabels object
-            Provides methods for peak detection (`find`), feature extraction
-            (`characterize`), and classification (`classify`).
-        '''
-        pass
+        # Save iLabels as a *class attribute*.
+        # (This enables the following usage:
+        # >>> import myimg.api as mi
+        # >>> mi.Apps.import_iLabels()
+        # >>> mi.Apps.iLabels.something(...)        
+        cls.iLabels = iLabels
         
-        # OLD
-        # nasledujici kod pridaval iLabels jako attribut do objektu MyImage
-        # toto nakonec zavrzeno a nechano nize jen jako docasna zaloha
-        # def iLabels(myimg.apps.iLabels.classPeaks.Peaks):
-        #     import myimg.apps.iLabels.classPeaks
-        #     if df is None:
-        #         img.iLabels = myimg.apps.iLabels.classPeaks.Peaks(
-        #             img=img.img, img_name=img.name)
-        #     elif isinstance(df, pd.DataFrame):    
-        #         img.iLabels = myimg.apps.iLabels.classPeaks.Peaks(
-        #             df=df, img=img.img, img_name=img.name)
-        #     else:
-        #         print('Error initializing MyImage.iLabels!')
-        #         print('Wrong type of {peaks} argument!')
-        #         print('Empty {peaks} object created.')
-        #         img.iLabels = myimg.apps.iLabels.classPeaks.Peaks(
-        #             img=img.img, img_name=img.name)
+        # Return the iLabels package.
+        # (This additionally enables:
+        # >>> import myimg.api as mi
+        # >>> iLabels = mi.Apps.import_iLabels()
+        # >>> iLabels.something(...)                
+        return iLabels
 
 
 class Settings:

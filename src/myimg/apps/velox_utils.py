@@ -205,8 +205,7 @@ class EMDmetadata:
     * The functions are usually not used directly, but
       employed in the sister EMDfiles and EMDobject classes.
     '''
-    
-    
+        
     # Class variables :: detector types
     TEM_detectors  = {'CETA', 'SMARTCAM', 'EAGLE'}
     STEM_detectors = {'BF', 'DF', 'HAADF'}
