@@ -30,25 +30,25 @@ Installation
 Quick start
 -----------
 
-* Jupyter notebooks with comments:
-	- [Example 1](https://www.dropbox.com/scl/fi/0vq7pcrna6v3qqxcjg7zr/ex1_single-images.nb.html.pdf?rlkey=z9ft9iapz8zm8kdurxs4kjqia&st=g7x2zuwx&dl=0)
-      :: MyImage :: process single image(s)
-	- [Example 2](https://www.dropbox.com/scl/fi/x9nvbqr2epd2fms8k1qx8/ex2_tiled-images.nb.html.pdf?rlkey=qcjx8tcv3pjoxgs4kkjplo61m&st=ylwaxak1&dl=0)
-	  :: MyReport :: create nice, publication-ready image reports
-	- [Example 3](https://www.dropbox.com/scl/fi/u4brdkvufnb4hxn9p3z1w/ex3_2d-fft.nb.html.pdf?rlkey=sus0snlqfgmpvbtol2xojqizu&st=80ela7q3&dl=0)
-	  :: Apps/FFT :: calculate and analyze 2D Fourier transforms
-* Complete set of examples including testing data at
-  [DropBox](https://www.dropbox.com/scl/fo/rdnhfl0eaiv3yueze2b24/APLqQqVV8BG8XC1_VDPbFxY?rlkey=pdzjibm35609oxtgfinxls3ga&st=qj8ul380&dl=0).
+* [Worked example](https://drive.google.com/file/d/1abxWcKD9GOGtMYASjO67RaUsUQfJN8DO/view?usp=sharing)
+  shows a simple use of MyImg package.
+* [Help on GitHub](https://mirekslouf.github.io/myimg/docs/)
+  with complete
+  [package documentation](https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg.html)
+  and
+  [additional examples](https://drive.google.com/drive/folders/1ylURF2U1EB3gdyUug_uOTFbfE0ASZX7n?usp=sharing).
 
  
 Documentation, help and examples
 --------------------------------
 
-* [PyPI](https://pypi.org/project/myimg) repository.
-* [GitHub](https://github.com/mirekslouf/myimg) repository.
-* [GitHub Pages](https://mirekslouf.github.io/myimg/)
-  with [help](https://mirekslouf.github.io/myimg/docs)
-  and [complete package documentation](https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg.html). 
+* [PyPI](https://pypi.org/project/myimg) repository -
+  the stable version to install.
+* [GitHub](https://github.com/mirekslouf/myimg) repository - 
+  the current version under development.
+* [GitHub Pages](https://mirekslouf.github.io/myimg/) -
+  the more user-friendly version of GitHub website.
+ 
 
 
 Versions of MyImg

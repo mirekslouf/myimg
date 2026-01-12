@@ -7,14 +7,21 @@ Key classes/objects for myimg package:
 1. *MyImage* class
    defines the basic MyImg object,
    which is used in most image manipulations.
-2. *Montage* class
+2. *MyReport* class
    defines a set/montage of images,
    which are arranged in a rectangular tiled image.
-3. *Units*, *NumberWithUnits* and *ScaleWithUnits* classes
-   defines allowed units, number-with-units and scale-with-units, respectively.
+3. *Units*, *NumberWithUnits* and *ScaleWithUnits* are
+   behind-the-scenes classes, which define allowed units
+   and their combination with numbers within *myimg* package.
 
-Examples: how does it work?
----------------------------
+Examples: How to use MyImage objects?
+-------------------------------------
+
+IMPORTANT technical note:
+
+* This class (myimg.objects) is used to define the objects.
+* The API class (myimg.api) is used to work with the objects,
+  as shown in the following examples.
 
 **MyImage** class creates the basic object,
 which is used in most image manipulations within myimg.api module.
@@ -630,11 +637,11 @@ class MyImage:
         ----------------------
         * color : PIL color specification, default is 'black'.
             Text color = color of the label text.
-            The default is defined in myimg.settings.Caption
+            The default is defined in myimg.settings.Label
             (and that is why it does not have to be re-defined here).
         * bcolor : PIL color specification, default is 'white'.
             Background color = color of the label background/box.
-            The default is defined in myimg.settings.Caption
+            The default is defined in myimg.settings.Label
             (and that is why it does not have to be re-defined here).
 
         Technical notes
