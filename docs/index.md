@@ -23,7 +23,7 @@ MyImg :: documentation and examples
 * [01_images.nb.pdf](https://drive.google.com/file/d/1abxWcKD9GOGtMYASjO67RaUsUQfJN8DO/view?usp=sharing)
   = Jupyter notebook converted to PDF; <br>
   the processing of single image(s) in MyImg
-  (auto-enhance contrast, insert label, insert scalebar ...).
+  (auto-enhance contrast, insert label, scalebar ...).
 * [02_reports.nb.pdf](https://drive.google.com/file/d/1PvjTpaPVBNYZf-5DiYkJ2um07XuO5esY/view?usp=sharing) 
   = Jupyter notebook converted to PDF; <br>
   the preparation of high-quality tiled images in MyImg,
