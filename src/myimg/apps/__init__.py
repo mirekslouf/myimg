@@ -12,7 +12,7 @@ The applications can be imported to myimg.api as follows:
 
 >>> import myimg.api as mi                   # standard import of MyImg
 >>> iLabels = myimg.Apps.import_iLabels()    # add iLabels package if needed
->>> fft = myimg.Apps.import_fft_utils()      # add FFT processing if needed
+>>> fft = myimg.Apps.import_fft()            # add FFT processing if needed
 >>> Velox = myimg.Apps.import_Velox_utils()  # add Velox EMD files procesing ...
 
 More details can be found in the documentation

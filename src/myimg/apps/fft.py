@@ -30,11 +30,12 @@ class FFT:
         '''
         Initialize FFT object.
         
-        >>> # Simple usage of FFT objects
-        >>> import myimg.api as mi        # standard import of myimg
+        >>> # Example :: Calculate 2D-FFT of an image and show the result
+        >>> import myimg.api as mi        # the standard import of myimg
+        >>> mi.Apps.import_fft_utils()    # import/add FFT utils to myimg.api
         >>> img = mi.MyImage('some.png')  # open an image using myimg.api
-        >>> fft = my.Apps.FFT(img)        # calculate FFT of the img object
-        >>> fft.show(cmap='magma')        # show the result
+        >>> img_ft = fft.FFT(MyImage)     # calculate FFT of the img object
+        >>> img_ft.show(cmap='magma')     # show the result
 
         Parameters
         ----------
@@ -48,7 +49,7 @@ class FFT:
         
         Technical details
         -----------------
-        * FFT object, 3 basic attributes: FFT.fft (array of complex numbers),
+        * FFT object has 3 basic attributes: FFT.fft (array of complex numbers),
           FFT.intensity (array of intensities = magnitudes = real numbers)
           and FFT.phase (array of phases = angles in range -pi:pi).
         * FFT object is pre-processed in the sense that the intensity center
