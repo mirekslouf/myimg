@@ -32,9 +32,9 @@ class FFT:
         
         >>> # Example :: Calculate 2D-FFT of an image and show the result
         >>> import myimg.api as mi        # the standard import of myimg
-        >>> mi.Apps.import_fft_utils()    # import/add FFT utils to myimg.api
+        >>> mi.Apps.import_FFT_utils()    # import/add FFT utils to myimg.api
         >>> img = mi.MyImage('some.png')  # open an image using myimg.api
-        >>> img_ft = fft.FFT(MyImage)     # calculate FFT of the img object
+        >>> img_ft = fft.FFT(MyImage)     # calculate FFT of the {img} object
         >>> img_ft.show(cmap='magma')     # show the result
 
         Parameters
@@ -380,6 +380,13 @@ class RadialProfile:
     # -------------------------------------------------------------------------
     @staticmethod
     def calc_radial(arr, center):
+        '''
+        Calculate radial profile.
+        
+        * This method is employed during RadialProfile initialization.
+        * It can be used alone, but this is not typical.
+        '''
+        
         # (1) Get image dimensions
         (height, width) = arr.shape
 
@@ -491,6 +498,12 @@ class AzimuthalProfile:
     # -------------------------------------------------------------------------
     @staticmethod
     def calc_azimuthal(arr, center, bins=360):
+        '''
+        Calculate azimuthal profile.
+        
+        * This method is employed during AzimuthalProfile initialization.
+        * It can be used alone, but this is not typical.
+        '''
         # (1) Get image dimensions
         (height, width) = arr.shape
 
