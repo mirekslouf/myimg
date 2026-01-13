@@ -2,10 +2,10 @@
 Subpackage myimg.apps
 ---------------------
 
-The collection of additional applications for MyImage.
+The collection of additional applications for *MyImg* package.
 
-* myimg.apps.iLabels = process STEM images with nanoparticles
-* myimg.apps.fft = FFT utilities = calculate and process 2D-DFFT of images
+* myimg.apps.iLabels = process (S)TEM images with nanoparticle markers
+* myimg.apps.fft = calculate and analyze Fourier transforms of images
 * myimg.apps.velox_utils = processing of Velox EMD files
 
 The applications can be imported to myimg.api as follows:

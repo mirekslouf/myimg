@@ -18,7 +18,7 @@ setuptools.setup(
     version=get_version(),
     author="Mirek Slouf",
     author_email="mirek.slouf@gmail.com",
-    description="Batch processing of micrographs",
+    description="Toolbox for processing of microscopic images.",
     long_description=get_long_description(),
     long_description_content_type="text/markdown",
     url="https://github.com/mirekslouf/myimg/",

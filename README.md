@@ -1,14 +1,12 @@
 MyImg :: Processing of micrographs
 ----------------------------------
 
-* MyImg is a toolbox for the processing of micrographs, which can:
+* *MyImg* is a toolbox for the processing of micrographs, which can:
 	1. Process single micrographs (improve contrast, insert scalebars, etc.).
 	2. Prepare publication-quality tiled images from the processed micrographs.
-	3. Run additional applications such as:
-		- FFT = 2D Fourier transform utilities
-		- MDistr = size distributions from series of micrographs
-		- iLabels = find and categorize nanoparticle markers in (S)TEM images
-
+	3. Run
+	   [additional applications](https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg/apps.html)
+	   such as: Fourier transforms, particle size distributions ...
 
 Principle
 ---------
@@ -31,7 +29,7 @@ Quick start
 -----------
 
 * [Worked example](https://drive.google.com/file/d/1abxWcKD9GOGtMYASjO67RaUsUQfJN8DO/view?usp=sharing)
-  shows a simple use of MyImg package.
+  shows a simple use of *MyImg* package.
 * [Help on GitHub](https://mirekslouf.github.io/myimg/docs/)
   with complete
   [package documentation](https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg.html)

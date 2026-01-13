@@ -2,23 +2,29 @@
 Module: myimg.apps.fft
 -----------------------
 
-Fourier transform utilities for package myimg.
+Fourier transform utilities for *MyImg* package.
 '''
 
-# Import modules
-# --------------
+# Import modules ---------------------------------------------------------------
+
+# System modules
 import sys
+from pathlib import Path
+
+# Basic modules
 import myimg.api
+import scipy.fftpack
+
+# Reading of input images
+from PIL import Image
+
 # Plotting
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits import axes_grid1  # to add nice colorbars
-# FFT
-import scipy.fftpack
-# Reading input images
-from PIL import Image
 
 
+# Define classes ---------------------------------------------------------------
 
 class FFT:
     '''
@@ -26,9 +32,12 @@ class FFT:
     '''
 
 
-    def __init__(self, img):
+    def __init__(self, img, name=None):
         '''
         Initialize FFT object.
+
+        * During the initialization, Fourier transform is calculated.
+        * Simple illustration how the initialize and use FFT object follows.
         
         >>> # Example :: Calculate 2D-FFT of an image and show the result
         >>> import myimg.api as mi        # the standard import of myimg
@@ -39,64 +48,94 @@ class FFT:
 
         Parameters
         ----------
-        img : image (array or str or path-like or MyImage object)
+        img : array or str/Path or MyImage object
             The 2D object, from which we will calculate FFT
             = 2D-DFFT = 2D discrete fast Fourier transform.
+        name : str, optional, default is None
+            Name of the input image (or array).
+            If the input is an image or MyImage object,
+            {name} is taken from it.
 
         Returns
         -------
-        FFT object.
+        FFT object
+            The object contains
+            {FFT of input image} + {additional properties}.
         
         Technical details
         -----------------
-        * FFT object has 3 basic attributes: FFT.fft (array of complex numbers),
-          FFT.intensity (array of intensities = magnitudes = real numbers)
-          and FFT.phase (array of phases = angles in range -pi:pi).
-        * FFT object is pre-processed in the sense that the intensity center
-          is shifted to the center of the array (using scipy.fftpack.fftshift).
-        * FFT object carries the information about calibration (pixel-size),
-          on condition it was created from MyImage object (the typical case).
+        * FFT object saves the results of Fourier transform in three props:
+            * {FFT.fft} = array of complex numbers
+            * {FFT.intensity} = arr of intensities = magnitudes = real numbers
+            * {FFT.phase} = array of phases = angles in range -pi:pi
+        * FFT object is post-processed - all three above-listed arrays have
+          the intensity center is shifted to the center of the array
+          (using scipy.fftpack.fftshift).
+        * FFT object may carry the information about name of the input image
+          in property {FFT.name} on condition that:
+            * It was created from an image or MyImage object. 
+            * The optional argument {name} was used during initialization.
+            * The property {FFT.name} property was set later.
         '''
         
-        # (1) Process the first argument = image
-        # (the first argument = input array
-        # (it can be: np.array, MyImage object, PIL object or path-to-image
-        if type(img) == np.ndarray:
+        # Define local functions
+        
+        def get_name_from_image(img):
+            # TODO
+            return None
+            
+        def get_name_from_MyImage(img):
+            # TODO
+            return None
+                
+        # (0) Pre-initialize name of the image
+        # * this simplifies further processing
+        # * if the {name} they cannot be determined from args (img, name)
+        #   then it is set to None - which is better than undefined value
+        self.name = None
+        
+        # (1) Process the first argument = img: {array} or {image} or {MyImage}
+        # * Props self.name and self.pixsize can be taken from {image / MyImage}
+        # * This may influence the following processing step!
+        if isinstance(img, np.ndarray):
             # img comes as numpy array
             # (the simplest case - just assign img to arr
             arr = img
-        elif type(img) == myimg.api.MyImage:
+        elif isinstance(img, str) or isinstance(img, Path):
+            # image comes as str or Path => we assume it is an image name
+            # TODO: check the image type
+            img = Image.open(img)
+            arr = np.asarray(img)
+            # Try to et self.name from img = image name
+            if name is None: self.name = get_name_from_image(img)
+        elif isinstance(img, myimg.api.MyImage):
             # img comes as MyImage object
             # (check the image type and convert it to array if possible
             if img.itype in ('binary','gray','gray16'):
                 arr = np.asarray(img.img)
+                # Try to get name from img = MyImage object
+                if name is None: self.name = get_name_from_MyImage(img)
             else:
-                print('Fourier transform only for binary or grayscale images!')
+                print('FFT works only for binary or grayscale images!')
                 sys.exit()
-        elif type(img) == str:
-            # image comes as str => we assume it is an image name
-            # TODO: check the image type
-            img = Image.open(img)
-            arr = np.asarray(img)
         else:
             print('Unknown image type!')
             sys.exit()
         
-        # (2) Calculate FFT, shift the origin, and save the result
+        # (2) Process the other two optional arguments = name, pixsize
+        # * the value of self.name might have been estimated
+        #   from the image or MyImage in the previous step
+        # * therefore, we re-define the value
+        #   only if the optional arguments name was given
+        #   (i.e. the argument - if given - has the priority
+        if name is not None: self.name = name
+        
+        # (3) Calculate FFT, shift the origin, and save the results
         arr = scipy.fftpack.fft2(arr)
         arr = scipy.fftpack.fftshift(arr)
         self.fft = arr
         self.intensity = np.abs(arr)
         self.phase = np.angle(arr)
-        
-        # (3) Save the information about pixel size, if available
-        if type(img) == myimg.api.MyImage:
-            # TODO: extend rec.units, add units here
-            # TODO: consider adding set_scale, scalebar to fft package
-            # self.recpixsize = 1 / (img.width * img.pixsize.number)
-            pass
-        else:
-            self.recpixsize = None
             
     
     def normalize(self, what='intensity', itype='16bit', icut=None):
@@ -119,7 +158,7 @@ class FFT:
 
         Returns
         -------
-        None.
+        None
         '''
         
         # Define local functions
@@ -272,15 +311,17 @@ class FFT:
         plt.show()
         
         
-    def save(self, output='fft.png', what='intensity', 
+    def save(self, output=None, what='intensity', 
              itype='16bit', icut=None, dpi=300):
         '''
         Save FFT object = Fourier transform of an image.
 
         Parameters
         ----------
-        output : str or path-like object, optional, default is 'fft.png' 
+        output : str or path-like object, optional, default is None. 
             Name of the output file.
+            If output = None, then we will try output = self.name.
+            If self.name = None, then we will set output = 'fft.png'.
         what : str, optional, default is 'intensity'
             What result should be shown - 'intensity' or 'phase'.
         itype : str, optional, default is '16bit'
@@ -329,9 +370,23 @@ class FFT:
             arr = arr.astype(np.uint8)
         
         # (4) Save array to Image using PIL
-        # (saving with PIL = original number of points/pixels + selected dpi
+        # (Why PIL? => original number of points/pixels + selected dpi
+        # (a) find the name of output file
+        if output is None:
+            if self.name is not None:
+                output = self.name
+            else:
+                output = 'fft.png'
+        # (b) save the selected array (given by argument what) to file
         img = Image.fromarray(arr)
         img.save(output, dpi=(dpi,dpi))
+        
+    
+    def save_with_extension(self):
+        # TODO
+        # 1. Build filename with extension.
+        # 2. Call save  with name = filename_with_extension
+        pass
 
 
 class RadialProfile:
