@@ -52,7 +52,9 @@ myimg.objects.Units, myimg.objects.NumberWithUnits,
 and myimg.objects.ScaleWithUnits.
 '''
 
-import os, sys, re, pathlib
+import os, sys, re
+from os import PathLike
+from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image, ImageFont, ImageDraw, ImageOps
@@ -66,24 +68,24 @@ class MyImage:
     '''
 
 
-    def __init__(self, img, pixsize=None, name=None):
+    def __init__(self, img, name=None, pixsize=None):
         '''
         Initialize MyImage object.
 
         Parameters
         ----------
-        img : image (array or str or path-like or MyImage object)
+        img : image (array or str or PathLike or MyImage object)
             Name of the array/image that we want to open.
+        name : str or PathLike object, optional, default is None
+            Name of the MyImage object.
+            If MyImage is created from file, the *name* is the filename.
+            If MyImage is created from array, the *name* can be user-defined.
+            The name is employed by MyImg.save_with_extension method.
         pixsize : str, optional, default is None
             Description how to determine pixel size.
             Pixel size is needed to calculate the scalebar length.
             See docs of myimg.objects.MyImage.scalebar
             about the possibilities how to use pixsize argument.
-        name : str, optional, default is None
-            Name of the MyImage object.
-            If MyImage is created from file, the *name* is the filename.
-            If MyImage is created from array, the *name* can be user-defined.
-            The name is employed by MyImg.save_with_extension method.
 
         Returns
         -------
@@ -105,21 +107,21 @@ class MyImage:
         
         # (1) Open the image and define/save its name
         # (we have to consider the type of the input img argument
-        if type(img) in (str, pathlib.WindowsPath, pathlib.PosixPath):
-            # (a) img is str or path-like object = filename
-            # => open the file to PIL.Image and save its filename
-            self.img = MyImage.img_from_file(img)
-            self.name = img
-        elif type(img) == np.ndrarray:
-            # (b) img is a numpy array
-            # => convert the file to PIL.Image and create profisional name
-            self.img = MyImage.img_from_array(img)
-            self.name = name or 'image_from_array'
-        elif type(img) == MyImage:
-            # (c) img is an existing MyImage object
-            # => create a copy of the object
+        if isinstance(img, MyImage):
+            # (a) img is an existing MyImage object
+            # => copy the properties of the object
             self.img = img.img
             self.name = img.name
+        elif isinstance(img, (str, PathLike)):
+            # (b) img is str or PathLike object = filename
+            # => open the file to PIL.Image + save filename as name
+            self.img = MyImage.img_from_file(img)
+            self.name = Path(img)
+        elif isinstance(img, np.ndarray):
+            # (c) img is a numpy array
+            # => convert the array to PIL.Image + create name
+            self.img = MyImage.img_from_array(img)
+            self.name = name or 'image_from_array'
         else:
             print('Error initializing MyImage object!')
             print(f'Unsuported type of input: f{type(img)}')
@@ -127,29 +129,24 @@ class MyImage:
             
         # (2) Define/determine additional image parameters
         # (again, we have to considet the type of the input img argument
-        if type(img) == MyImage:
+        if isinstance(img, MyImage):
             # (a) MyImage object
-            # (itype => ALWAYS defined in MyImage object
-            # (pixsize => MAYBE defined in MyImage object OR taken the argument
+            # itype => ALWAYS defined in MyImage object
             self.itype   = img.itype
-            self.pixsize = img.pixsize or pixsize
+            # pixsize => MAYBE  defined in MyImage object
+            self.pixsize = img.pixsize
+            # If pixsize was not in MyImage object => take from pixsize arg
+            if self.pixsize is None and pixsize is not None:
+                self.pixsize = self.set_scale(pixsize)
         else:
             # (b) array or filename
-            # (itype => must be determined
-            # (pixsize => taken from the argument, whose default value is None
+            # itype => MUST be deduced from the source array/image
             self.itype = self.determine_image_type()
-            self.pixsize = pixsize
-            
-        
-        # (3) Recalculate {pixsize}, if needed.
-        # If self.pixsize is not undefined
-        # (which is not a problem, as it can be defined later),
-        # and pixsize is not already converted to NumberWithUnits object,
-        # (which might have happened if img was a calibrated MyImage object),
-        # then self.pixsize should be converted now to NumberWithUnits object.
-        if self.pixsize is not None:
-            if not isinstance(self.pixsize, NumberWithUnits):
-                self.pixsize = self.set_scale(pixsize)        
+            # pixsize => taken from the pixsize argument
+            if pixsize is None:
+                self.pixsize = None
+            else:
+                self.pixsize = self.set_scale(pixsize)       
     
     
     @staticmethod
@@ -197,12 +194,26 @@ class MyImage:
         -------
         img : PIL image object
             The PIL image object is usually saved in MyImage object.
+        
+        Technical note
+        --------------
+        * In general, the array values shoud be of type np.uint8 or np.uint16,
+          which corresponds to the most common 8-bit and 16-bit images.
+        * Other data types are possible (check the PIL documentation),
+          but np.uint8 and np.uint16 are the best = most standard.
+        * This function is usually called when initializing MyImage object
+          and the img argument is a np.array. In such a case, you should
+          convert the array values to np.uint8 or np.uint16 before
+          calling this function = before initialization of MyImage object!
         '''
         try:
-            img = Image.from_array(arr)
+            # User should ensure that the arr data are of correct type/format.
+            # Read the *Technical note* in the docstring above!
+            img = Image.fromarray(arr)
             return(img)
         except Exception as err:
             print('Something went wrong when converting array to PIL.Image!')
+            print('Usually the array values should be np.uint8 or np.uint16.')
             print(err)
             sys.exit()
             
@@ -257,15 +268,20 @@ class MyImage:
 
         Returns
         -------
-        None
-            The result is the defined pixel size,
-            saved in the attribute pixsize of myimg.objects.MyImage object.
+        pixsize : NumberWithUnits object
+            The result = pixel size in (myimg.objects.NumberWithUnits) format,
+            which both returned and saved in the property of self.pixsize
+            of the calling self object (self = myimg.objects.MyImage).
         '''  
         # The complete code of this method is long. 
         # Therefore, the code has been moved to its own module.
         # This method is a wrapper calling the function in the external module. 
         from myimg.utils import scalebar as my_scalebar
+        # Set self.pixsize directly
         self.pixsize = my_scalebar.get_pixel_size(self, pixsize)
+        # Return pixsize
+        # (this enables something like: pixsize = self.set_scale('rwi,100nm')
+        return(self.pixsize)
 
 
     def set_font_size(self, font_name, required_font_size_in_pixels):

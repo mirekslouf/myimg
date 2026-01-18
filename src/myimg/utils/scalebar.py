@@ -29,6 +29,7 @@ the usaage of the scalebar method is shown in the example above.
 '''
 
 import sys, os, glob, re
+from pathlib import Path
 import numpy as np
 from PIL import ImageFont, ImageDraw
 import myimg.settings as Settings
@@ -58,8 +59,7 @@ def insert_scalebar(my_img, pixsize=None, F=None, **kwargs):
             pixel_size = my_img.pixsize
         else:
             print('Error when inserting scalebar!')
-            print('Pixel size has not been defined.')
-            sys.exit()
+            raise(ValueError('Pixel size has not been defined.'))
     else:
         pixel_size = get_pixel_size(my_img, pixsize)
     # Save info about pixelsize back to my_img object
@@ -280,12 +280,20 @@ def pixel_size_from_mag(my_img, pixelsize_args):
         sys.exit()
     
     # (2) Get magnification...
-    # (2a) If the 2nd argument was given, it should be magnification
+    # (2a) If the 2nd argument was given, it should be the magnification
     if len(pixelsize_args) == 2:
         mag = pixelsize_args[1]
     # (2b) If 2nd argument was not given, get it from image name
     else:
-        mag = re.search(r'\S+_(\d+\.?\d*[Kk]?[Xx]?)\.\S{3,}', my_img.name)[1]
+        # Step 1: Get image name, my_img.name can be str or Path!
+        if isinstance(my_img.name, str):
+            image_name = my_img.name
+        elif isinstance(my_img.name, Path):
+            image_name = str(my_img.name)
+        else:
+            raise('Unknown type in MyImage.name!')
+        # Step 2: Get magnification from the image name
+        mag = re.search(r'\S+_(\d+\.?\d*[Kk]?[Xx]?)\.\S{3,}', image_name)[1]
         if mag == None:
             print('Unrecognized magnification in filename!')
             print('Filename:', my_img.name)

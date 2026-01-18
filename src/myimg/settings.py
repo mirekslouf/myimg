@@ -114,19 +114,7 @@ class MicCalibrations:
         >>> print(Settings.MicCalibrations.TecnaiVeleta.const)
     '''
     
-    @dataclass
-    class TecnaiVeleta:
-        '''
-        Calibration of Tecnai microscope with Veleta camera.
-        
-        * Typical image size = [1024x1024]pix
-        * Alternative image sizes = integer multiples possible due to binning.
-        * Binning does not influence real-width-of-image and calibration const.
-        '''
-        description : str = 'TEM Tecnai, Veleta3G camera'
-        const       : float = 110.440  # const = rwi * mag (rwi = const/mag)
-        units       : str = 'mm'       # const units
-   
+
     @dataclass
     class LM_Nikon1:
         '''
@@ -139,6 +127,7 @@ class MicCalibrations:
         description : str = 'LM Nikon, ProgRes camera'
         const       : float = 6.55300   # const = rwi * mag (rwi = const/mag)
         units       : str = 'mm'        # const units
+
 
     @dataclass
     class LM_Nikon2:
@@ -153,6 +142,21 @@ class MicCalibrations:
         description : str = 'LM Nikon, Basler camera'
         const       : float = 8.50000   # const = rwi * mag (rwi = const/mag)
         units       : str = 'mm'        # const units
+
+
+    @dataclass
+    class TecnaiVeleta:
+        '''
+        Calibration of Tecnai microscope with Veleta camera.
+        
+        * Typical image size = [1024x1024]pix
+        * Alternative image sizes = integer multiples possible due to binning.
+        * Binning does not influence real-width-of-image and calibration const.
+        '''
+        description : str = 'TEM Tecnai, Veleta3G camera'
+        const       : float = 110.440  # const = rwi * mag (rwi = const/mag)
+        units       : str = 'mm'       # const units
+   
 
      
 @dataclass
@@ -172,10 +176,11 @@ class MicDescriptionFiles:
     # (description file is a text file containing pixelsize
     # (for some microscopes, decription files are saved together with images
     # (each microscope below = dictionary containing the following elements
-    # (...filename = name of descr.file; * = name of image file, ? = any character
+    # (...filename = name of descr.file; * = name of img.file, ? = any char
     # (...pixsize_line = regular expression describing line with pixelsize
     # (   the paretheses () within the regexp should catch the pixelsize number
     # (...pixsize_units = units, in which the pixelsize is given
+
     
     @dataclass
     class MAIA:
@@ -185,6 +190,7 @@ class MicDescriptionFiles:
         filename     : str = r'*-???.hdr'
         pixsize_line : str = r'^PixelSizeX=(.*)'
         pixsize_units: str = r'm'
+
     
     @dataclass
     class VEGA:
@@ -194,6 +200,7 @@ class MicDescriptionFiles:
         filename     : str = r'*.bhd'
         pixsize_line : str = r'^Pix=(.*)'
         pixsize_units: str = r'um'
+
 
     @dataclass
     class JEOL:
