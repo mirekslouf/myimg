@@ -1,8 +1,53 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Apr 29 08:08:54 2025
+Feature extraction and visualization for nanoparticle ROI classification.
 
-@author: p-sik
+This module implements a feature-engineering pipeline for small, square
+regions of interest (ROIs) centered on detected particles. The core entry
+point is :func:`get_features`, which combines multiple feature families into
+a single feature table suitable for a classification.
+
+Implemented feature families
+----------------------------
+- **Intensity statistics** (via :func:`roi_features`):
+  max/min/mean/median, standard deviation, variance, skewness, kurtosis.
+
+- **Morphology and shape descriptors** (via :func:`extended_features`):
+  Otsu thresholding + morphological cleanup, connected-component labeling,
+  and region properties such as area, convex area, eccentricity, solidity,
+  extent, orientation, and perimeter. Also exports 2D image moments.
+
+- **Template correlation features** (via :func:`corr_features`):
+  normalized cross-correlation (NCC) scores between each ROI and a set of
+  class masks (same shape as ROIs).
+
+- **2D Gaussian fit features** (via :func:`gauss_params` and
+  :func:`gauss_features`):
+  fits a rotated elliptical 2D Gaussian and derives interpretable quantities
+  such as FWHM, peak intensity, eccentricity/ellipticity, and integrated
+  intensity.
+
+The module also provides :func:`visualize_features` for quick exploratory
+plots (boxplots, pairplots, correlation heatmaps) to assess feature
+separability and redundancy.
+
+Data conventions
+----------------
+- ROIs are expected to be 2D NumPy arrays (grayscale) of identical shape.
+- The metadata table ``df`` must contain a ``'Class'`` column with the class
+  label for each ROI. Row order must correspond to the ROI list order.
+- Correlation masks must have the same shape as each ROI. Masks can be passed
+  as:
+  - a list of four masks (class order 1..4), or
+  - a dict mapping names to masks (e.g. ``{"CorrCL1": mask1, ...}``).
+
+Outputs
+-------
+- Feature tables are returned as :class:`pandas.DataFrame` objects.
+- Array-valued features (moments) are returned separately where applicable.
+- This code does not modify ROIs in-place; preprocessing/normalization is the
+  responsibility of upstream ROI extraction routines.
+
 """
 import numpy as np
 import pandas as pd

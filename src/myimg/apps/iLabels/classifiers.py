@@ -1,9 +1,54 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Apr 29 11:13:42 2025
+Utilities for training and evaluating a Random Forest classifier on tabular
+feature data.
 
-@author: p-sik
+This script provides a compact workflow for supervised classification of
+feature tables (typically stored as a :class:`pandas.DataFrame`), including:
+
+- dataset splitting into training/test sets (optionally also a validation set)
+- Random Forest hyperparameter tuning via randomized search
+- forward sequential feature selection (SFS) using cross-validation
+- model fitting and reporting on the training set
+- prediction and optional evaluation on a held-out test set
+
+The expected input to most functions is a feature table containing a target
+column named ``"Class"``. Several common metadata columns (e.g. ``"X"``,
+``"Y"``, ``"Note"``, ``"imID"``) are automatically ignored if present.
+
+Typical workflow
+----------------
+A standard workflow looks like::
+
+    X_train, X_test, y_train, y_test = dataset(features)
+
+    # Hyperparameter optimization
+    model, best_params = get_optimal_rfc(X_train, y_train)
+
+    # Feature selection (optional)
+    selected = select_features(X_train, y_train, num=5, estimator=model)
+
+    # Train on selected features
+    model, _ = fitting(X_train, y_train, model, sfeatures=selected)
+
+    # Predict on test set + evaluation
+    y_pred = predicting(X_test, model, sfeatures=selected, y_test=y_test)
+
+Notes
+-----
+- The Random Forest classifier is configured with ``class_weight="balanced"``
+  to improve robustness on imbalanced datasets.
+- Hyperparameter tuning uses :class:`sklearn.model_selection.RandomizedSearchCV`
+  with ``balanced_accuracy`` scoring.
+- Feature selection uses forward
+  :class:`sklearn.feature_selection.SequentialFeatureSelector` with
+  cross-validation.
+
+This module is intended as a lightweight and reusable ML helper layer rather
+than a standalone command-line tool.
 """
+
+
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import RandomizedSearchCV

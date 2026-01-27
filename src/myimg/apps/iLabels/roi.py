@@ -1,9 +1,53 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Apr 29 07:10:29 2025
+ROI preprocessing and extraction utilities for iLabels workflows.
 
-@author: p-sik
+This module provides helper functions to load and preprocess microscopy
+images, load peak annotations, and extract square regions of interest (ROIs)
+centered on particle coordinates. It is primarily used by the iLabels
+annotation/classification pipeline.
+
+Main capabilities
+-----------------
+- **Image loading + cropping** via :func:`load_myimg`:
+  loads from a file path or PIL image, crops a fixed number of bottom pixels,
+  applies preprocessing, and optionally saves the result.
+
+- **Image preprocessing** via :func:`preprocess_image`:
+  grayscale conversion, optional CLAHE contrast enhancement, gamma correction,
+  and optional normalization to 8-bit range.
+
+- **Peak/annotation preparation** via :func:`prep_data`:
+  loads an image using :class:`myimg.api.MyImage`, loads a peak table through
+  :class:`myimg.apps.iLabels.classPeaks.Peaks`, and optionally visualizes the
+  peaks on the image.
+
+- **ROI extraction and coordinate refinement** via :func:`get_ROIs`:
+  extracts square ROIs centered near each (X, Y) peak location and recenters
+  each ROI to the local maximum-intensity pixel within the preliminary window.
+  Updated coordinates are returned in the corrected DataFrame.
+
+- **Class mean masks** via :func:`create_masks`:
+  builds average templates per class by averaging a fixed number of ROIs per
+  class; optionally saves the masks as ``mask1.pkl``, ``mask2.pkl``, ... for
+  downstream template-matching detectors.
+
+- **Utilities**:
+  :func:`min_max_normalize` rescales individual ROIs with per-image min–max
+  scaling, and :func:`show_random_rois` displays a random subset of ROIs for
+  quick inspection.
+
+Data conventions
+----------------
+- Peak coordinates follow the project convention used in DataFrames:
+  ``X`` is the horizontal coordinate (column index), ``Y`` is the vertical
+  coordinate (row index).
+- The peaks table is expected to contain at least ``X`` and ``Y`` columns.
+  If present, ``Class`` is used for color-coded visualization.
+- ROIs extracted by :func:`get_ROIs` are square windows of side ``2*s`` pixels
+  (current implementation slices ``[x-s:x+s]``).
 """
+
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
