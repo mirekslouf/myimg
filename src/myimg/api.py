@@ -4,11 +4,11 @@ Module: myimg.api
 
 A simple interface to MyImg package.
 
->>> # Simple usage of myimg.api interface
+>>> # Standard import of MyImg package
 >>> import myimg.api as mi
 >>>
 >>> # (1) Open image
->>> img = mi.MyImage('somefile.bmp')  # input image: somefile.bmp
+>>> img = mi.MyImage('somefile.bmp')  # input: somefile.bmp
 >>>
 >>> # (2) Modify the image 
 >>> img.cut(60)                # cut off lower bar (60 pixels)             
@@ -50,12 +50,16 @@ class MyImage(myimg.objects.MyImage):
     Class providing MyImage objects.
     
     * MyImage object = PIL-image-object + additional attributes and methods.
-    * This class in api module (myimg.api.MyImage)
-      is just inherited from objects module (myimg.objects.MyImage).
+    * This class is just inherited from myimg.objects.MyImage.
     
-    >>> import myimg.api as mi        # standard import of MyImg package
-    >>> img = mi.MyImage('some.png')  # open some image
-    >>> img.show()                    # show the image
+    >>> # Simple usage of MyImage object
+    >>> import myimg.api as mi
+    >>> # Open an image
+    >>> img = mi.MyImage('some.png')
+    >>> # Do something with the image ...
+    >>> img.autocontrast()
+    >>> # Show the modified image
+    >>> img.show()
     
     Parameters
     ----------
@@ -89,8 +93,7 @@ class MyReport(myimg.objects.MyReport):
     Class providing MyReport objects.
     
     * MyReport object = a rectangular multi-image.
-    * This class in api module (myimg.api.MyReport)
-      is just inherited from objects module (myimg.objects.MyReport).
+    * This class is just inherited from myimg.objects.MyReport.
     
     >>> # Simple usage of MyReport object
     >>> import myimg.api as mi
@@ -248,6 +251,44 @@ class Apps:
         # >>> Velox.something(...)        
         return Velox
     
+    
+    @classmethod 
+    def import_MDistr(cls):
+        '''
+        Import iLabels package = calculate and plot particle distributions.
+
+        * The function gives access to myimg.apps.MDistr package.
+        * https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg/apps.html
+        
+        The function can be called and used in two ways:
+            
+        >>> import myimg.api as mi  # ............. standard import of MyImg
+        >>>
+        >>> mi.Apps.import_MDistr()  # ............ 1st way to access iLabels
+        >>> mi.Apps.MDistr.something(...)
+        >>>
+        >>> MDistr = mi.Apps.import_MDistr()  # ... 2nd way to access iLabels
+        >>> MDistr.something(...)
+        '''
+        # Import iLabels into the *local function namespace*.
+        # (The package is loaded once and cached in sys.modules by Python;
+        # (the name `iLabels` is local to this func unless we store return it.        
+        import myimg.apps.MDistr as MDistr
+
+        # Save iLabels as a *class attribute*.
+        # (This enables the following usage:
+        # >>> import myimg.api as mi
+        # >>> mi.Apps.import_iLabels()
+        # >>> mi.Apps.iLabels.something(...)        
+        cls.MDistr = MDistr
+        
+        # Return the iLabels package.
+        # (This additionally enables:
+        # >>> import myimg.api as mi
+        # >>> iLabels = mi.Apps.import_iLabels()
+        # >>> iLabels.something(...)                
+        return MDistr
+
     
     @classmethod
     def import_iLabels(cls):

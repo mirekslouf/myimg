@@ -1,15 +1,15 @@
 '''
-Utilities for Velox EMD files
+Module: myimg.apps.velox_utils
+------------------------------
 
-* Assumptions:
-    - EMD files from Velox software (from Thermo Fisher)
-    - EMD file names: {number} + {description} + {magnification/camera length}
-* Limitations:
-    - tested only for our Talos L120C microscope
-    - detectors in our Talos: TEM(Ceta,SmartCam), STEM(Panther), HAADF, EDS
-* Possible extensions:
-    - modifications of the code may be necessary for other microscopes
-    - contact the authors if you need to extend/modify/adjust this package
+Utilities for Velox EMD files.
+
+Limitations:
+
+* Tested only for our Talos L120C microscope.
+* Detectors in our Talos: TEM(Ceta,SmartCam), STEM(Panther), HAADF, EDS
+* Modifications of the code may be necessary for other microscopes.
+* Contact the authors if you need to extend/modify/adjust this package.
 '''
 
 # HyperSpy library
@@ -38,28 +38,54 @@ class EMDobject:
     '''
     Class providing EMDobjects.
     
+    * EMDobject provides access to the content of Velox EMD files.
     * EMDobject is a HyperSpy object with a few additional methods/properties.
+    * EMDobject can use all HyperSpy methods + our own methods defined below.
     
-    Technical notes
-    ---------------
+    Example - use EMDobject to save an image from EMD file:
     
-    EMDobject is build by means of three principal components.
-    
-    * Initialization:
-        * __init__ initializes self.hsObject = HyperSpy object
-        * EMD object = hsObject + self.additional_methods/props
-    * Re-defined private methods: 
-        * __getattr__ = delegates access to underlying HyperSpy object methods
-        * __getitem__ = access to items (in case of list-of-HyperSpy objects)
-        * __iter__ = access to iteration (in case of list-of-HyperSpy objects)
-        * __len__ = access to len func (in case of list-of-HyperSpy objects)
-    * Additional methods/props defined within this class, such as:
-        * signal, describe, get_scale, save_signal2d ...
+    >>> # Standard import of MyImg + package to read Velox files 
+    >>> import myimg.api as mi
+    >>> Velox = mi.Apps.import_Velox_utils
+    >>>
+    >>> # Read an EMD file and print what is inside
+    >>> emd = Velox.EMDobject(r'some.emd')
+    >>> emd.describe(verbose=3)
+    >>>
+    >>> # Show and save an image from EMD file
+    >>> emd.signal2d_show(cmap='magma')
+    >>> emd.signal2d_save('some.png')
     '''
+
+    # Technical notes
+    # ---------------    
+    # EMDobject is build by means of three principal components.
+    # 1. Initialization:
+    #     * __init__ initializes self.hsObject = HyperSpy object
+    #     * EMD object = hsObject + self.additional_methods/props
+    # 2. Re-defined private methods: 
+    #     * __getattr__ = delegates access to underlying HyperSpy object methods
+    #     * __getitem__ = access to items (in case of list-of-HyperSpy objects)
+    #     * __iter__ = access to iteration (in case of list-of-HyperSpy objects)
+    #     * __len__ = access to len func (in case of list-of-HyperSpy objects)
+    # 3. Additional methods/props defined within this class, such as:
+    #     * signal, describe, get_scale, save_signal2d ...
     
     def __init__(self, source_data):
         '''
-        Initialize EMDobject.
+        Initialize {EMDobject} = a {HyperSpy} object with additional methods.
+
+        Parameters
+        ----------
+        source_data : str or PathLike or HyperSpy object
+            Source data for the {EMDobject}.
+            Typically, {source_data} is a filename of existing Velox EMD file.
+            Alternatively, {source_data} can be a HyperSpy object,
+            which was used to read the Velox EMD file.
+
+        Returns
+        -------
+        EMDobject
         '''
         
         # (1) source_data = str => filename
@@ -132,26 +158,68 @@ class EMDobject:
     
     @property
     def signal(self):
+        '''
+        Property: signal in the EMD file.
+
+        Returns
+        -------
+        str
+            Signal in the original EMD file.
+            General form of the output: 'method:output'.
+            Examples: 'TEM:image', 'STEM:image', 'EDS:spectrum', 'TEM:diff' ...
+        '''
         return EMDmetadata.signal_description(self)
     
     
     @property 
     def detectors(self):
+        '''
+        Property: Detector(s) used to get the signal in the EMD file. 
+
+        Returns
+        -------
+        str
+            Detector(s) that were used to get the signal in the EMD file. 
+            Examples: 'Ceta', 'SmartCam', '[BF DF DFi HAADF DFo]' ...
+        '''
         return EMDmetadata.list_of_detectors(self)
     
     
     @property
     def apertures(self):
+        '''
+        Property: Apertures that were used to get the signal in the EMD file.
+
+        Returns
+        -------
+        str
+            List of apertures that wre used to get the signal in the EMD file.
+            Examples: '[C2:150 OBJ:100 SA:---]', '[C2:150 OBJ:--- SA: 40]' ...
+
+        '''
         return EMDmetadata.list_of_apertures(self)
         
  
     def scale(self, out_format=1):
         '''
-        Return scale from Velox EMD file.
+        Scale from Velox EMD file.
         
         * Scale for 2Dsignals = images => pixel size.
         * Scale for 1Dsignals = spectra => unit on X-axis.
         * The information about scale is hidden in Velox EMD metadata.
+        
+        Parameters
+        ----------
+        out_format : int, optional, default is 1
+            If {out_format} = 1, we get output like '1.25 nm'.
+            If {out_format} = 0, we get output like (1.25, 'nm').
+            
+        Returns
+        -------
+        str or tuple
+            Scale of the signal (such as pixel size, unit on axis).
+            The form of the output depend on {out_format} argument.
+            The various types of scales and output formats are described above.
         '''
         
         # (1) Get hsObject, which is saved in self.hsObject
@@ -182,27 +250,46 @@ class EMDobject:
 
         Parameters
         ----------
-        verbose : int (0,1,2), optional, default is 0
-            The argument determines, how much details we get. 
+        verbose : int (0,1,2,3), optional, default is 0
+            The argument determines, how much information we get. 
 
         Returns
         -------
         None
             The method just prints the information on the stdout.
         '''
-        print('---')
         extra_space = ('') if verbose == 0 else ('   ')
         print(f'Signal {extra_space}: {EMDmetadata.signal_description(self)}')
         if verbose >= 1:
-            print(f'Detectors : {EMDmetadata.list_of_detectors(self)}')
+            print(f'Detectors : {self.detectors}')
         if verbose >= 2:
-            print(f'Apertures : {EMDmetadata.list_of_apertures(self)}')
-        print('---')
+            print(f'Apertures : {self.apertures}')
+        if verbose >= 3:
+            print(f'Scale     : {self.scale()}')
 
 
     def signal2d_show(self, out_file=None, out_dpi=300, item=None, **kwargs):
         '''
         Show 2D-signal from the Velox EMD file.
+        
+        Parameters
+        ----------
+        out_file : str or path, optional, default is None
+            If {out_file} is not None, the plot of the signal will be saved
+            to the image file with name {out_file} and resolution {out_dpi}.
+        out_dpi : int, optional, default is 300
+            DPI resolution of the output file = {out_file}.
+        item : None or int, optional, default is None
+            Obligatory if the original EMD file contains series of images.
+            Example: EMD file contains three images [BF DF HAADF]
+            and we set {item} = 2; in this case, the function will show
+            the HAADF (because in our example: item=0 is BF, item=1 is DF,
+            and item=2 is HAADF).
+        **kwargs : dict, optional
+            The keyword arguments will be sent to `plt.imshow` command
+            inside this function.
+            Example: we can specify vmax=5000, cmap='magma' when calling
+            this function, and these parameters will go to `plt.imshow`.
         '''
         # (1) Get signal
         if item is None: 
@@ -221,7 +308,19 @@ class EMDobject:
     
     def signal2d_save(self, out_file, item=None):
         '''
-        Save 2D-signal from the Velox EMD file.
+        Save 2D-signal from the Velox EMD file as a 16-bit image file.
+        
+        Parameters
+        ----------
+        out_file : str or path
+            Name of the output file.
+            The extension determines the type of the file.
+        item : None or int, optional, default is None
+            Obligatory if the original EMD file contains series of images.
+            Example: EMD file contains three images [BF DF HAADF]
+            and we set {item} = 2; in this case, the function will save
+            the HAADF (because in our examlple: item=0 is BF, item=1 is DF,
+            and item=2 is HAADF).
         '''
         # (1) Get signal
         if item is None: 
@@ -266,30 +365,69 @@ class EMDfiles:
     
     This non-OO class contains two key functions:
         
-    * rename = rename Velox EMD files (shorter names without whitespace)
+    * rename = rename Velox EMD files (shorten the names + remove whitespace)
     * describe = describe Velox EMD files (file, signal, apertures, detectors)
     
-    Technical notes
-    ---------------
+    Prerequisites (for rename function):
+
+    * EMD files from Velox software (from Thermo Fisher)
+    * EMD file names = three items = {number} + {description} + {magnification}
+    * The three items  of the filename must be set in the Velox software. 
+    
+    Important notes:
     
     * The *rename* function renames also the exported files (PNG, TIFF...)
-    * The *describe* function describes only the original EMD files.
+    * The *describe* function describes only the original EMD files.    
     '''
 
         
     @classmethod
     def rename(cls, vdir, idigits=3, validate=False):
+        '''
+        Rename Velox EMD files.
+        
+        * This function works for files saved acc.to our convention.
+        * See {Prerequisites} in the myimg.apps.velox_utils.EMDfiles class.
+
+        Parameters
+        ----------
+        vdir : str or Path
+            Directory with Velox EMD files.
+            The files can be also in subdirectories.
+        idigits : int, optional, default is 3 
+            The Velox EMD filenames start with four digits (0001, 0002 ..).
+            If {idigits} = 3, this is reduced to three (001, 002 ...).
+        validate : bool, optional, default is False
+            If {validate} = False, do NOT rename the files,
+            just print the old and new names on stdout.
+
+        Returns
+        -------
+        None
+            The result are renamed files
+            (or just screen output if {validate} default is changed to True).
+        '''
         cls.rename_orig(vdir, idigits, validate)
         cls.rename_exported(vdir, idigits, validate)
         
     
     @classmethod 
     def rename_orig(cls, vdir, idigits=3, validate=False):
+        '''
+        Rename *original* Velox EMD files = files with EMD extension.
+
+        * This function is usually called from {rename} function above.
+        * The parameters are the same as in
+          myimg.apps.velox_utils.EMDfiles.rename.
+        '''
+        
         # If vdir is string, convert it to Path object.
         if isinstance(vdir, str): vdir = Path(vdir)
+        
         # Define EMD files withing {vdir} directory.
         # (only Velox EMD files of type: 0001 - something.emd
         emd_files = vdir.rglob('???? - ?*.emd')
+        
         # Go through EMD files, and rename them.
         for file in sorted(emd_files):
             new_name = cls.short_name(file, fullpath=True)
@@ -301,15 +439,28 @@ class EMDfiles:
     
     @classmethod 
     def rename_exported(cls, vdir, idigits=3, validate=False):
+        '''
+        Rename *exported* Velox EMD files = PNG/TIF/TXT/CIF-files.
+
+        * This function is usually called from {rename} function above.
+        * We assume that the files were exported with Velox
+          and have names like the original EMD files.
+        * The parameters are the same as in
+          myimg.apps.velox_utils.EMDfiles.rename.
+        '''
+        
         # If vdir is string, convert it to Path object.
         if isinstance(vdir, str): vdir = Path(vdir)
+        
         # Define image files within {vdir} directory.
         # (only Velox exported files of type: 0001 - something.png|tif|txt
         img_files = itertools.chain(
             vdir.rglob('???? - ?*.png'),
             vdir.rglob('???? - ?*.tif'),
-            vdir.rglob('???? - ?*.txt'))
-        # Go through EMD files, and rename them.
+            vdir.rglob('???? - ?*.txt'),
+            vdir.rglob('???? - ?*.csv'))
+        
+        # Go through exported files, and rename them.
         for file in sorted(img_files):
             new_name = cls.short_name( 
                 file, fullpath=True, last_part_of_name=True)
@@ -328,8 +479,11 @@ class EMDfiles:
         # Get stem of the filename
         # (this will be gradually changed to new_name
         orig_name = file.stem
+        # Start with converting the all chars in filename to lowercase
+        # (this standardization can save a lot of troubles
+        new_name = orig_name.lower()
         # Convert the initial separator between file number and the rest
-        new_name = orig_name.replace(' - ','_')
+        new_name =new_name.replace(' - ','_')
         # Remove space between magnification and 'x'/'kx'
         new_name = new_name.replace(' x','x')
         new_name = new_name.replace(' kx','kx')
@@ -337,6 +491,15 @@ class EMDfiles:
         new_name = new_name.replace(' mm','mm')
         # Correct possible error when the JobID is inserted as H66_
         new_name = new_name.replace('_ ','_')
+        # Change special names of EDS results exported to CSV
+        # (* These files can be created in Velox by:
+        # (  Velox-Processing - Menu - EDS - Export quantification details
+        # (* We hard-ren:ame these special files in the following way
+        # (  exchange initial '-' for ' ' => to separate {last_part_of_name}
+        # (  do not use '_' in the text   => not to split {last_part_of_name}
+        # (  => then {last_part_of_name} is compatible with further processing 
+        new_name = new_name.replace('-eds spectrum-composition', ' eds1-elem')
+        new_name = new_name.replace('-eds spectrum-lines',       ' eds2-lines')
         # Convert all other whitespace to underscore
         new_name = new_name.replace(' ','_')
         # Split to components

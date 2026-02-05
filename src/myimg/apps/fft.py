@@ -1,6 +1,6 @@
 '''
 Module: myimg.apps.fft
------------------------
+----------------------
 
 Fourier transform utilities for *MyImg* package.
 '''
