@@ -5,7 +5,7 @@ Module: myimg.apps.fft
 Fourier transform utilities for *MyImg* package.
 '''
 
-# Import modules ---------------------------------------------------------------
+# Import modules --------------------------------------------------------------
 
 # System modules
 import sys
@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits import axes_grid1  # to add nice colorbars
 
 
-# Define classes ---------------------------------------------------------------
+# Define classes --------------------------------------------------------------
 
 class FFT:
     '''
@@ -453,33 +453,26 @@ class RadialProfile:
         their distance from the center. Only binary and grayscale images are
         supported. 
         '''
-        
-        # --- import for MyImage to avoid circular dependency
-        try:
-            from myimg.api import MyImage
-        except ImportError:
-            MyImage = None
-        try:
-            from myimg.apps.fft import FFT
-        except ImportError:
-            FFT = None
-            
+
         # (1) Convert input image to numpy array
-        if FFT is not None and isinstance(img, FFT):
+        if isinstance(img, FFT):
             if what == 'intensity':
                 arr = img.intensity
             elif what == 'phase':
                 arr = img.phase
             else:
-                raise ValueError("Parameter 'what' must be 'intensity' or 'phase'")
+                raise ValueError(
+                    "Parameter 'what' must be 'intensity' or 'phase'")
         elif isinstance(img, np.ndarray):
             arr = img
-        elif MyImage is not None and isinstance(img, MyImage):
+        elif isinstance(img, myimg.api.MyImage):
             if img.itype in ('binary', 'gray', 'gray16'):
                 arr = np.asarray(img.img)
             else:
-                raise TypeError("RadialProfile supports only binary/gray images")
+                raise TypeError(
+                    "RadialProfile supports only binary/gray images")
         elif isinstance(img, (str, Path)):
+            # TODO: test if the image is grayscale
             img = Image.open(img)
             arr = np.asarray(img)
         else:
@@ -531,8 +524,7 @@ class RadialProfile:
         Y, X = np.meshgrid(
             np.arange(height) - yc,
             np.arange(width) - xc,
-            indexing='ij'
-        )
+            indexing='ij')
     
         # (3) Radial distance map
         Rmap = np.sqrt(X**2 + Y**2)
@@ -551,49 +543,48 @@ class RadialProfile:
         return R, I
 
     # -------------------------------------------------------------------------
-    def show(self, ax=None, **kwargs):
+    def show(self, freq=False, 
+             icut=None, title=None, xlim=None, ylim=None):
         '''
-        Display the radial profile as a matplotlib plot.
-        
-        X-axis is spatial frequency [1/pixel].
-        Y-axis is intensity [a.u.].
+        Display the radial profile.
 
         Parameters
         ----------
-        ax : matplotlib.axes.Axes, optional
-            Existing matplotlib axes to plot on. If None, a new figure
-            and axes are created.
-        **kwargs : dict
-            Additional keyword arguments passed to ax.plot().
-
+        freq : bool, optional, default is False
+            If {freq} = True, convert X-axis units
+            from {pixels} to {spatial frequency}.
+        
         Returns
         -------
         None
-            Shows the radial profile plot.
-
-        Technical Notes
-        ---------------
-        If ax is None, the function creates a new figure. Grid, labels, and
-        title are automatically added. Suitable for quick visualization.
+           The plot is shown on the screen.
         '''
-        created_ax = False
-        if ax is None:
-            fig, ax = plt.subplots()
-            created_ax = True
-    
+        
         # (1) Convert radius from pixels to spatial frequency
-        n = max(self.R) * 2          # equivalent to image size
-        k = self.R / n               # spatial frequency [1/pixel]
+        # (ONLY on explicit request
+        if freq is True:
+            n = max(self.R) * 2   # equivalent to image size
+            k = self.R / n        # spatial frequency [1/pixel]
     
-        # (2) Plot
-        ax.plot(k, self.I, **kwargs)
-        ax.set_xlabel("r [1/pixel]")
-        ax.set_ylabel("Intensity []")
-        ax.set_title("Radial Profile")
-        ax.grid(True)
-    
-        if created_ax:
-            plt.show()
+        # (2) Plot the radial profile
+        # (a) Basic plot: frequency or pixels
+        if freq is True:
+            plt.plot(k, self.I, lw=2)
+            plt.xlabel("r [1/pixel]")
+        else: 
+            plt.plot(self.R, self.I, lw=2)
+            plt.xlabel("R [pixel]")
+        plt.ylabel("Intensity")
+        # (b) Optional parameters
+        if icut is not None: plt.ylim(0,icut)
+        if title is not None: plt.title(title)
+        if xlim is not None: plt.xlim(xlim)
+        if ylim is not None: plt.ylim(ylim)
+        # (c) Finalization
+        plt.grid()
+        plt.tight_layout()
+        plt.show()
+
 
     def save(self, filename="radial_profile.csv"):
         '''
@@ -662,8 +653,8 @@ class AzimuthalProfile:
     range.   
     '''
 
-    def __init__(self, img, radius, center=None,
-                 bins=360, what='intensity', dr=1.5):
+    def __init__(self, img, radius, center=None, 
+                 width=1, bins=360, what='intensity'):
         '''
         Initialize AzimuthalProfile object.
 
@@ -681,13 +672,18 @@ class AzimuthalProfile:
             * str or Path:
                 Interpreted as an image filename.
 
-            center : tuple (row, col), optional
+        radius : float
+            Radius = distance from the center,
+            for which we want to calculate the azimuthal profile.
+        center : tuple (row, col), optional
             Center of azimuthal profile in pixels.
             If None, image center is used.
 
+        width : int, optional, default is 1
+            Thickness of the ring,
+            within which the intensities are calculated.        
         bins : int, optional, default is 360
             Number of angular bins between 0 and 360 degrees.
-
         what : str, optional, default is 'intensity'
             Specifies which FFT result to use.
             Allowed values are 'intensity' or 'phase'.
@@ -699,40 +695,27 @@ class AzimuthalProfile:
             * AzimuthalProfile.Theta = angles in degrees
             * AzimuthalProfile.I = mean intensity per angle bin
         ''' 
-        try:
-            from myimg.api import MyImage
-        except ImportError:
-            MyImage = None
-        
-        try:
-            from myimg.apps.fft import FFT
-        except ImportError:
-            FFT = None
         
         # (1) Convert input to numpy array
-        if FFT is not None and isinstance(img, FFT):
+        if isinstance(img, FFT):
             if what == 'intensity':
                 arr = img.intensity
             elif what == 'phase':
                 arr = img.phase
             else:
                 raise ValueError("what must be 'intensity' or 'phase'")
-        
         elif isinstance(img, np.ndarray):
             arr = img
-        
-        elif MyImage is not None and isinstance(img, MyImage):
+        elif isinstance(img, myimg.api.MyImage):
             if img.itype in ('binary', 'gray', 'gray16'):
                 arr = np.asarray(img.img)
             else:
                 raise TypeError(
-                    'AzimuthalProfile supports only binary or grayscale images'
-                )
-        
+                    'AzimuthalProfile supports only binary/grayscale images')
         elif isinstance(img, (str, Path)):
+            # TODO: test if the image is binary/graysca
             img = Image.open(img)
             arr = np.asarray(img)
-        
         else:
             raise TypeError('Unsupported input type for AzimuthalProfile')
 
@@ -749,17 +732,16 @@ class AzimuthalProfile:
             radius=radius,
             center=(xc, yc),
             bins=bins,
-            dr=dr
-        )
+            width=width)
         self.Theta = Theta
         self.I = I
         self.radius = radius
-        self.dr = dr
+        self.width = width
         self.center = (xc, yc)
 
     # -------------------------------------------------------------------------
     @staticmethod
-    def calc_azimuthal(arr, radius, center=None, bins=360, dr=1.5):
+    def calc_azimuthal(arr, radius, center=None, width=1, bins=360):
         '''
         Calculate azimuthal profile on a circular ring.
     
@@ -784,77 +766,89 @@ class AzimuthalProfile:
         I : np.ndarray
             Mean intensity per angle bin.
         '''
-        height, width = arr.shape
+        # (0) Get array height and width
+        # (Note: the variables MUST have the prefix arr_
+        # (Reason: {width} is the argument of the function!
+        arr_height, arr_width = arr.shape
     
         # (1) FFT-consistent center
         if center is None:
-            yc = height / 2.0
-            xc = width / 2.0
+            yc = arr_height / 2.0
+            xc = arr_width / 2.0
         else:
             yc, xc = center
     
-        # (2) Coordinate grids
+        # (2) Coordinate grids (CORRECT mapping)
         Y, X = np.meshgrid(
-            np.arange(height) - yc,
-            np.arange(width) - xc,
-            indexing='ij'
-        )
+            np.arange(arr_height) - yc,
+            np.arange(arr_width) - xc,
+            indexing='ij')
     
-        # (3) Polar coordinates
+        # (3) Calculate map of distances and map of theta-angles
+        # (* in fact, we calculate polar coordinates
+        # (* AI suggestion,
+        # (  the constant 90 set by trial-and-error to get proper orientation
+        # (  the modulo % 360 converts everything to positive numbers/angles
         Rmap = np.sqrt(X**2 + Y**2)
-        ThetaMap = (np.degrees(np.arctan2(Y, X)) + 360) % 360
+        ThetaMap = (np.degrees(np.arctan2(X, Y)) + 90) % 360
     
-        # (4) Ring mask (3-pixel thick)
-        ring_mask = (Rmap >= radius - dr) & (Rmap <= radius + dr)
+        # (4) Ring mask
+        ring_mask = (radius-width <= Rmap) & (Rmap <= radius+width)
     
         # (5) Angular bins
         angle_bins = np.linspace(0, 360, bins + 1)
         I = np.zeros(bins)
-    
+        
+        # (6) Calculate radial profile = intensities along the ring_masks
         for i in range(bins):
             ang_mask = (
                 (ThetaMap >= angle_bins[i]) &
-                (ThetaMap < angle_bins[i + 1])
-            )
+                (ThetaMap < angle_bins[i + 1]))
             mask = ring_mask & ang_mask
             values = arr[mask]
             I[i] = np.mean(values) if values.size else 0.0
-    
+        # (7) Calculate Theta
+        # (np-trick: average of 1st/2nd, 2nd/3rd ....
         Theta = 0.5 * (angle_bins[:-1] + angle_bins[1:])
+        
+        # (8) Return the calculated values
         return Theta, I
 
     # -------------------------------------------------------------------------
     # For AzimuthalProfile
-    def show(self, ax=None, **kwargs):
+    def show(self,
+             icut=None, title=None, xlim=None, ylim=None):
         '''
         Show azimuthal profile plot.
 
         Parameters
         ----------
-        ax : matplotlib.axes.Axes, optional
-            Existing axes for plotting.
-            If None, new figure and axes are created.
-
-        **kwargs
-            Additional keyword arguments passed to matplotlib.plot().
+        icut : float, optional, default is None
+            Intensity cut;
+            if {icut}=100, the y-range of the plot is from (0,100).
 
         Returns
         -------
         None
-        '''
-        created_ax = False
-        if ax is None:
-            fig, ax = plt.subplots()
-            created_ax = True
+            The plot is shown on the screen.
+        '''        
+        # (a) Basic plot
+        plt.plot(self.Theta, self.I, lw=2)
+        plt.xlim(-10,370)
+        plt.xlabel('Angle [deg]')
+        plt.ylabel('Intensity')
+        plt.gca().xaxis.set_major_locator(plt.MultipleLocator(90))
+        plt.gca().xaxis.set_minor_locator(plt.MultipleLocator(45))
+        # (b) Optional parameters
+        if icut is not None: plt.ylim(0,icut)
+        if title is not None: plt.title(title)
+        if xlim is not None: plt.xlim(xlim)
+        if ylim is not None: plt.ylim(ylim)
+        # (c) Finalization
+        plt.grid()
+        plt.tight_layout()
+        plt.show()
     
-        ax.plot(self.Theta, self.I, **kwargs)
-        ax.set_xlabel("Angle [deg]")
-        ax.set_ylabel("Intensity []")
-        ax.set_title("Azimuthal Profile")
-        ax.grid(True)
-    
-        if created_ax:
-            plt.show()
     
     def save(self, filename="azimuthal_profile.csv"):
         '''
