@@ -347,7 +347,7 @@ class Peaks:
 
 
         if method == "manual":
-            from myimg.utils.iplot import interactive_plot, default_plot_params
+            from myimg.apps.iLabels.iplot import interactive_plot, default_plot_params
     
             # Generate and display the interactive plot for manual annotation
             fig, ax = interactive_plot(self.img, 
