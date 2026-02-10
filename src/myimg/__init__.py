@@ -5,28 +5,34 @@ Package: MyImg
 A toolbox for the processing of micrographs, which can do the following:
     
 1. Process single micrographs (improve contrast, insert scalebars, etc.).
-2. Prepare nice, publication-ready tiled images from processed micrographs.
-3. Apply additional tools, such as: FFT, distributions, immunolabelling ...
+2. Prepare publication-ready tiled images from the processed micrographs.
+3. Apply additional tools, such as: FFT, size distributions, labelling ...
 
-See myimg.api for a simple user interface.
+Key components:
 
-List of key objects, modules, and sub-packages:
-    
-* myimg.api = simple user interface, the starting point
-* myimg.objects = key objects used by *MyImg*
-    - myimg.objects.MyImage = single micrographs
-    - myimg.objects.MyReport = multi-images = tiled images
-* myimg.apps = sub-package containing additional tools and/or applications
-    - myimg.apps = list of available additional applications
-    - myimg.api.Apps = practical access to additional applications
-* myimg.plots = simple module with auxiliary functions for plotting
-* myimg.utils = sub-package with code for specific/more complex utils in *MyImg*
-* myimg.settings = default settings employed by *MyImg* objects
+* myimg.api = a simple user interface with basic tools
+* myimg.apps = a subpackage providing access to the additional tools
 '''
 
 __version__ = '0.5.2'
 
-# Obligatory acknowledgement -- the development was co-funded by TACR.
+
+# More complete list of objects, modules, and sub-packages:
+# ---------------------------------------------------------    
+# * myimg.api = simple user interface, the starting point
+# * myimg.objects = key objects used by *MyImg*
+#     - myimg.objects.MyImage = single micrographs
+#     - myimg.objects.MyReport = multi-images = tiled images
+# * myimg.apps = sub-package containing additional tools and/or applications
+#     - myimg.apps = list of available additional applications
+#     - myimg.api.Apps = practical access to additional applications
+# * myimg.plots = simple module with auxiliary functions for plotting
+# * myimg.utils = sub-package with code for specific/more complex utils in *MyImg*
+# * myimg.settings = default settings employed by *MyImg* objects
+
+
+# Obligatory acknowledgement -- the development was co-funded by TACR
+# -------------------------------------------------------------------
 #  TACR requires that the acknowledgement is printed when we run the program.
 #  Nevertheless, Python packages run within other programs, not directly.
 # The following code ensures that the acknowledgement is printed when:
