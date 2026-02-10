@@ -71,7 +71,7 @@ Typical usage
 # src/myimg/apps/iLabels/__init__.py
 import importlib
 
-__all__ = ["features", "roi", "classPeaks", "classifiers", "detectors"]
+__all__ = ["features", "roi", "classPeaks", "classifiers", "detectors", "iplot"]
 
 def __getattr__(name):
     if name in __all__:
