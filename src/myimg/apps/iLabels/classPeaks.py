@@ -1,8 +1,31 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Apr 30 10:16:17 2025
+Peak annotation and classification utilities.
 
-@author: p-sik
+This module defines :class:`~myimg.objects.peaks.Peaks`, a convenience 
+container that binds a single image to a table of peak locations and related 
+metadata. It provides methods for:
+
+- Loading/saving peak tables (pickle/pandas).
+- Visualizing peaks overlaid on the source image.
+- Detecting peaks interactively (manual picking) or via normalized
+  cross-correlation against reference masks.
+- Extracting ROIs around peaks, computing features, and selecting informative
+  features for downstream classification.
+- Running a Random Forest-based classifier pipeline using feature selection.
+
+The implementation relies on submodules from :mod:`myimg.apps.iLabels` 
+(imported as ``milab``) for detection, ROI extraction, feature computation,
+and model utilities.
+
+Notes
+-----
+- Peak coordinates are expected to follow the convention used in the project's
+  DataFrames: ``X`` is the horizontal coordinate (column index), ``Y`` is the
+  vertical coordinate (row index).
+- Some methods update the object in-place by adding derived attributes
+  (e.g., ``masks``, ``pimg``, ``features``, ``selection``, ``y_pred``).
+
 """
 
 import sys 
@@ -19,20 +42,46 @@ class Peaks:
     """
     Container for peak annotations tied to a single image.
 
-    A `Peaks` instance stores:
-      - the source image (as a NumPy array or PIL image), and
-      - a table of detected/annotated peak positions (and optional labels).
+    A :class:`~myimg.objects.peaks.Peaks` instance stores:
 
-    The peak table is expected to be a `pandas.DataFrame` with at least
-    coordinate columns (see `__init__` for details). Use this class as the
-    central object for manual/automatic labeling, visualization, and
-    feature extraction workflows.
+    - ``img``: the source image as a NumPy array (2D grayscale or 3D RGB/RGBA).
+    - ``df``: a :class:`pandas.DataFrame` containing peak coordinates and
+      optional labels/metadata.
 
-    Notes
-    -----
-    - See the constructor for required/optional columns in ``df``.
-    - For usage examples and API docs, see:
-      https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg.html
+    The peak table typically contains at least:
+
+    - ``X``: x-coordinate (column index, width axis)
+    - ``Y``: y-coordinate (row index, height axis)
+
+    Additional columns (for example ``Class``, confidence scores, notes, etc.)
+    are preserved and propagated through the workflow where possible.
+
+    This class is intended as the central object for manual/automatic labeling,
+    visualization, ROI extraction, feature engineering, and classification.
+    
+    Attributes
+    ----------
+    df : pandas.DataFrame
+        Peak table. Typically includes columns ``X``, ``Y`` and optionally
+        ``Class`` and other metadata.
+    img : numpy.ndarray or None
+        Image associated with the peak table.
+    img_name : str
+        Human-readable image identifier (for plots/logs).
+    file_name : str
+        Base name used when saving outputs.
+    messages : bool
+        If True, prints diagnostic messages.
+    
+    masks : dict[int, numpy.ndarray]
+        Loaded reference masks (created by :meth:`find` or :meth:`characterize`).
+    features : pandas.DataFrame
+        Feature table derived from ROIs (created by :meth:`characterize`).
+    selection : list[str] or pandas.Index
+        Selected feature names (created by :meth:`characterize`).
+    y_pred : numpy.ndarray
+        Last predicted labels (created by :meth:`classify`).
+
     """
 
     def __init__(self, 
@@ -107,18 +156,19 @@ class Peaks:
     
     
     def read(self, filename):
-        '''
-        Load the peak data from a .pkl file.
+        """
+        Load peak data from a pickled pandas DataFrame.
     
         Parameters
         ----------
-        filename : str
-            The path to the .pkl file containing the peak data.
+        filename : str or os.PathLike
+            Path to a ``.pkl`` file created by :meth:`pandas.DataFrame.to_pickle`.
     
         Returns
         -------
         None
-        '''
+            Updates ``self.df`` in-place.
+        """
         try:
             self.df = pd.read_pickle(filename)
             # Load the DataFrame from the specified .pkl file
@@ -215,50 +265,89 @@ class Peaks:
              show=True, 
              **kwargs):
         """
-        Find peaks either interactively (“manual”) or by norm. cross-correlation
-        (“ccorr”) against a reference mask.
+        Detect or annotate peaks in the associated image.
+    
+        This method provides three detection modes:
+    
+        - ``"manual"`` : interactive peak picking using a GUI.
+        - ``"ccorr"``  : normalized cross-correlation against a single 
+                         reference mask.
+        - ``"ncc"``    : multi-template normalized cross-correlation with
+                         artefact suppression and duplicate filtering.
     
         Parameters
         ----------
-        method : {"manual", "ccorr"}, optional
-            Detection mode. "manual" opens an interactive picker; "ccorr" 
-            performs normalized cross-correlation with a reference mask. 
-            Default "manual".
-            
+        method : {"manual", "ccorr", "ncc"}, optional
+            Detection mode.
+    
+            - ``"manual"`` opens an interactive picker for manual annotation.
+            - ``"ccorr"`` performs normalized cross-correlation using a single
+              reference mask.
+            - ``"ncc"`` performs multi-mask NCC with variance masking, distance
+              filtering, and duplicate removal.
+    
+            Default is ``"manual"``.
+    
         ref : bool, optional
-            Whether to refine detected coordinates after the initial pick 
-            (reserved for future use). Default True.
-            
-        mask_path : str, optional
+            Placeholder for coordinate refinement after detection.
+            Currently unused. Default ``True``.
+    
+        mask_path : str or os.PathLike, optional
             Directory containing reference masks saved as ``mask1.pkl``,
-            ``mask2.pkl``,... Required when ``method="ccorr"``.
-            
+            ``mask2.pkl``, ... Required for ``method="ccorr"`` and
+            ``method="ncc"``.
+    
         midx : int, optional
-            Mask index to use. Default 0.
-            
+            Index of the reference mask to use for ``method="ccorr"``.
+            Masks are expected to be numbered starting from 1.
+            Default is ``1``.
+    
         thr : float, optional
-            NCC threshold in [0, 1]. Detections with correlation below this are
-            discarded. Default 0.5.
-            
+            Detection threshold.
+    
+            - For ``"ccorr"`` and ``"ncc"``, this is the minimum normalized
+              cross-correlation score in the range ``[0, 1]``.
+    
+            Default is ``0.5``.
+    
         show : bool, optional
-            Visualize the detections/overlay. Default True.
-            
+            If ``True``, display visualizations of the detection process and
+            results. Passed through to the underlying detector.
+            Default ``True``.
+    
         **kwargs
-            Reserved for passing additional options to the interactive plotter
-            or detector implementation (e.g., debug flags).
+            Additional keyword arguments forwarded to
+            :func:`milab.detectors.detector_NCC` when ``method="ncc"``.
+            Typical options include:
+    
+            - ``cut_bottom`` : int
+            - ``variance_threshold`` : float
+            - ``variance_window`` : int
+            - ``min_dist`` : int
+            - ``margin`` : int
+            - ``ext`` : float
+            - ``n_jobs`` : int
+            - ``cmap`` : str
     
         Returns
         -------
         detected : Any or None
-            For ``method="ccorr"``, returns whatever 
-            ``milab.detectors.detector_correlation`` returns (e.g., a DataFrame 
-            of coordinates/scores). For ``method="manual"``, returns ``None`` 
-            after displaying the picker.
-
-        """
+            - ``method="manual"``: returns ``None`` after interactive annotation.
+            - ``method="ccorr"`` : returns the output of
+              ``milab.detectors.detector_correlation`` (typically a list of
+              coordinates).
+            - ``method="ncc"`` : returns a ``pandas.DataFrame`` with detected
+              coordinates and classes (columns ``["X", "Y", "Class", "Note"]``).
     
+        """
+        if mask_path is None and method != "manual":
+            raise ValueError(
+                "mask_path is required for method='ccorr' and method='ncc'."
+                )
+
+
         if method == "manual":
-            from myimg.utils.iplot import interactive_plot, default_plot_params
+            from myimg.apps.iLabels.iplot import interactive_plot, default_plot_params
     
             # Generate and display the interactive plot for manual annotation
             fig, ax = interactive_plot(self.img, 
@@ -285,6 +374,30 @@ class Peaks:
                                                      self.masks[midx], 
                                                      thr, 
                                                      show)
+            return self.detected
+
+
+        elif method == "ncc":
+            # Load masks
+            self.masks = {}
+            for i in range(1, 5):
+                file_path = os.path.join(mask_path, f"mask{i}.pkl")
+                if not os.path.exists(file_path):
+                    raise FileNotFoundError(
+                        f"Input file not found: {file_path}")
+                with open(file_path, 'rb') as f:
+                    self.masks[i] = pickle.load(f)
+                    
+            mask_list = [self.masks[i] for i in sorted(self.masks)]
+
+    
+            self.detected, self.im_masked = milab.detectors.detector_NCC(
+                self.img, 
+                masks=mask_list, 
+                threshold=thr, 
+                **kwargs,
+                show=show,
+            )
             
             return self.detected
     
@@ -412,7 +525,7 @@ class Peaks:
         
         return 
     
-    
+    @staticmethod
     def correct(image, coords, s=20, method='intensity'):
         """
         Refine peak coordinates by re-centering each peak to the local

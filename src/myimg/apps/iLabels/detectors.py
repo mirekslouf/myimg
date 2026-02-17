@@ -1,8 +1,61 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Apr 30 08:19:46 2025
+Template-matching detectors for nanoparticle detection.
 
-@author: p-sik
+This module provides a small collection of utilities to detect particle-like
+objects in 2D microscopy images using template matching via normalized
+cross-correlation (NCC). It supports:
+
+- computing a *local variance* map to identify low-information/background
+  regions,
+- template matching of one or multiple masks against an input image,
+- duplicate removal via spatial clustering (DBSCAN),
+- additional geometric filtering (border margins and distance-from-artefact
+  constraints),
+- optional visualization of intermediate and final results.
+
+The primary high-level entry point is :func:`detector_NCC`, which runs NCC
+template matching in parallel for a list of masks and returns a table of
+detections as a :class:`pandas.DataFrame` with columns ``["X", "Y", "Class",
+"Note"]``.
+
+A simpler, legacy detector is provided in :func:`detector_correlation`, which
+computes NCC for a single mask and returns connected-component centroids.
+
+Typical usage
+-------------
+Detect objects using multiple masks and obtain a labeled coordinates table::
+
+    import myimg.apps.iLabels.detectors as det
+
+    # image: 2D ndarray
+    # masks: list of 2D ndarrays (templates), one per class/type
+    df, masked = det.detector_NCC(
+        image=image,
+        masks=masks,
+        threshold=0.6,
+        show=True,
+        n_jobs=-1,
+        margin=30,
+    )
+
+    # df columns: X, Y, Class, Note
+    print(df.head())
+
+Assumptions and conventions
+---------------------------
+- Input images are expected to be 2D grayscale arrays. If pixel values appear
+  to be 8-bit (max > ~2), the code normalizes by 255.0.
+- Coordinates are reported in image pixel coordinates using the convention:
+  ``X`` = column index, ``Y`` = row index.
+- The current implementation crops a fixed number of pixels from the image
+  bottom (``cut_bottom = 300``) in :func:`detector_NCC` and
+  :func:`detector_correlation`. This is application-specific and may need to
+  be parameterized for other datasets.
+- In :func:`detector_NCC`, low-variance regions are treated as artefacts or
+  background and detections are rejected near them using a distance transform.
+  The required safe distance is derived from mask size plus a fixed padding.
+
 """
 
 import matplotlib.pyplot as plt
@@ -16,12 +69,7 @@ from skimage.feature import match_template
 from scipy.ndimage import maximum_filter
 from sklearn.cluster import DBSCAN
 from scipy.ndimage import distance_transform_edt
-from skimage.feature import match_template
 from skimage import measure
-import matplotlib.pyplot as plt
-import myimg.apps.iLabels.roi as miroi
-import numpy as np
-
 
 
 def compute_local_variance(image, window_size=31):
@@ -35,7 +83,7 @@ def compute_local_variance(image, window_size=31):
         
     window_size : int, optional
         Size of the sliding window over which variance is computed.
-        Default is 31.
+        Default is 31.a
     
     Returns
     -------
@@ -160,68 +208,111 @@ def remove_duplicates(detections, min_dist=10):
     return unique_detections
 
 
-def detector_NCC(image, masks, threshold=0.6, show=True, 
-                 n_jobs=-1, cmap="viridis", margin=30, ext=1.2):
+def detector_NCC(
+    image,
+    masks,
+    threshold=0.6,
+    *,
+    cut_bottom=300,
+    variance_threshold=0.01,
+    variance_window=60,
+    min_dist=10,
+    margin=30,
+    ext=1.2,
+    show=True,
+    n_jobs=-1,
+    cmap="viridis",
+):
     """
-    Detects objects in an image using Normalized Cross-Correlation (NCC) 
-    template matching, while masking out low-variance regions (typically 
-    artefacts) to reduce false positives.
+    Detect objects in a grayscale image using normalized cross-correlation 
+    (NCC) template matching with variance-based artefact suppression.
+
+    This function performs template matching between an input image and one or
+    more reference masks using normalized cross-correlation. To reduce false
+    positives from smooth artefacts or background regions, low-variance areas
+    of the image are identified and excluded from detection using a distance
+    transform–based safety margin.
+
+    The processing pipeline is:
+
+    1. Optionally crop the bottom part of the image (e.g. detector artefacts).
+    2. Normalize image and masks to the [0, 1] range.
+    3. Compute a local variance map and identify low-variance (artefact) 
+       regions.
+    4. Exclude pixels too close to low-variance regions using a distance map.
+    5. Run NCC template matching for each mask (optionally in parallel).
+    6. Remove duplicate detections via spatial clustering.
+    7. Filter detections near image borders and artefact-adjacent regions.
+    8. Return detections as a structured table.
 
     Parameters
     ----------
-    image : ndarray
-        Input grayscale image as a 2D NumPy array.
-        
-    masks : list of ndarray
-        List of template masks used for matching. Each mask is a 2D array.
-        
+    image : numpy.ndarray
+        Input grayscale image as a 2D array. 
+        Values may be in [0, 255] or [0, 1].
+
+    masks : list of numpy.ndarray
+        List of 2D template masks used for NCC matching. Each mask should
+        represent one object class or morphology.
+
     threshold : float, optional
-        NCC score threshold for accepting detections.
+        Minimum normalized cross-correlation score for accepting a detection.
         Default is 0.6.
-        
-    show : bool, optional
-        If True, show visualizations of masked image and detections. 
-        Default is True.
-        
-    n_jobs : int, optional
-        Number of parallel jobs to run. 
-        Default is -1 (use all cores).
-        
-    cmap : str, optional
-        Colormap for displaying images. 
-        Default is "viridis".
-        
+
+    cut_bottom : int, optional
+        Number of pixels to remove from the bottom of the image before
+        processing. Useful for excluding detector artefacts.
+        Default is 300.
+
+    variance_threshold : float, optional
+        Minimum local variance required for a pixel to be considered valid
+        for detection. Lower-variance regions are treated as artefacts.
+        Default is 0.01.
+
+    variance_window : int, optional
+        Window size (in pixels) used to compute local variance.
+        Default is 60.
+
+    min_dist : int, optional
+        Minimum Euclidean distance (in pixels) between detections when removing
+        duplicates. Default is 10.
+
     margin : int, optional
-        Minimum distance (in pixels) from image border to keep a detection. 
-        Default is 30.
-        
+        Minimum distance (in pixels) from the image border for a detection to
+        be retained. Default is 30.
+
     ext : float, optional
-        Extra scaling factor applied to minimum safe distance from low-variance 
-        regions. Helps further reject detections near artefact edges.
+        Scaling factor applied to the minimum safe distance from low-variance
+        regions. Values >1 make artefact rejection more conservative.
         Default is 1.2.
+
+    show : bool, optional
+        If True, display intermediate visualizations including the masked image
+        and final detections. Default is True.
+
+    n_jobs : int, optional
+        Number of parallel jobs used for template matching.
+        Use -1 to utilize all available CPU cores. Default is -1.
+
+    cmap : str, optional
+        Matplotlib colormap used for visualization. Default is "viridis".
 
     Returns
     -------
     output : pandas.DataFrame
-        Table of detected coordinates and classes with columns:
-        ['X', 'Y', 'Class', 'Note'].
-        
-    im_masked : ndarray
-        Preprocessed image after low-variance masking
+        Table of detected objects with columns:
 
-    Notes
-    -----
-    - Low-variance regions are assumed to correspond to artefacts or smooth 
-      backgrounds.
-    - The function automatically normalizes both the input image and masks 
-      to [0, 1] range.
-    - Duplicate detections are removed based on spatial proximity.
-    - Detection filtering includes proximity to mask edges and artefact-adjacent 
-      areas.
+        - ``X`` : x-coordinate (column index)
+        - ``Y`` : y-coordinate (row index)
+        - ``Class`` : integer class label (mask index + 1)
+        - ``Note`` : placeholder column (currently None)
+
+    im_masked : numpy.ndarray
+        Cropped and preprocessed image after variance-based masking. This is 
+        the image actually used for template matching.
     """
     
     # Prepare image
-    cut_bottom = 300
     height, width = image.shape[:2]
     image_cropped = image[:height - cut_bottom, :width]
     im = image_cropped.astype(np.float32)
@@ -238,8 +329,7 @@ def detector_NCC(image, masks, threshold=0.6, show=True,
         prepared_masks.append((idx, m))
 
     # Compute local variance mask
-    variance_threshold = 0.01
-    var_map = compute_local_variance(im, window_size=60)
+    var_map = compute_local_variance(im, window_size=variance_window)
     var_mask = var_map >= variance_threshold  # True for high-variance pixels
     low_var_mask = ~var_mask
 
@@ -248,7 +338,7 @@ def detector_NCC(image, masks, threshold=0.6, show=True,
 
     # Define min safe distance based on template size
     max_template_radius = max(max(m.shape) for _, m in prepared_masks) // 2
-    min_safe_distance = max_template_radius + 60  
+    min_safe_distance = max_template_radius + variance_window  
 
     # Mask out pixels too close to low-variance regions
     valid_area = dist_map >= min_safe_distance
@@ -292,11 +382,14 @@ def detector_NCC(image, masks, threshold=0.6, show=True,
     h, w = im.shape[:2]
     filtered_detections = [
         d for d in detections
-        if (margin <= d['x'] <= w - margin) and (margin <= d['y'] <= h - margin)
+        if (margin<=d['x'] <= w - margin) and (margin<= d['y'] <= h - margin)
     ]
     
     # Remove duplicates
-    filtered_detections = remove_duplicates(filtered_detections, min_dist=10)
+    filtered_detections = remove_duplicates(
+        filtered_detections, 
+        min_dist=min_dist
+        )
 
     # Final filtering: only keep detections at a safe distance from mask
     final_detections = [
@@ -332,6 +425,7 @@ def detector_NCC(image, masks, threshold=0.6, show=True,
     })  
     
     return output, im_masked
+
 
 def detector_correlation(image, mask, threshold=0.5, show=True):
     """

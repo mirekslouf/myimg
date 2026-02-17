@@ -34,6 +34,7 @@
                     <li><a href="iLabels/classPeaks.html">classPeaks</a></li>
                     <li><a href="iLabels/classifiers.html">classifiers</a></li>
                     <li><a href="iLabels/detectors.html">detectors</a></li>
+                    <li><a href="iLabels/iplot.html">iplot</a></li>
             </ul>
 
 
@@ -50,9 +51,72 @@
                     <h1 class="modulename">
 <a href="./../../myimg.html">myimg</a><wbr>.<a href="./../apps.html">apps</a><wbr>.iLabels    </h1>
 
-                        <div class="docstring"><p>Created on Wed Apr 30 10:50:17 2025</p>
+                        <div class="docstring"><p>iLabels: interactive labeling, ROI extraction, and classification tools.</p>
 
-<p>@author: p-sik</p>
+<p>The <code><a href="">myimg.apps.iLabels</a></code> package provides a modular toolkit for
+interactive and automated annotation of particle-like objects in microscopy
+images (e.g. SEM/TEM). It is designed to support the full workflow from
+manual labeling through feature extraction to supervised classification.</p>
+
+<h6 id="submodules">Submodules</h6>
+
+<p>features
+    Feature extraction utilities operating on ROIs, including:
+    - intensity statistics,
+    - morphological descriptors,
+    - normalized cross-correlation features,
+    - 2D Gaussian fit parameters and derived quantities.</p>
+
+<p>roi
+    Image preprocessing and Region of Interest (ROI) utilities:
+    - image loading and normalization,
+    - ROI extraction and re-centering,
+    - generation of class-averaged masks for template matching.</p>
+
+<p>classPeaks
+    Defines the <code>~<a href="iLabels/classPeaks.html#Peaks">myimg.apps.iLabels.classPeaks.Peaks</a></code> class, which
+    binds an image to a peak table and provides high-level methods for:
+    - visualization,
+    - interactive/manual annotation,
+    - detector-based peak finding,
+    - ROI characterization and feature selection,
+    - downstream classification.</p>
+
+<p>classifiers
+    Machine-learning helpers for supervised classification, including:
+    - dataset preparation and train/test splitting,
+    - feature selection,
+    - Random Forest training, optimization, and prediction.</p>
+
+<p>detectors
+    Peak detection algorithms, including:
+    - normalized cross-correlation (NCC) template matching,
+    - correlation-based detectors using reference masks,
+    - post-processing steps such as duplicate removal and spatial filtering.</p>
+
+<h6 id="typical-usage">Typical usage</h6>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">joblib</span><span class="o">,</span><span class="w"> </span><span class="nn">pickle</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn"><a href="iLabels/classifiers.html">myimg.apps.iLabels.classifiers</a></span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">miclass</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load a suitable classification model</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">classifier</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;rfc_model.joblib&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load the list of previously selected features</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;selected_features.pkl&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="n">selection</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load dataset represented by features </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">features</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="s2">&quot;features.pkl&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Classification</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">miclass</span><span class="o">.</span><span class="n">predicting</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> 
+<span class="gp">&gt;&gt;&gt; </span>                            <span class="n">estimator</span><span class="o">=</span><span class="n">classifier</span><span class="p">,</span> 
+<span class="gp">&gt;&gt;&gt; </span>                            <span class="n">sfeatures</span><span class="o">=</span><span class="n">selection</span><span class="p">)</span>
+</code></pre>
+</div>
 </div>
 
                         <input id="mod-iLabels-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -61,20 +125,83 @@
 
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="c1"># -*- coding: utf-8 -*-</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="sd">Created on Wed Apr 30 10:50:17 2025</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="sd">iLabels: interactive labeling, ROI extraction, and classification tools.</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>
-</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="sd">@author: p-sik</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="c1"># src/myimg/apps/iLabels/__init__.py</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">,</span> <span class="s2">&quot;roi&quot;</span><span class="p">,</span> <span class="s2">&quot;classPeaks&quot;</span><span class="p">,</span> <span class="s2">&quot;classifiers&quot;</span><span class="p">,</span> <span class="s2">&quot;detectors&quot;</span><span class="p">]</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>    <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">__all__</span><span class="p">:</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>        <span class="k">return</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;module </span><span class="si">{</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2"> has no attribute </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="sd">The :mod:`myimg.apps.iLabels` package provides a modular toolkit for</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="sd">interactive and automated annotation of particle-like objects in microscopy</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="sd">images (e.g. SEM/TEM). It is designed to support the full workflow from</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="sd">manual labeling through feature extraction to supervised classification.</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="sd">Submodules</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="sd">----------</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="sd">features</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="sd">    Feature extraction utilities operating on ROIs, including:</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="sd">    - intensity statistics,</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="sd">    - morphological descriptors,</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="sd">    - normalized cross-correlation features,</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="sd">    - 2D Gaussian fit parameters and derived quantities.</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="sd">roi</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="sd">    Image preprocessing and Region of Interest (ROI) utilities:</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="sd">    - image loading and normalization,</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="sd">    - ROI extraction and re-centering,</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">    - generation of class-averaged masks for template matching.</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">classPeaks</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">    Defines the :class:`~myimg.apps.iLabels.classPeaks.Peaks` class, which</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="sd">    binds an image to a peak table and provides high-level methods for:</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="sd">    - visualization,</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="sd">    - interactive/manual annotation,</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="sd">    - detector-based peak finding,</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">    - ROI characterization and feature selection,</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="sd">    - downstream classification.</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="sd">classifiers</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="sd">    Machine-learning helpers for supervised classification, including:</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="sd">    - dataset preparation and train/test splitting,</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="sd">    - feature selection,</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="sd">    - Random Forest training, optimization, and prediction.</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a><span class="sd">detectors</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a><span class="sd">    Peak detection algorithms, including:</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a><span class="sd">    - normalized cross-correlation (NCC) template matching,</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a><span class="sd">    - correlation-based detectors using reference masks,</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a><span class="sd">    - post-processing steps such as duplicate removal and spatial filtering.</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a><span class="sd">Typical usage</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a><span class="sd">-------------</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a><span class="sd">&gt;&gt;&gt; import joblib, pickle</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a><span class="sd">&gt;&gt;&gt; import pandas as pd</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a><span class="sd">&gt;&gt;&gt; import myimg.apps.iLabels.classifiers as miclass</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a><span class="sd">&gt;&gt;&gt;</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a><span class="sd">&gt;&gt;&gt; # Load a suitable classification model</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="sd">&gt;&gt;&gt; classifier = joblib.load(&quot;rfc_model.joblib&quot;)</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a><span class="sd">&gt;&gt;&gt;</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a><span class="sd">&gt;&gt;&gt; # Load the list of previously selected features</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a><span class="sd">&gt;&gt;&gt; with open(&quot;selected_features.pkl&quot;, &quot;rb&quot;) as f:</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a><span class="sd">&gt;&gt;&gt;    selection = pickle.load(f)</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a><span class="sd">&gt;&gt;&gt; </span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a><span class="sd">&gt;&gt;&gt; # Load dataset represented by features </span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="sd">&gt;&gt;&gt; features = pd.read_pickle(&quot;features.pkl&quot;)</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a><span class="sd">&gt;&gt;&gt;</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a><span class="sd">&gt;&gt;&gt; # Classification</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a><span class="sd">&gt;&gt;&gt; y_pred = miclass.predicting(features, </span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a><span class="sd">&gt;&gt;&gt;                             estimator=classifier, </span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a><span class="sd">&gt;&gt;&gt;                             sfeatures=selection)</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a><span class="c1"># src/myimg/apps/iLabels/__init__.py</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">,</span> <span class="s2">&quot;roi&quot;</span><span class="p">,</span> <span class="s2">&quot;classPeaks&quot;</span><span class="p">,</span> <span class="s2">&quot;classifiers&quot;</span><span class="p">,</span> <span class="s2">&quot;detectors&quot;</span><span class="p">,</span> <span class="s2">&quot;iplot&quot;</span><span class="p">]</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>
+</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a><span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>    <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">__all__</span><span class="p">:</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>        <span class="k">return</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;module </span><span class="si">{</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2"> has no attribute </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span></pre></div>
 
 
