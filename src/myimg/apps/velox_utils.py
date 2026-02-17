@@ -328,7 +328,16 @@ class EMDobject:
         else:
             sig = self[item].data
         # (2) Convert signal to numpy.array
-        arr = sig.astype(np.uint16).compute()
+        # (a) convert to float32 to correct possible negative values
+        # (some values in EMD files can be "small negatives"
+        # (due to offset subtraction / dark reference correction
+        arr = sig.astype('float32').compute()
+        # (b) check if there are negative values and subtract them
+        min_val = arr.min()
+        if min_val < 0: arr = arr - min_val
+        # (c) convert to standard uint16
+        arr = np.round(arr)
+        arr = arr.astype(np.uint16)
         # (3) Convert array to image + save to {out_file}
         img = PIL.Image.fromarray(arr, mode='I;16')
         img.save(out_file)
