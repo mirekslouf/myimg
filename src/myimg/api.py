@@ -189,29 +189,29 @@ class Apps:
         >>> import myimg.api as mi  # ........... standard import of MyImg
         >>>
         >>> mi.Apps.import_FFT_utils()  # ....... 1st way to access fft
-        >>> mi.Apps.fft.FFT('some.png')
+        >>> mi.Apps.mf.FFT2D('some.png')
         >>>
-        >>> fft = mi.Apps.import_FFT_utils  # ... 2nd way to access fft
-        >>> fft.FFT('some.png')
+        >>> mf = mi.Apps.import_FFT_utils  # ... 2nd way to access fft
+        >>> mf.FFT2D('some.png')
         '''
-        # Import fft into the *local function namespace*.
+        # Import fft_utils into the *local function namespace*.
         # (The module is loaded once and cached in sys.modules by Python;
-        # (the name `fft` is local to this func unless we store return it.
-        import myimg.apps.fft as fft
+        # (the name `mf` is local to this func unless we store/return it.
+        import myimg.apps.fft_utils as mf
     
-        # Save fft as a *class attribute*.
+        # Save mf as a *class attribute*.
         # (This enables the following usage:
         # >>> import myimg.api as mi
         # >>> mi.Apps.import_FFT_utils()
-        # >>> mi.Apps.fft.something(...)
-        cls.fft = fft
+        # >>> mi.Apps.mf.something(...)
+        cls.mf = mf
     
         # Return the fft module.
         # (This additionally enables:
         # >>> import myimg.api as mi
-        # >>> fft = mi.Apps.import_FFT_utils()
-        # >>> fft.something(...)
-        return fft
+        # >>> mf = mi.Apps.import_FFT_utils()
+        # >>> mf.something(...)
+        return mf
 
 
     @classmethod        

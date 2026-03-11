@@ -1,6 +1,6 @@
 '''
-Module: myimg.apps.fft
-----------------------
+Module: myimg.apps.fft_utils
+----------------------------
 
 Fourier transform utilities for *MyImg* package.
 '''
@@ -26,9 +26,325 @@ from mpl_toolkits import axes_grid1  # to add nice colorbars
 
 # Define classes --------------------------------------------------------------
 
-class FFT:
+
+class FFT1D:
     '''
-    Class defining *FFT* object.
+    Class yielding *FFT1D* objects.
+    
+    FFT1D objects contain 1D-DFFT of a 1D-profile/line
+    and several methods to normalize/show/save the results.
+    '''
+    
+    
+    def __init__(self, data, name=None, **kwargs):
+        '''
+        Initialize FFT1D object.
+        
+        * During the initialization, Fourier transform is calculated.
+        * Simple illustration how the initialize and use FFT object follows.
+        
+        >>> # Calculate 1D-FFT of a profile and show the result
+        >>> import myimg.api as mi           # add myimg.api as mi object
+        >>> mf = mi.Apps.import_FFT_utils()  # add FFT utils as mf object
+        >>> fft = mf.FFT1D('data.txt')       # calculate FFT of an XY-profile
+        >>> fft.show(signal='intensity')     # show the result
+
+        Parameters
+        ----------
+        data : numpy.ndarray or str or PathLike object
+            XY-data from which we will calculate the 1D-DFFT.
+            If data are numpy array, then it must have two ROWS: x, fx.
+            If data are str/PathLike, then we suppose it is a datafile;
+            the datafile should contain COLS (or rows): x, fx;
+            the datafile is read by np.loadtxt using optional {**kwargs}.    
+        name : str
+            Name of the XYdata/profile that is used for 1D-DFFT calculation.
+        kwargs : dict
+            Keyword arguments that are passed to np.loadtxt function
+            if the data are read from the file (i.e. if {data} is a filename).
+
+        Returns
+        -------
+        FFT1D object
+            The object contains
+            {FFT of input XYdata} + {additional properties and methods}.
+        '''
+        
+        # Define local functions
+        
+        def get_name_from_file(data):
+            # At the moment, name_of_data = name_of_file
+            # (we convert the name to str as it can be PathLike object
+            return( str(data) )
+            
+        # (0) Pre-initialize name of the data
+        # * this simplifies further processing
+        # * even if {name} = None (default), it is better than undefined value
+        self.name = name
+        
+        # (1) Read the {data}
+        # (when reading data, we consider {name} and {**kwargs} arguments
+        if isinstance(data, np.ndarray):
+            # data come as a numpy array
+            # * user's responsibility: the array has 2 cols [x,fx] = [x,signal]
+            (x,fx) = data
+        elif isinstance(data, (str,Path)):
+            # data come as str or Path => we assume it is a filename
+            # * user's responsibility: supply **kwargs for given datafile
+            # * the only automation: we add unpack=True if not given by user
+            if not('unpack' in kwargs): kwargs['unpack'] = True
+            (x,fx) = np.loadtxt(data, **kwargs)
+            name = get_name_from_file(data)
+        else:
+            print('Unknown profile/array type!')
+            sys.exit()
+        
+        # (2) Calculate FFT = 1D-DFFT
+        # (a) prepare y values = the frequencies
+        signal_size = x.size
+        signal_step = (max(x) - min(x)) / signal_size
+        y = scipy.fftpack.fftfreq(signal_size, signal_step)
+        # (b) calculate gy values = the FFT itself
+        gy = scipy.fftpack.fft(fx)
+        # (c) save the results
+        # ... input data
+        # (for convenient plotting
+        self.x = x
+        self.fx = fx
+        # ... basic 1D-DFFT output
+        # (frequencies and complex amplitudes
+        # (fft = gy => for convenience and backward compatibility
+        self.y = y
+        self.gy = gy
+        self.fft = gy
+        # ... derived quantities
+        self.intensity = np.abs(gy)**2 
+        self.amplitude = np.abs(gy)
+        self.phase = np.angle(gy)
+        
+    
+    def normalize(self, signal='amplitude', norm_constant=None, icut=None):
+        '''
+        Normalize results of FFT-1D calculation.
+        
+        Parameters
+        ----------
+        signal : str, optional, default is 'amplitude'
+            Which signal should be normalized 
+            (intensity, amplitude, phase, or all).
+            Intensity and amplitude normalization
+            usually to 1.0 (default value of norm_constant).
+            Phase normalization = from (-pi:pi) to (0:2*pi) in order to
+            eliminate negative values, which cause problems in plotting/saving.
+        norm_constant : float, optional, default is None
+            Maximum value/constant, to which the arrays are normalized.
+            If {None} and what='amplitude' => set to 1.0.
+            If {None} and what='phase' => set to 2*pi.
+        icut : float, optional, default is None
+            Intensity cut.
+            Example: If {icut} = 200 then all values >200 are set to 200. 
+
+        Returns
+        -------
+        None
+            The normalized signal is saved in the properties
+            of FFT1D object: self.intensity, self.amplitude and/or self.phase.
+        '''
+        
+        # Define local functions ..............................................
+
+        def normalize_values(arr, norm_constant):
+            # Amplitude is a non-negative number
+            # and so it can be normalized in a standard way.
+            
+            # Standard normalization to maximal value
+            arr = arr/np.max(arr) * norm_constant
+            arr = arr.astype('float')
+            return(arr)
+        
+        def normalize_angles(arr, norm_constant):
+            # Phase takes the values in interval (-pi;pi),
+            # BUT for saving phase as image we need positive values
+            # THEREFORE, if we want to normalize phase for plotting,
+            # we have to convert phase to range (0;2*pi) and then normalize.
+            
+            # (1) Convert (-pi:pi) to (0:2*pi)
+            # for the reason explained above
+            arr = np.where( 
+                arr < 0, arr + 2*np.pi, arr)
+            
+            # (2) Max.phase = upper limit should be ALWAYS 2*pi
+            # even if this specific number is not in the array.
+            max_phase = 2*np.pi
+            
+            # (3) Standard normalization to maximal value
+            arr = arr/max_phase * norm_constant
+            arr = arr.astype('float')
+            return(arr)
+        
+        # Code of the method (after local funcs) ..............................
+        
+        # (1) Determine, what to normalize and perform the normalization(s).
+        if signal == 'all':
+            # Default: normalize all calculated outputs to default values
+            self.amplitude = normalize_values(self.amplitude, 1.0)    
+            self.intensity = normalize_values(self.intensity, 1.0)    
+            self.phase = normalize_values(self.phase, 2 * np.pi)    
+        elif signal == 'amplitude':
+            if norm_constant is None: norm_constant = 1.0
+            self.amplitude = normalize_values(self.amplitude, norm_constant)
+        elif signal == 'intensity':
+            if norm_constant is None: norm_constant = 1.0
+            self.intensity = normalize_values(self.intensity, norm_constant)
+        elif signal == 'phase':
+            if norm_constant is None: norm_constant = 2 * np.pi
+            normalize_angles(self.phase, norm_constant)
+        else: 
+            raise TypeError('Wrong {what} argument!')
+            
+        # (3) Perform intensity cut if required (and re-normalize)
+        if icut is not None:
+            if signal == 'intensity' or signal == 'all':
+                arr = self.intensity
+                arr = np.where(arr > icut, icut, arr)
+                self.intensity = normalize_values(arr, norm_constant)
+            elif signal == 'amplitude' or signal == 'all':
+                arr = self.amplitude
+                arr = np.where(arr > icut, icut, arr)
+                self.amplitude = normalize_values(arr, norm_constant)
+    
+    
+    def show(self, signal='amplitude', 
+             icut=None, title=None, xlim=None, ylim=None,
+             out_file=None, out_dpi=300):
+        '''
+        Show results of FFT1D calculation.
+
+        Parameters
+        ----------
+        signal : TYPE, optional
+            DESCRIPTION. The default is 'intensity'.
+        icut : TYPE, optional
+            DESCRIPTION. The default is None.
+        title : TYPE, optional
+            DESCRIPTION. The default is None.
+        xlim : TYPE, optional
+            DESCRIPTION. The default is None.
+        ylim : TYPE, optional
+            DESCRIPTION. The default is None.
+        out_file : TYPE, optional
+            DESCRIPTION. The default is None.
+        out_dpi : TYPE, optional
+            DESCRIPTION. The default is 300.
+
+        Returns
+        -------
+        None
+        '''
+        
+        if signal == 'intensity':
+            gy = self.intensity
+        elif signal == 'amplitude':
+            gy = self.amplitude
+        elif signal == 'phase':
+            gy = self.phase
+        elif signal == 'fx':
+            fx = self.fx
+        
+        if icut is not None:
+            gy = np.where(gy > icut, icut, gy)
+        
+        if signal in ('intensity','amplitude','phase'):
+            plt.vlines(self.y, 0, gy, lw=2)
+        elif signal == 'fx':
+            plt.plot(self.x, fx)
+        
+        if title is not None: plt.title(title) 
+        if xlim is not None: plt.xlim(xlim)
+        if ylim is not None: plt.ylim(ylim)
+        
+        plt.grid()
+        plt.tight_layout()
+        
+        if out_file is not None: plt.savefig(out_file, dpi=out_dpi)
+        
+        plt.show()
+        
+        
+    def save(self, out_file):
+        '''
+        Save the results of FFT1D calculation to a text file.
+
+        Parameters
+        ----------
+        out_file : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        None
+            The results are just saved in the text file.
+            The text file contains 7 columns
+            corresponding to 7 key properties of FFT1D object
+            (x, fx, y, gy=fft, intensities, amplitudes, phases).
+        '''
+        pass
+    
+
+    def find_periodicities(self, 
+        signal='intensity', peak_height=0.1, decimals=1, verbose=1):
+        '''
+        Find dominant frequencies (in reciprocal space)
+        and corresponding periodicities (in direct space).
+
+        Parameters
+        ----------
+        signal : TYPE, optional
+            DESCRIPTION. The default is 'intensity'.
+        peak_height : TYPE, optional
+            DESCRIPTION. The default is 0.1.
+        decimals : TYPE, optional
+            DESCRIPTION. The default is 1.
+        verbose : TYPE, optional
+            DESCRIPTION. The default is 1.
+
+        Returns
+        -------
+        freq, pdist : lists
+            List of dominant frequencies (in reciprocal space)
+            and corresponding periodiciies (in direct space).
+        '''
+        
+        # Find, which signal we want to analyze ...
+        if signal == 'intensity':
+            gy = self.intensity
+        elif signal == 'amplitude':
+            gy = self.amplitude
+        
+        # Find peaks for given signa ...
+        peak_indices = scipy.signal.find_peaks(gy, height=peak_height)
+        peak_positions = self.y[peak_indices[0]]
+        peak_positions = peak_positions[peak_positions > 0]
+        
+        # Store peak_positions = frequencies (f)
+        # and calculate periodic distance (d)
+        # by means of BL/reciprocity: f*d = 1
+        freq = peak_positions
+        pdist = [round(float(1/f),decimals) for f in freq]
+        # Print on stdou if requested
+        if verbose == 1:
+            print(f'Frequencies   : {freq}')
+            print(f'Periodicities : {pdist}')
+        # Return the calculated values
+        return(freq, pdist)
+
+        
+class FFT2D:
+    '''
+    Class defining *FFT2D* object.
+    
+    FFT2D objects contain 2D-DFFT of a 2D-array/image
+    and several methods to normalize/show/save the results.
     '''
 
 
@@ -39,12 +355,12 @@ class FFT:
         * During the initialization, Fourier transform is calculated.
         * Simple illustration how the initialize and use FFT object follows.
         
-        >>> # Example :: Calculate 2D-FFT of an image and show the result
-        >>> import myimg.api as mi        # the standard import of myimg
-        >>> mi.Apps.import_FFT_utils()    # import/add FFT utils to myimg.api
-        >>> img = mi.MyImage('some.png')  # open an image using myimg.api
-        >>> img_ft = fft.FFT(MyImage)     # calculate FFT of the {img} object
-        >>> img_ft.show(cmap='magma')     # show the result
+        >>> # Calculate 2D-FFT of an image and show the result
+        >>> import myimg.api as mi           # add myimg.api as mi object
+        >>> mf = mi.Apps.import_FFT_utils()  # add FFT utils as mf object
+        >>> img = mi.MyImage('some.png')     # read image as {img} object 
+        >>> fft = mf.FFT2D(img)              # calculate FFT of the {img}
+        >>> fft.show(cmap='magma')           # show the result
 
         Parameters
         ----------
@@ -58,20 +374,21 @@ class FFT:
 
         Returns
         -------
-        FFT object
+        FFT2D object
             The object contains
-            {FFT of input image} + {additional properties}.
+            {FFT of input image} + {additional properties and methods}.
         
         Technical details
         -----------------
-        * FFT object saves the results of Fourier transform in three props:
-            * {FFT.fft} = array of complex numbers
-            * {FFT.intensity} = arr of intensities = magnitudes = real numbers
-            * {FFT.phase} = array of phases = angles in range -pi:pi
-        * FFT object is post-processed - all three above-listed arrays have
-          the intensity center is shifted to the center of the array
+        * FFT2D object saves the results of Fourier transform in three props:
+            * {FFT2D.fft} = array of complex numbers
+            * {FFT2D.intensity} = arr of intensities = real numbers
+            * {FFT2D.amplitude} = arr of amplitudes = real numbers
+            * {FFT2D.phase} = array of phases = angles in range -pi:pi
+        * FFT2D object is post-processed - all three above-listed arrays have
+          the center is shifted to the center of the array
           (using scipy.fftpack.fftshift).
-        * FFT object may carry the information about name of the input image
+        * FFT2D object may carry the information about name of the input image
           in property {FFT.name} on condition that:
             * It was created from an image or MyImage object. 
             * The optional argument {name} was used during initialization.
@@ -80,9 +397,10 @@ class FFT:
         
         # Define local functions
         
-        def get_name_from_image(img):
-            # TODO
-            return None
+        def get_name_from_file(img):
+            # At the moment, name_of_data = name_of_file
+            # (we convert the name to str as it can be PathLike object
+            return( str(img) )
             
         def get_name_from_MyImage(img):
             # TODO
@@ -95,19 +413,19 @@ class FFT:
         self.name = None
         
         # (1) Process the first argument = img: {array} or {image} or {MyImage}
-        # * Props self.name and self.pixsize can be taken from {image / MyImage}
+        # * Props self.name and self.pixsize can be taken from {image/MyImage}
         # * This may influence the following processing step!
         if isinstance(img, np.ndarray):
             # img comes as numpy array
             # (the simplest case - just assign img to arr
             arr = img
-        elif isinstance(img, str) or isinstance(img, Path):
+        elif isinstance(img, (str, Path)):
             # image comes as str or Path => we assume it is an image name
             # TODO: check the image type
             img = Image.open(img)
             arr = np.asarray(img)
             # Try to et self.name from img = image name
-            if name is None: self.name = get_name_from_image(img)
+            if name is None: self.name = get_name_from_file(img)
         elif isinstance(img, myimg.api.MyImage):
             # img comes as MyImage object
             # (check the image type and convert it to array if possible
@@ -119,10 +437,10 @@ class FFT:
                 print('FFT works only for binary or grayscale images!')
                 sys.exit()
         else:
-            print('Unknown image type!')
+            print('Unknown image/array type!')
             sys.exit()
         
-        # (2) Process the other two optional arguments = name, pixsize
+        # (2) Process the optional argument = name
         # * the value of self.name might have been estimated
         #   from the image or MyImage in the previous step
         # * therefore, we re-define the value
@@ -134,19 +452,21 @@ class FFT:
         arr = scipy.fftpack.fft2(arr)
         arr = scipy.fftpack.fftshift(arr)
         self.fft = arr
-        self.intensity = np.abs(arr)
+        self.intensity = np.abs(arr)**2
+        self.amplitude = np.abs(arr)
         self.phase = np.angle(arr)
             
     
-    def normalize(self, what='intensity', itype='16bit', icut=None):
+    def normalize(self, signal='amplitude', itype='16bit', icut=None):
         '''
-        Normalize results of fft calculation.
+        Normalize results of FFT-2D calculation.
         
         Parameters
         ----------
-        what : str, optional, default is 'intensity'
-            What result should be normalized - 'intensity' or 'phase'.
-            Intensity normalization = from arbitrary scale to given itype.
+        signal : str, optional, default is 'amplitude'
+            Which result should be normalized
+            (intensity, amplitude, phase, or all).
+            Amplitude normalization = from arbitrary scale to given itype.
             Phase normalization = from (-pi:pi) to (0:2*pi) in order to
             eliminate negative values, which cause problems in plotting/saving.
         itype : str, optional, default is '16bit'
@@ -159,29 +479,31 @@ class FFT:
         Returns
         -------
         None
+            The normalized signal is saved in the properties
+            of FFT2D object: self.intensity, self.amplitude and/or self.phase.
         '''
         
-        # Define local functions
+        # Define local functions ..............................................
 
-        def normalize_intensity(norm_constant):
-            # Intensity is a non-negative number
-            # and so it can be normalized in a standard way.
+        def normalize_values(arr, norm_constant):
+            # Values = here: intensities/amplitudes = a non-negative numbers
+            # and so they can be normalized in a standard way.
+             
+            # Standard normalization to maximal value
+            arr = arr/np.max(arr) * norm_constant
+            arr = arr.astype('float')
             
-            # (1) Dermine max.value = maximal intenstity in the array.
-            max_intensity = np.max(self.intensity)
-            
-            # (2) Standard normalization to maximal value
-            # BUT taking into account rounding and type of the final array.
-            # (a) Standard normalization
-            self.intensity = self.intensity/max_intensity * norm_constant
-            # (b) Adjusting type of the normalized array
+            # Important: adjusting type of the normalized array
             # If the normalization constant is an integer value,
             # ..round the result to int and convert the array to integers
             # ..this is important for the smooth converting of arrays to images
             if type(norm_constant) == int:
-                self.intensity = np.round(self.intensity).astype('int')
+                self.amplitude = np.round(self.amplitude).astype('int')
+            
+            # Return the normalized array
+            return(arr)
         
-        def normalize_phase(norm_constant):
+        def normalize_angles(arr, norm_constant):
             # Phase takes the values in interval (-pi;pi),
             # BUT for saving phase as image we need positive values
             # THEREFORE, if we want to normalize phase for plotting,
@@ -189,8 +511,7 @@ class FFT:
             
             # (1) Convert (-pi:pi) to (0:2*pi)
             # for the reason explained above
-            self.phase = np.where( 
-                self.phase < 0, self.phase + 2*np.pi, self.phase)
+            arr = np.where(arr < 0, arr + 2*np.pi, arr)
             
             # (2) Max.phase = upper limit should be ALWAYS 2*pi
             # even if this specific number is not in the array.
@@ -199,15 +520,15 @@ class FFT:
             # (3) Standard normalization to maximal value
             # BUT taking into account rounding and type of the final array.
             # (a) Standard normalization
-            self.phase = self.phase/max_phase * norm_constant
+            arr = arr/max_phase * norm_constant
             # (b) Adjusting type of the normalized array
             # If the normalization constant is an integer value,
             # ..round the result to int and convert the array to integers
             # ..this is important for the smooth converting of arrays to images
             if type(norm_constant) == 'int':
-                self.phase = np.round(self.phase).astype('int')
+                arr = np.round(arr).astype('int')
         
-        # Code of the method itself (after defning local functions)
+        # Code of the method (after local funcs) ..............................
         
         # (1) Calculate normalization constant        
         if itype == '16bit': norm_constant = 2**16 - 1
@@ -215,43 +536,51 @@ class FFT:
         else: norm_constant = itype
         
         # (2) Determine, what to normalize and perform the normalization(s).
-        if what == 'intensity':
-            normalize_intensity(norm_constant)
-        elif what == 'phase':
-            normalize_phase(norm_constant)
+        if signal == 'all':
+            pass
+        elif signal == 'intensity':
+            self.intensity = normalize_values(self.intensity, norm_constant)
+        elif signal == 'amplitude':
+            self.amplitude = normalize_values(self.amplitude, norm_constant)
+        elif signal == 'phase':
+            self.phase = normalize_angles(self.phase, norm_constant)
         else:  # Exit if what argument was wrong. 
-            print('myimg.apps.fft.convert_to_16big -> wrong what argument!')
-            sys.exit()
+            raise TypeError('Wrong {what} argument!')
             
         # (3) Perform intensity cut if required (and re-normalize)
-        if (what == 'intensity') and (icut is not None):
-            arr = self.intensity
-            self.intensity = np.where(arr > icut, icut, arr)
-            normalize_intensity(norm_constant)
+        if icut is not None:
+            if signal == 'intensity' or signal == 'all':
+                arr = self.intensity
+                arr = np.where(arr > icut, icut, arr)
+                self.intensity = normalize_values(arr, norm_constant)
+            elif signal == 'amplitude' or signal == 'all':
+                arr = self.amplitude
+                arr = np.where(arr > icut, icut, arr)
+                self.amplitude = normalize_values(arr, norm_constant)
     
         
-    def show(self, what='intensity',
-             axes=False, cmap=None, icut=None, colorbar=False, 
-             output=None, dpi=300):
+    def show(self, signal='amplitude',
+             icut=None, axes=False, cmap=None, cbar=False, 
+             out_file=None, out_dpi=300):
         '''
         Show FFT object = Fourier transform of an image.
 
         Parameters
         ----------
-        what : str, optional, default is 'intensity'
-            What result should be shown - 'intensity' or 'phase'.
+        signal : str, optional, default is 'amplitude'
+            Which signal should be shown (intensity, amplitude, or phase).
+        icut : int or float, optional, default is None
+            Intensity cut value.
+            If icut = 1000, all intenstity values >1000 are set to 1000.
         axes : bool, optional, default is False
             Show axes around the plotted/shown image.
         cmap : str, optional, default is None
             Matplotlib cmap name, such as 'magma' or 'viridis'.
-        icut : int or float, optional, default is None
-            Intensity cut value.
-            If icut = 1000, all intenstity values >1000 are set to 1000.
-        colorbar : bool, optional, the default is False
+        cbar : bool, optional, the default is False
             If True, a colorbar is added to the plot.
-        output : str or path-like object, optional, default is None
+        out_file : str or path-like object, optional, default is None
             If output argument is given, the plot is saved to {output} file.
-        dpi : int, optional, default is 300
+        out_dpi : int, optional, default is 300
             DPI of the saved image.
             Relevant only if ouput is not None.
 
@@ -259,12 +588,12 @@ class FFT:
         -------
         None
             The output is the image/plot of the Fourier transform result
-            (intensity or phase), which is shown in the screen
-            or (optionally) saved to an image file.
+            (amplitude or phase), which is shown in the screen
+            or (optionally) saved to an {out_file}.
             
         Technical note
         --------------
-        The FFT results (intensity or phase) are shown/plotted using
+        The FFT results (amplitude or phase) are shown/plotted using
         matplotlib. Therefore, many arguments of the current *show* method
         correspond to matplotlib parameters (such as *cmap* argument).
         '''
@@ -285,9 +614,15 @@ class FFT:
             return im.axes.figure.colorbar(im, cax=cax, **kwargs)
         
         # (1) Determine what to save
-        # (default is FFT.intensity, but FFT.phase can be saved as well
-        if what == 'intensity': arr = self.intensity
-        else: arr = self.phase
+        # (default is FFT.amplitude, but FFT.phase can be saved as well
+        if signal == 'intensity': 
+            arr = self.intensity
+        elif signal == 'amplitude':
+            arr = self.amplitude
+        elif signal == 'phase':
+            arr = self.phase
+        else:
+            raise TypeError('Unknown type of {signal}!')
         
         # (2) Set default colormap
         if cmap is None: cmap = 'gray'
@@ -296,13 +631,14 @@ class FFT:
         # Basic plot, saved to im - this is needed for (optional) colorbar
         im = plt.imshow(arr, cmap=cmap, vmax=icut)
         # Add nice colorbar not exceeding image height (using local function)
-        if colorbar: add_colorbar(im)
+        if cbar: add_colorbar(im)
  
         # (4) If saving to output file is required,
         # remove axes + edges and save the figure.
-        if output is not None:
+        if out_file is not None:
             plt.axis('off')
-            plt.savefig(output, dpi=dpi, bbox_inches='tight', pad_inches=0)
+            plt.savefig(out_file, dpi=out_dpi, 
+                        bbox_inches='tight', pad_inches=0)
             
         # Show the figure.
         if axes == True: plt.axis('on')
@@ -311,8 +647,8 @@ class FFT:
         plt.show()
         
         
-    def save(self, output=None, what='intensity', 
-             itype='16bit', icut=None, dpi=300):
+    def save(self, signal='amplitude', 
+             itype='16bit', icut=None, out_file=None, out_dpi=300):
         '''
         Save FFT object = Fourier transform of an image.
 
@@ -322,8 +658,9 @@ class FFT:
             Name of the output file.
             If output = None, then we will try output = self.name.
             If self.name = None, then we will set output = 'fft.png'.
-        what : str, optional, default is 'intensity'
-            What result should be shown - 'intensity' or 'phase'.
+        signal : str, optional, default is 'amplitude'
+            Which result should be shown
+            (intensity, amplitude, or phase).
         itype : str, optional, default is '16bit'
             Format of the output image.
             If '16bit' (default) => 16-bit grayscale image.
@@ -338,11 +675,11 @@ class FFT:
         -------
         None
             The output is the image the Fourier transform result
-            (intensity or phase), which is saved in {output} file.
+            (amplitude or phase), which is saved in {output} file.
         
         Technical note
         --------------
-        The FFT results (images of 'intensity' or 'phase') can be saved
+        The FFT results (images of 'amplitude' or 'phase') can be saved
         either as matplotlib plots (show method with optional output argument)
         or standard grayscale images (save method = this method).
         The save method gives standard result, the show method can yield
@@ -352,8 +689,14 @@ class FFT:
         
         # (1) Determine what to save
         # (default is FFT.intensity, but FFT.phase can be saved as well        
-        if what == 'intensity': arr = self.intensity
-        else: arr = self.phase
+        if signal == 'intensity':
+            arr = self.intensity
+        elif signal == 'amplitude':
+            arr = self.amplitude
+        elif signal == 'phase':
+            arr = self.phase
+        else:
+            raise TypeError('Unknown type of {signal}!')
         
         # (2) Cut intenstity if required
         if icut is not None:
@@ -372,22 +715,15 @@ class FFT:
         # (4) Save array to Image using PIL
         # (Why PIL? => original number of points/pixels + selected dpi
         # (a) find the name of output file
-        if output is None:
+        if out_file is None:
             if self.name is not None:
-                output = self.name
+                out_file = self.name
             else:
-                output = 'fft.png'
+                out_file = 'fft.png'
         # (b) save the selected array (given by argument what) to file
         img = Image.fromarray(arr)
-        img.save(output, dpi=(dpi,dpi))
+        img.save(out_file, dpi=(out_dpi,out_dpi))
         
-    
-    def save_with_extension(self):
-        # TODO
-        # 1. Build filename with extension.
-        # 2. Call save  with name = filename_with_extension
-        pass
-
 
 class RadialProfile:
     '''
@@ -429,7 +765,7 @@ class RadialProfile:
     uses a simple binning approach with radius step = 1 pixel.
     '''
 
-    def __init__(self, img, center=None, what='intensity'):
+    def __init__(self, img, center=None):
         '''
         Initialize RadialProfile object and calculate radial profile.
 
@@ -455,14 +791,8 @@ class RadialProfile:
         '''
 
         # (1) Convert input image to numpy array
-        if isinstance(img, FFT):
-            if what == 'intensity':
-                arr = img.intensity
-            elif what == 'phase':
-                arr = img.phase
-            else:
-                raise ValueError(
-                    "Parameter 'what' must be 'intensity' or 'phase'")
+        if isinstance(img, FFT2D):
+            arr = img.amplitude
         elif isinstance(img, np.ndarray):
             arr = img
         elif isinstance(img, myimg.api.MyImage):
@@ -470,7 +800,7 @@ class RadialProfile:
                 arr = np.asarray(img.img)
             else:
                 raise TypeError(
-                    "RadialProfile supports only binary/gray images")
+                    "RadialProfile supports only binary/gray/gray16 images")
         elif isinstance(img, (str, Path)):
             # TODO: test if the image is grayscale
             img = Image.open(img)
@@ -490,7 +820,7 @@ class RadialProfile:
         self.R = R
         self.I = I
 
-    # -------------------------------------------------------------------------
+    
     @staticmethod
     def calc_radial(arr, center=None):
         '''
@@ -542,9 +872,9 @@ class RadialProfile:
     
         return R, I
 
-    # -------------------------------------------------------------------------
-    def show(self, freq=False, 
-             icut=None, title=None, xlim=None, ylim=None):
+    
+    def show(self,  icut=None, title=None, xlim=None, ylim=None,
+             out_file=None, out_dpi=300):
         '''
         Display the radial profile.
 
@@ -560,29 +890,25 @@ class RadialProfile:
            The plot is shown on the screen.
         '''
         
-        # (1) Convert radius from pixels to spatial frequency
-        # (ONLY on explicit request
-        if freq is True:
-            n = max(self.R) * 2   # equivalent to image size
-            k = self.R / n        # spatial frequency [1/pixel]
-    
-        # (2) Plot the radial profile
-        # (a) Basic plot: frequency or pixels
-        if freq is True:
-            plt.plot(k, self.I, lw=2)
-            plt.xlabel("r [1/pixel]")
-        else: 
-            plt.plot(self.R, self.I, lw=2)
-            plt.xlabel("R [pixel]")
+        # Basic plot
+        plt.plot(self.R, self.I, lw=2)
+        plt.xlabel("R [pixel]")
         plt.ylabel("Intensity")
-        # (b) Optional parameters
+        
+        # Optional parameters
         if icut is not None: plt.ylim(0,icut)
         if title is not None: plt.title(title)
         if xlim is not None: plt.xlim(xlim)
         if ylim is not None: plt.ylim(ylim)
-        # (c) Finalization
+        
+        # Finalization
         plt.grid()
         plt.tight_layout()
+        
+        # Save the plot to {out_file} if requested
+        if out_file is not None: plt.savefig(out_file, dpi=out_dpi)
+        
+        # Show the plot
         plt.show()
 
 
@@ -653,8 +979,7 @@ class AzimuthalProfile:
     range.   
     '''
 
-    def __init__(self, img, radius, center=None, 
-                 width=1, bins=360, what='intensity'):
+    def __init__(self, img, radius, center=None, width=1, bins=360):
         '''
         Initialize AzimuthalProfile object.
 
@@ -684,9 +1009,6 @@ class AzimuthalProfile:
             within which the intensities are calculated.        
         bins : int, optional, default is 360
             Number of angular bins between 0 and 360 degrees.
-        what : str, optional, default is 'intensity'
-            Specifies which FFT result to use.
-            Allowed values are 'intensity' or 'phase'.
 
         Returns
         -------
@@ -697,13 +1019,8 @@ class AzimuthalProfile:
         ''' 
         
         # (1) Convert input to numpy array
-        if isinstance(img, FFT):
-            if what == 'intensity':
-                arr = img.intensity
-            elif what == 'phase':
-                arr = img.phase
-            else:
-                raise ValueError("what must be 'intensity' or 'phase'")
+        if isinstance(img, FFT2D):
+            arr = img.amplitude
         elif isinstance(img, np.ndarray):
             arr = img
         elif isinstance(img, myimg.api.MyImage):
@@ -739,7 +1056,7 @@ class AzimuthalProfile:
         self.width = width
         self.center = (xc, yc)
 
-    # -------------------------------------------------------------------------
+    
     @staticmethod
     def calc_azimuthal(arr, radius, center=None, width=1, bins=360):
         '''
@@ -766,6 +1083,7 @@ class AzimuthalProfile:
         I : np.ndarray
             Mean intensity per angle bin.
         '''
+        
         # (0) Get array height and width
         # (Note: the variables MUST have the prefix arr_
         # (Reason: {width} is the argument of the function!
@@ -786,7 +1104,7 @@ class AzimuthalProfile:
     
         # (3) Calculate map of distances and map of theta-angles
         # (* in fact, we calculate polar coordinates
-        # (* AI suggestion,
+        # (* AI-suggested code with my modifications:
         # (  the constant 90 set by trial-and-error to get proper orientation
         # (  the modulo % 360 converts everything to positive numbers/angles
         Rmap = np.sqrt(X**2 + Y**2)
@@ -807,6 +1125,7 @@ class AzimuthalProfile:
             mask = ring_mask & ang_mask
             values = arr[mask]
             I[i] = np.mean(values) if values.size else 0.0
+        
         # (7) Calculate Theta
         # (np-trick: average of 1st/2nd, 2nd/3rd ....
         Theta = 0.5 * (angle_bins[:-1] + angle_bins[1:])
@@ -814,10 +1133,9 @@ class AzimuthalProfile:
         # (8) Return the calculated values
         return Theta, I
 
-    # -------------------------------------------------------------------------
-    # For AzimuthalProfile
-    def show(self,
-             icut=None, title=None, xlim=None, ylim=None):
+    
+    def show(self, icut=None, title=None, xlim=None, ylim=None,
+             out_file=None, out_dpi=300):
         '''
         Show azimuthal profile plot.
 
@@ -832,21 +1150,28 @@ class AzimuthalProfile:
         None
             The plot is shown on the screen.
         '''        
-        # (a) Basic plot
+        # Basic plot
         plt.plot(self.Theta, self.I, lw=2)
         plt.xlim(-10,370)
         plt.xlabel('Angle [deg]')
         plt.ylabel('Intensity')
         plt.gca().xaxis.set_major_locator(plt.MultipleLocator(90))
         plt.gca().xaxis.set_minor_locator(plt.MultipleLocator(45))
-        # (b) Optional parameters
+        
+        # Optional parameters
         if icut is not None: plt.ylim(0,icut)
         if title is not None: plt.title(title)
         if xlim is not None: plt.xlim(xlim)
         if ylim is not None: plt.ylim(ylim)
-        # (c) Finalization
+        
+        # Finalization
         plt.grid()
         plt.tight_layout()
+        
+        # Save the plot to {out_file} if requested
+        if out_file is not None: plt.savefig(out_file, dpi=out_dpi)
+        
+        # Show the plot
         plt.show()
     
     

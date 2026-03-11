@@ -6,7 +6,7 @@ The collection of additional applications for *MyImg* package.
 
 * myimg.apps.iLabels = process (S)TEM images with nanoparticle markers
 * myimg.apps.MDistr = calculate distributions from microscopic datasets
-* myimg.apps.fft = calculate and analyze Fourier transforms of images
+* myimg.apps.fft_utils = calculate and analyze 1D and 2D Fourier transforms
 * myimg.apps.velox_utils = processing of Velox EMD files
 
 The applications can be imported to myimg.api as follows:
