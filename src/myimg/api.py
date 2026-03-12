@@ -188,11 +188,11 @@ class Apps:
             
         >>> import myimg.api as mi  # ........... standard import of MyImg
         >>>
-        >>> mi.Apps.import_FFT_utils()  # ....... 1st way to access fft
-        >>> mi.Apps.mf.FFT2D('some.png')
+        >>> mi.Apps.import_FFT_utils()  # ....... 1st way to access FFT utils
+        >>> fft = mi.Apps.mf.FFT2D('some.png')  # (direct, less elegant
         >>>
-        >>> mf = mi.Apps.import_FFT_utils  # ... 2nd way to access fft
-        >>> mf.FFT2D('some.png')
+        >>> mf = mi.Apps.import_FFT_utils  # .... 2nd way to access FFT utils
+        >>> fft = mf.FFT2D('some.png')          # (via mf object, more elegant
         '''
         # Import fft_utils into the *local function namespace*.
         # (The module is loaded once and cached in sys.modules by Python;

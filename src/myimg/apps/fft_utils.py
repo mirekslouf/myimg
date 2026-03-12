@@ -106,7 +106,13 @@ class FFT1D:
         y = scipy.fftpack.fftfreq(signal_size, signal_step)
         # (b) calculate gy values = the FFT itself
         gy = scipy.fftpack.fft(fx)
-        # (c) save the results
+        # (c) fftshift to get the center of the fft to the center of the plot
+        # (in 1D-DFFT calculated here, this is not strictly necessary
+        # (reason: (y,gy) values can be in arbitrary order and everything works 
+        # (but: it is clearer to have (y,gy) values arranged/ordered correctly
+        y = scipy.fftpack.fftshift(y)
+        gy = scipy.fftpack.fftshift(gy)
+        # (d) save the results
         # ... input data
         # (for convenient plotting
         self.x = x
@@ -222,24 +228,33 @@ class FFT1D:
 
         Parameters
         ----------
-        signal : TYPE, optional
-            DESCRIPTION. The default is 'intensity'.
-        icut : TYPE, optional
-            DESCRIPTION. The default is None.
-        title : TYPE, optional
-            DESCRIPTION. The default is None.
-        xlim : TYPE, optional
-            DESCRIPTION. The default is None.
-        ylim : TYPE, optional
-            DESCRIPTION. The default is None.
-        out_file : TYPE, optional
-            DESCRIPTION. The default is None.
-        out_dpi : TYPE, optional
-            DESCRIPTION. The default is 300.
+        signal : str, optional, default is 'amplitude'
+            Which signal should be shown (intensity, amplitude, or phase).
+        icut : int or float, optional, default is None
+            Intensity cut value
+            (which applies to any signal = 
+            intensities, amplitudes or phases).
+            If icut = 1000, all {signal} values >1000 are set to 1000.            
+        title : str, optional, default is None
+            Title of the plot.
+        xlim : tuple or list, optional, default is None
+            Value of {plt.xlim} of the plot.
+            If None, the y-range is set automatically by Matplotlib.
+        ylim : str, optional, default is None
+            Value of {plt.ylim} of the plot.
+            If None, the y-range is set automatically by Matplotlib.
+        out_file : str or path-like object, optional, default is None
+            If the argument is given, the plot is saved to {out_file}.
+        out_dpi : int, optional, default is 300
+            DPI of the saved image.
+            Relevant only if {out_file} is not None.
 
         Returns
         -------
         None
+            The output is the image/plot of the Fourier transform result
+            (intensity, amplitude or phase), which is shown in the screen
+            or (optionally) saved to an {out_file}.
         '''
         
         if signal == 'intensity':
@@ -271,25 +286,43 @@ class FFT1D:
         plt.show()
         
         
-    def save(self, out_file):
+    def save(self, out_file, fmt='%12.5e'):
         '''
         Save the results of FFT1D calculation to a text file.
 
         Parameters
         ----------
-        out_file : TYPE
-            DESCRIPTION.
+        out_file : str or PathLike object
+            Name of the output file.
+            The {out_file} will be a text file with EIGHT columns
+            corresponding to SEVEN key properties of FFT1D object
+            (x, fx, y, gy.real, gy.imag, intensities, amplitudes, phases).
+        fmt : str, optional, default is '%12.5e'
+            Format of output data = floating point numbers.
 
         Returns
         -------
         None
-            The results are just saved in the text file.
-            The text file contains 7 columns
-            corresponding to 7 key properties of FFT1D object
-            (x, fx, y, gy=fft, intensities, amplitudes, phases).
+            The results are just saved in a text file named {out_file}.
         '''
-        pass
-    
+        
+        # Prepare header of the output file
+        my_header = (
+            'Results of 1D-DFFT calculation\n' +
+            'Columns: ' +
+            'x, fx, y, gy.real, gy.imag, intensity, amplitude, phase\n' +
+            '------')
+        
+        # Prepare data to save
+        my_data = np.array(
+            [self.x, self.fx, self.y, self.gy.real, self.gy.imag, 
+             self.intensity, self.amplitude, self.phase])
+        
+        # Save the data
+        # (the result are easily readable with np.loadtxt
+        np.savetxt(out_file, np.transpose(my_data), 
+                   header=my_header, fmt=fmt)
+
 
     def find_periodicities(self, 
         signal='intensity', peak_height=0.1, decimals=1, verbose=1):
@@ -299,20 +332,30 @@ class FFT1D:
 
         Parameters
         ----------
-        signal : TYPE, optional
-            DESCRIPTION. The default is 'intensity'.
-        peak_height : TYPE, optional
-            DESCRIPTION. The default is 0.1.
-        decimals : TYPE, optional
-            DESCRIPTION. The default is 1.
-        verbose : TYPE, optional
-            DESCRIPTION. The default is 1.
+        signal : str, optional, default is 'amplitude'
+            Which signal we want to analyze (amplitude or intensity).
+            Amplitude signal (default) is in line with default imaging.
+            Intensity signal better emphasizes dominant frequencies.
+        peak_height : 
+            Minimal peak height that is considered for calculation.
+            The {peak_height} argument is employed as {height} argument
+            of scipy.signal.find_peaks function.
+        decimals : int, optional, default is 1
+            Number of decimals for the output frequencies and periodicities.
+        verbose : int, optional, default is 1
+            Output verbosity.
+            If verbose = 0, then nothing is printed on stdout.
+            If verbose = 1, then print brief lists of dominant
+            frequencies (peaks of gy) and
+            periodicities (periodic distances of fx).
 
         Returns
         -------
         freq, pdist : lists
             List of dominant frequencies (in reciprocal space)
             and corresponding periodiciies (in direct space).
+            Moreover the {freq, pdist} values can be printed to stdout
+            if {verbose} >= 1.
         '''
         
         # Find, which signal we want to analyze ...
@@ -579,21 +622,21 @@ class FFT2D:
         cbar : bool, optional, the default is False
             If True, a colorbar is added to the plot.
         out_file : str or path-like object, optional, default is None
-            If output argument is given, the plot is saved to {output} file.
+            If the argument is given, the plot is saved to {out_file}.
         out_dpi : int, optional, default is 300
             DPI of the saved image.
-            Relevant only if ouput is not None.
+            Relevant only if {out_file} is not None.
 
         Returns
         -------
         None
             The output is the image/plot of the Fourier transform result
-            (amplitude or phase), which is shown in the screen
+            (intensity, amplitude or phase), which is shown in the screen
             or (optionally) saved to an {out_file}.
             
         Technical note
         --------------
-        The FFT results (amplitude or phase) are shown/plotted using
+        The FFT results (intensity, amplitude or phase) are shown/plotted using
         matplotlib. Therefore, many arguments of the current *show* method
         correspond to matplotlib parameters (such as *cmap* argument).
         '''
@@ -654,10 +697,6 @@ class FFT2D:
 
         Parameters
         ----------
-        output : str or path-like object, optional, default is None. 
-            Name of the output file.
-            If output = None, then we will try output = self.name.
-            If self.name = None, then we will set output = 'fft.png'.
         signal : str, optional, default is 'amplitude'
             Which result should be shown
             (intensity, amplitude, or phase).
@@ -666,25 +705,33 @@ class FFT2D:
             If '16bit' (default) => 16-bit grayscale image.
             If '8bit' (less suitable, narrow range) => 8-bit grayscale image.
         icut : int or float, optional, default is None
-            Intensity cut value.
-            If icut = 1000, all intenstity values >1000 are set to 1000.            
-        dpi : int, optional, default is 300
+            Intensity cut value
+            (which applies to any signal = 
+            intensities, amplitudes or phases).
+            If icut = 1000, all {signal} values >1000 are set to 1000.            
+        out_file : str or path-like object, optional, default is None. 
+            Name of the output file.
+            If {out_file} = None, then we will try {out_file} = self.name.
+            If self.name = None, then we will set {out_file} = 'fft.png'.
+        out_dpi : int, optional, default is 300
             DPI of the saved image.
 
         Returns
         -------
         None
             The output is the image the Fourier transform result
-            (amplitude or phase), which is saved in {output} file.
+            (acc.to {signal} = intensity, amplitude or phase),
+            which is saved in {output} file.
         
         Technical note
         --------------
-        The FFT results (images of 'amplitude' or 'phase') can be saved
-        either as matplotlib plots (show method with optional output argument)
+        The FFT results (images of 'intensity', 'amplitude' or 'phase')
+        can be saved either as matplotlib plots (show method = above)
         or standard grayscale images (save method = this method).
-        The save method gives standard result, the show method can yield
-        colour images with various cmaps and/or colorbars,
-        which are suitable for presentations.
+        The {save} method gives standard result,
+        while the sister {show} method can yield colour images.
+        The images can have various cmaps and/or colorbars,
+        which may be suitable for presentations.
         '''
         
         # (1) Determine what to save
