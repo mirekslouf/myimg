@@ -4,7 +4,7 @@ MyImg :: Processing of micrographs
 * *MyImg* is a toolbox for the processing of micrographs, <br>
   which improves single images, batch-processes multiple images, and much more. 
 * If you use *MyImg* in your research, <br>
-  please cite recent paper: [*Microscopy and Microanalysis* 31, 2025, ozaf045.](https://doi.org/10.1093/mam/ozaf045)
+  please cite our recent paper: [*Microscopy and Microanalysis* 31, 2025, ozaf045.](https://doi.org/10.1093/mam/ozaf045)
 
 
 Principle
@@ -22,8 +22,8 @@ Principle
 Installation
 ------------
 
-* MyImg installation: `pip install myimg` 
-* MyImg additional packages, which are auto-installed if not present: 
+* *MyImg* installation: `pip install myimg` 
+* *MyImg* additional packages, which are auto-installed if not present: 
 	- `numpy`, `matplotlib`, `pandas`
 	- `scikig-image`, `hyperspy[all]`, `exspy[all]`, `tabulate`
 
