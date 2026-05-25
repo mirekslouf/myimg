@@ -147,7 +147,7 @@ class MicCalibrations:
     @dataclass
     class TecnaiVeleta:
         '''
-        Calibration of Tecnai microscope with Veleta camera.
+        Calibration of Tecnai 120kV microscope with Veleta camera.
         
         * Typical image size = [1024x1024]pix
         * Alternative image sizes = integer multiples possible due to binning.
@@ -157,6 +157,19 @@ class MicCalibrations:
         const       : float = 110.440  # const = rwi * mag (rwi = const/mag)
         units       : str = 'mm'       # const units
    
+
+    @dataclass
+    class TalosCeta:
+        '''
+        Calibration of Talos L120C microscope with Ceta camera.
+        
+        * Typical image size = [1024x1024]pix
+        * Alternative image sizes = integer multiples possible due to binning.
+        * Binning does not influence real-width-of-image and calibration const.
+        '''
+        description : str = 'TEM Talos L120C, Ceta camera'
+        const       : float = 59.295   # const = rwi * mag (rwi = const/mag)
+        units       : str = 'mm'       # const units
 
      
 @dataclass

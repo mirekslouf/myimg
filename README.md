@@ -1,38 +1,40 @@
 MyImg :: Processing of micrographs
 ----------------------------------
 
-* *MyImg* is a toolbox for the processing of micrographs, which can:
-	1. Process single micrographs (improve contrast, insert scalebars, etc.).
-	2. Prepare publication-quality tiled images from the processed micrographs.
-	3. Run
-	   [additional applications](https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg/apps.html)
-	   such as: Fourier transforms, particle size distributions ...
+* *MyImg* is a toolbox for the processing of micrographs, <br>
+  which improves single images, batch-processes multiple images, and much more. 
+* If you use *MyImg* in your research, <br>
+  please cite recent paper: [*Microscopy and Microanalysis* 31, 2025, ozaf045.](https://doi.org/10.1093/mam/ozaf045)
+
 
 Principle
 ---------
-
-* TODO
-
-
+1. [Single images](https://mirekslouf.github.io/myimg/docs/assets/1_myimg.png)
+   = inserting scalebars, auto-adjusting contrast ...
+2. [Multiple images](https://mirekslouf.github.io/myimg/docs/assets/2_myreport.png)
+   = batch processing, publication-quality tiled images ...
+3. [Additional applications](https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg/apps.html)
+   = Fourier transforms, particle size distributions  ...
+   <br>
+   <br>
+   <img src="https://mirekslouf.github.io/myimg/docs/assets/1_myimg.png" alt="MyImg principle" width="600"/>
+	
 Installation
 ------------
 
-* Requirement: Python with sci-modules: numpy, matplotlib, pandas
-* `pip install scikit-image` = additional package for image processing
-* `pip install hyperspy[all]` = package that can read Velox EMD files
-* `pip install exspy[all]` = supplement to hyperspy package
-* `pip install tabulate` = tabulate module for nice outputs
-* `pip install myimg` = MyImg package itself (uses all packages above)
-
+* MyImg installation: `pip install myimg` 
+* MyImg additional packages, which are auto-installed if not present: 
+	- `numpy`, `matplotlib`, `pandas`
+	- `scikig-image`, `hyperspy[all]`, `exspy[all]`, `tabulate`
 
 Quick start
 -----------
 
 * [Worked example](https://drive.google.com/file/d/1abxWcKD9GOGtMYASjO67RaUsUQfJN8DO/view?usp=sharing)
-  shows a simple use of *MyImg* package.
+  shows *MyImg* package in action.
 * [Help on GitHub](https://mirekslouf.github.io/myimg/docs/)
-  with complete
-  [package documentation](https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg.html)
+  with
+  [complete documentation](https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg.html)
   and
   [additional examples](https://drive.google.com/drive/folders/1ylURF2U1EB3gdyUug_uOTFbfE0ASZX7n?usp=sharing).
 
@@ -48,7 +50,6 @@ Documentation, help and examples
   the more user-friendly version of GitHub website.
  
 
-
 Versions of MyImg
 -----------------
 
@@ -57,4 +58,4 @@ Versions of MyImg
 * Version 0.3 = objects: MyImage, MyReport; apps: FFT, iLabels (semi-finished)
 * Version 0.4 = apps.velox: utilities to process Velox EMD files
 * Version 0.5 = better Apps interface + improved Apps + updated documentation
-* Version 0.6 = TODO: add scalebar-stripes, mdistr + finalize FFT, iLabels
+* Version 0.6 = TODO: finalize apps.fft_utils, apps.iLabels

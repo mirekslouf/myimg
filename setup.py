@@ -31,5 +31,8 @@ setuptools.setup(
     license='MIT',
     package_dir={"":"src"},
     packages=setuptools.find_packages(where="src"),
-    python_requires=">=3.7",     # 3.6 for f-strings, 3.7 for dataclasses
+    python_requires=">=3.11",
+    install_requires= [
+        "numpy", "matplotlib", "scipy", "pandas",
+        "scikit-image", "hyperspy[all]", "exspy[all]", "tabulate"],
     include_package_data=True)

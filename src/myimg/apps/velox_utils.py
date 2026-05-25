@@ -485,12 +485,13 @@ class EMDfiles:
                    fullpath=False, subdirs=None, extension=False):
         # Convert file argument to Path object - for the sake of consistency
         if isinstance(file, str): file = Path(file)
-        # Get stem of the filename
+        # Get stem of the filename = just name without dirs and extension
         # (this will be gradually changed to new_name
         orig_name = file.stem
+        new_name  = orig_name
         # Start with converting the all chars in filename to lowercase
         # (this standardization can save a lot of troubles
-        new_name = orig_name.lower()
+        new_name = new_name.lower()
         # Convert the initial separator between file number and the rest
         new_name =new_name.replace(' - ','_')
         # Remove space between magnification and 'x'/'kx'
@@ -509,6 +510,8 @@ class EMDfiles:
         # (  => then {last_part_of_name} is compatible with further processing 
         new_name = new_name.replace('-eds spectrum-composition', ' eds1-elem')
         new_name = new_name.replace('-eds spectrum-lines',       ' eds2-lines')
+        # Change possible EDS file saved as TXT
+        new_name = new_name.replace('-eds', '_eds')
         # Convert all other whitespace to underscore
         new_name = new_name.replace(' ','_')
         # Split to components

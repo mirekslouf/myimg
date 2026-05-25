@@ -74,6 +74,12 @@
                             </ul>
 
                         </li>
+                        <li>
+                                <a class="class" href="#MicCalibrations.TalosCeta">MicCalibrations.TalosCeta</a>
+                                        <ul class="memberlist">
+                            </ul>
+
+                        </li>
                 </ul>
 
             </li>
@@ -288,7 +294,7 @@
 </span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>    <span class="nd">@dataclass</span>
 </span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">TecnaiVeleta</span><span class="p">:</span>
 </span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a><span class="sd">        Calibration of Tecnai microscope with Veleta camera.</span>
+</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a><span class="sd">        Calibration of Tecnai 120kV microscope with Veleta camera.</span>
 </span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a><span class="sd">        </span>
 </span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a><span class="sd">        * Typical image size = [1024x1024]pix</span>
 </span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a><span class="sd">        * Alternative image sizes = integer multiples possible due to binning.</span>
@@ -299,58 +305,71 @@
 </span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>        <span class="n">units</span>       <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;mm&#39;</span>       <span class="c1"># const units</span>
 </span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>   
 </span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>
-</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>     
-</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a><span class="nd">@dataclass</span>
-</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MicDescriptionFiles</span><span class="p">:</span>
-</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a><span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a><span class="sd">    Microscope description files.</span>
-</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a><span class="sd">    </span>
-</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a><span class="sd">    * Some microscopes yield micrographs *with* text description files.</span>
-</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a><span class="sd">    * The description file contains additional info about the micrograph.</span>
-</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a><span class="sd">        - the filename is usually similar to the micrograph/image file</span>
-</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a><span class="sd">        - the description file contains information about the pixel size</span>
-</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a><span class="sd">        - therefore, a description file can be used</span>
-</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a><span class="sd">          for the micrograph calibration</span>
-</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a><span class="sd">    &#39;&#39;&#39;</span>
-</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a>    
-</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a>    <span class="c1"># MicroscopeDescrFiles = microscopes with description files</span>
-</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a>    <span class="c1"># (description file is a text file containing pixelsize</span>
-</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a>    <span class="c1"># (for some microscopes, decription files are saved together with images</span>
-</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>    <span class="c1"># (each microscope below = dictionary containing the following elements</span>
-</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a>    <span class="c1"># (...filename = name of descr.file; * = name of img.file, ? = any char</span>
-</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>    <span class="c1"># (...pixsize_line = regular expression describing line with pixelsize</span>
-</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a>    <span class="c1"># (   the paretheses () within the regexp should catch the pixelsize number</span>
-</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a>    <span class="c1"># (...pixsize_units = units, in which the pixelsize is given</span>
-</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a>
-</span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a>    
-</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a>    <span class="nd">@dataclass</span>
-</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">MAIA</span><span class="p">:</span>
-</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a><span class="sd">        Desription files produced by an SEM microscope MAIA.</span>
-</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a><span class="sd">        &#39;&#39;&#39;</span>
-</span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a>        <span class="n">filename</span>     <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;*-???.hdr&#39;</span>
-</span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a>        <span class="n">pixsize_line</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;^PixelSizeX=(.*)&#39;</span>
-</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a>        <span class="n">pixsize_units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;m&#39;</span>
-</span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a>
-</span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a>    
-</span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a>    <span class="nd">@dataclass</span>
-</span><span id="L-196"><a href="#L-196"><span class="linenos">196</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">VEGA</span><span class="p">:</span>
-</span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a><span class="sd">        Description files produced by an SEM microscope VEGA.</span>
-</span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a><span class="sd">        &#39;&#39;&#39;</span>
-</span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a>        <span class="n">filename</span>     <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;*.bhd&#39;</span>
-</span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a>        <span class="n">pixsize_line</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;^Pix=(.*)&#39;</span>
-</span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a>        <span class="n">pixsize_units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;um&#39;</span>
-</span><span id="L-203"><a href="#L-203"><span class="linenos">203</span></a>
-</span><span id="L-204"><a href="#L-204"><span class="linenos">204</span></a>
-</span><span id="L-205"><a href="#L-205"><span class="linenos">205</span></a>    <span class="nd">@dataclass</span>
-</span><span id="L-206"><a href="#L-206"><span class="linenos">206</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">JEOL</span><span class="p">:</span>
-</span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="L-208"><a href="#L-208"><span class="linenos">208</span></a><span class="sd">        Description files produced by an SEM microscope JEOL.</span>
-</span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a><span class="sd">        &#39;&#39;&#39;</span>
-</span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a>        <span class="n">filename</span>     <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;*.hdr&#39;</span>
-</span><span id="L-211"><a href="#L-211"><span class="linenos">211</span></a>        <span class="n">pixsize_line</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;^Pix: (\S+)&#39;</span>
-</span><span id="L-212"><a href="#L-212"><span class="linenos">212</span></a>        <span class="n">pixsize_units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;um&#39;</span>
+</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>    <span class="nd">@dataclass</span>
+</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">TalosCeta</span><span class="p">:</span>
+</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a><span class="sd">        Calibration of Talos L120C microscope with Ceta camera.</span>
+</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a><span class="sd">        </span>
+</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a><span class="sd">        * Typical image size = [1024x1024]pix</span>
+</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a><span class="sd">        * Alternative image sizes = integer multiples possible due to binning.</span>
+</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a><span class="sd">        * Binning does not influence real-width-of-image and calibration const.</span>
+</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a><span class="sd">        &#39;&#39;&#39;</span>
+</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>        <span class="n">description</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;TEM Talos L120C, Ceta camera&#39;</span>
+</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a>        <span class="n">const</span>       <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">59.295</span>   <span class="c1"># const = rwi * mag (rwi = const/mag)</span>
+</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>        <span class="n">units</span>       <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;mm&#39;</span>       <span class="c1"># const units</span>
+</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a>
+</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a>     
+</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a><span class="nd">@dataclass</span>
+</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MicDescriptionFiles</span><span class="p">:</span>
+</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a><span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a><span class="sd">    Microscope description files.</span>
+</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a><span class="sd">    </span>
+</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a><span class="sd">    * Some microscopes yield micrographs *with* text description files.</span>
+</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a><span class="sd">    * The description file contains additional info about the micrograph.</span>
+</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a><span class="sd">        - the filename is usually similar to the micrograph/image file</span>
+</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a><span class="sd">        - the description file contains information about the pixel size</span>
+</span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a><span class="sd">        - therefore, a description file can be used</span>
+</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a><span class="sd">          for the micrograph calibration</span>
+</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a><span class="sd">    &#39;&#39;&#39;</span>
+</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a>    
+</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a>    <span class="c1"># MicroscopeDescrFiles = microscopes with description files</span>
+</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a>    <span class="c1"># (description file is a text file containing pixelsize</span>
+</span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a>    <span class="c1"># (for some microscopes, decription files are saved together with images</span>
+</span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a>    <span class="c1"># (each microscope below = dictionary containing the following elements</span>
+</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a>    <span class="c1"># (...filename = name of descr.file; * = name of img.file, ? = any char</span>
+</span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a>    <span class="c1"># (...pixsize_line = regular expression describing line with pixelsize</span>
+</span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a>    <span class="c1"># (   the paretheses () within the regexp should catch the pixelsize number</span>
+</span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a>    <span class="c1"># (...pixsize_units = units, in which the pixelsize is given</span>
+</span><span id="L-196"><a href="#L-196"><span class="linenos">196</span></a>
+</span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a>    
+</span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a>    <span class="nd">@dataclass</span>
+</span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">MAIA</span><span class="p">:</span>
+</span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a><span class="sd">        Desription files produced by an SEM microscope MAIA.</span>
+</span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a><span class="sd">        &#39;&#39;&#39;</span>
+</span><span id="L-203"><a href="#L-203"><span class="linenos">203</span></a>        <span class="n">filename</span>     <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;*-???.hdr&#39;</span>
+</span><span id="L-204"><a href="#L-204"><span class="linenos">204</span></a>        <span class="n">pixsize_line</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;^PixelSizeX=(.*)&#39;</span>
+</span><span id="L-205"><a href="#L-205"><span class="linenos">205</span></a>        <span class="n">pixsize_units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;m&#39;</span>
+</span><span id="L-206"><a href="#L-206"><span class="linenos">206</span></a>
+</span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a>    
+</span><span id="L-208"><a href="#L-208"><span class="linenos">208</span></a>    <span class="nd">@dataclass</span>
+</span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">VEGA</span><span class="p">:</span>
+</span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="L-211"><a href="#L-211"><span class="linenos">211</span></a><span class="sd">        Description files produced by an SEM microscope VEGA.</span>
+</span><span id="L-212"><a href="#L-212"><span class="linenos">212</span></a><span class="sd">        &#39;&#39;&#39;</span>
+</span><span id="L-213"><a href="#L-213"><span class="linenos">213</span></a>        <span class="n">filename</span>     <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;*.bhd&#39;</span>
+</span><span id="L-214"><a href="#L-214"><span class="linenos">214</span></a>        <span class="n">pixsize_line</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;^Pix=(.*)&#39;</span>
+</span><span id="L-215"><a href="#L-215"><span class="linenos">215</span></a>        <span class="n">pixsize_units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;um&#39;</span>
+</span><span id="L-216"><a href="#L-216"><span class="linenos">216</span></a>
+</span><span id="L-217"><a href="#L-217"><span class="linenos">217</span></a>
+</span><span id="L-218"><a href="#L-218"><span class="linenos">218</span></a>    <span class="nd">@dataclass</span>
+</span><span id="L-219"><a href="#L-219"><span class="linenos">219</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">JEOL</span><span class="p">:</span>
+</span><span id="L-220"><a href="#L-220"><span class="linenos">220</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="L-221"><a href="#L-221"><span class="linenos">221</span></a><span class="sd">        Description files produced by an SEM microscope JEOL.</span>
+</span><span id="L-222"><a href="#L-222"><span class="linenos">222</span></a><span class="sd">        &#39;&#39;&#39;</span>
+</span><span id="L-223"><a href="#L-223"><span class="linenos">223</span></a>        <span class="n">filename</span>     <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;*.hdr&#39;</span>
+</span><span id="L-224"><a href="#L-224"><span class="linenos">224</span></a>        <span class="n">pixsize_line</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;^Pix: (\S+)&#39;</span>
+</span><span id="L-225"><a href="#L-225"><span class="linenos">225</span></a>        <span class="n">pixsize_units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;um&#39;</span>
 </span></pre></div>
 
 
@@ -564,7 +583,7 @@
 </span><span id="MicCalibrations-148"><a href="#MicCalibrations-148"><span class="linenos">148</span></a>    <span class="nd">@dataclass</span>
 </span><span id="MicCalibrations-149"><a href="#MicCalibrations-149"><span class="linenos">149</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">TecnaiVeleta</span><span class="p">:</span>
 </span><span id="MicCalibrations-150"><a href="#MicCalibrations-150"><span class="linenos">150</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="MicCalibrations-151"><a href="#MicCalibrations-151"><span class="linenos">151</span></a><span class="sd">        Calibration of Tecnai microscope with Veleta camera.</span>
+</span><span id="MicCalibrations-151"><a href="#MicCalibrations-151"><span class="linenos">151</span></a><span class="sd">        Calibration of Tecnai 120kV microscope with Veleta camera.</span>
 </span><span id="MicCalibrations-152"><a href="#MicCalibrations-152"><span class="linenos">152</span></a><span class="sd">        </span>
 </span><span id="MicCalibrations-153"><a href="#MicCalibrations-153"><span class="linenos">153</span></a><span class="sd">        * Typical image size = [1024x1024]pix</span>
 </span><span id="MicCalibrations-154"><a href="#MicCalibrations-154"><span class="linenos">154</span></a><span class="sd">        * Alternative image sizes = integer multiples possible due to binning.</span>
@@ -573,6 +592,20 @@
 </span><span id="MicCalibrations-157"><a href="#MicCalibrations-157"><span class="linenos">157</span></a>        <span class="n">description</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;TEM Tecnai, Veleta3G camera&#39;</span>
 </span><span id="MicCalibrations-158"><a href="#MicCalibrations-158"><span class="linenos">158</span></a>        <span class="n">const</span>       <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">110.440</span>  <span class="c1"># const = rwi * mag (rwi = const/mag)</span>
 </span><span id="MicCalibrations-159"><a href="#MicCalibrations-159"><span class="linenos">159</span></a>        <span class="n">units</span>       <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;mm&#39;</span>       <span class="c1"># const units</span>
+</span><span id="MicCalibrations-160"><a href="#MicCalibrations-160"><span class="linenos">160</span></a>   
+</span><span id="MicCalibrations-161"><a href="#MicCalibrations-161"><span class="linenos">161</span></a>
+</span><span id="MicCalibrations-162"><a href="#MicCalibrations-162"><span class="linenos">162</span></a>    <span class="nd">@dataclass</span>
+</span><span id="MicCalibrations-163"><a href="#MicCalibrations-163"><span class="linenos">163</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">TalosCeta</span><span class="p">:</span>
+</span><span id="MicCalibrations-164"><a href="#MicCalibrations-164"><span class="linenos">164</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="MicCalibrations-165"><a href="#MicCalibrations-165"><span class="linenos">165</span></a><span class="sd">        Calibration of Talos L120C microscope with Ceta camera.</span>
+</span><span id="MicCalibrations-166"><a href="#MicCalibrations-166"><span class="linenos">166</span></a><span class="sd">        </span>
+</span><span id="MicCalibrations-167"><a href="#MicCalibrations-167"><span class="linenos">167</span></a><span class="sd">        * Typical image size = [1024x1024]pix</span>
+</span><span id="MicCalibrations-168"><a href="#MicCalibrations-168"><span class="linenos">168</span></a><span class="sd">        * Alternative image sizes = integer multiples possible due to binning.</span>
+</span><span id="MicCalibrations-169"><a href="#MicCalibrations-169"><span class="linenos">169</span></a><span class="sd">        * Binning does not influence real-width-of-image and calibration const.</span>
+</span><span id="MicCalibrations-170"><a href="#MicCalibrations-170"><span class="linenos">170</span></a><span class="sd">        &#39;&#39;&#39;</span>
+</span><span id="MicCalibrations-171"><a href="#MicCalibrations-171"><span class="linenos">171</span></a>        <span class="n">description</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;TEM Talos L120C, Ceta camera&#39;</span>
+</span><span id="MicCalibrations-172"><a href="#MicCalibrations-172"><span class="linenos">172</span></a>        <span class="n">const</span>       <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">59.295</span>   <span class="c1"># const = rwi * mag (rwi = const/mag)</span>
+</span><span id="MicCalibrations-173"><a href="#MicCalibrations-173"><span class="linenos">173</span></a>        <span class="n">units</span>       <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;mm&#39;</span>       <span class="c1"># const units</span>
 </span></pre></div>
 
 
@@ -721,7 +754,7 @@ for given microscope, const = rwi of image at mag=1x</li>
             <div class="pdoc-code codehilite"><pre><span></span><span id="MicCalibrations.TecnaiVeleta-148"><a href="#MicCalibrations.TecnaiVeleta-148"><span class="linenos">148</span></a>    <span class="nd">@dataclass</span>
 </span><span id="MicCalibrations.TecnaiVeleta-149"><a href="#MicCalibrations.TecnaiVeleta-149"><span class="linenos">149</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">TecnaiVeleta</span><span class="p">:</span>
 </span><span id="MicCalibrations.TecnaiVeleta-150"><a href="#MicCalibrations.TecnaiVeleta-150"><span class="linenos">150</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="MicCalibrations.TecnaiVeleta-151"><a href="#MicCalibrations.TecnaiVeleta-151"><span class="linenos">151</span></a><span class="sd">        Calibration of Tecnai microscope with Veleta camera.</span>
+</span><span id="MicCalibrations.TecnaiVeleta-151"><a href="#MicCalibrations.TecnaiVeleta-151"><span class="linenos">151</span></a><span class="sd">        Calibration of Tecnai 120kV microscope with Veleta camera.</span>
 </span><span id="MicCalibrations.TecnaiVeleta-152"><a href="#MicCalibrations.TecnaiVeleta-152"><span class="linenos">152</span></a><span class="sd">        </span>
 </span><span id="MicCalibrations.TecnaiVeleta-153"><a href="#MicCalibrations.TecnaiVeleta-153"><span class="linenos">153</span></a><span class="sd">        * Typical image size = [1024x1024]pix</span>
 </span><span id="MicCalibrations.TecnaiVeleta-154"><a href="#MicCalibrations.TecnaiVeleta-154"><span class="linenos">154</span></a><span class="sd">        * Alternative image sizes = integer multiples possible due to binning.</span>
@@ -733,7 +766,45 @@ for given microscope, const = rwi of image at mag=1x</li>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Calibration of Tecnai microscope with Veleta camera.</p>
+            <div class="docstring"><p>Calibration of Tecnai 120kV microscope with Veleta camera.</p>
+
+<ul>
+<li>Typical image size = [1024x1024]pix</li>
+<li>Alternative image sizes = integer multiples possible due to binning.</li>
+<li>Binning does not influence real-width-of-image and calibration const.</li>
+</ul>
+</div>
+
+
+                </section>
+                <section id="MicCalibrations.TalosCeta">
+                            <input id="MicCalibrations.TalosCeta-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+                    <div class="decorator decorator-dataclass">@dataclass</div>
+
+    <span class="def">class</span>
+    <span class="name">MicCalibrations.TalosCeta</span>:
+
+                <label class="view-source-button" for="MicCalibrations.TalosCeta-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#MicCalibrations.TalosCeta"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MicCalibrations.TalosCeta-162"><a href="#MicCalibrations.TalosCeta-162"><span class="linenos">162</span></a>    <span class="nd">@dataclass</span>
+</span><span id="MicCalibrations.TalosCeta-163"><a href="#MicCalibrations.TalosCeta-163"><span class="linenos">163</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">TalosCeta</span><span class="p">:</span>
+</span><span id="MicCalibrations.TalosCeta-164"><a href="#MicCalibrations.TalosCeta-164"><span class="linenos">164</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="MicCalibrations.TalosCeta-165"><a href="#MicCalibrations.TalosCeta-165"><span class="linenos">165</span></a><span class="sd">        Calibration of Talos L120C microscope with Ceta camera.</span>
+</span><span id="MicCalibrations.TalosCeta-166"><a href="#MicCalibrations.TalosCeta-166"><span class="linenos">166</span></a><span class="sd">        </span>
+</span><span id="MicCalibrations.TalosCeta-167"><a href="#MicCalibrations.TalosCeta-167"><span class="linenos">167</span></a><span class="sd">        * Typical image size = [1024x1024]pix</span>
+</span><span id="MicCalibrations.TalosCeta-168"><a href="#MicCalibrations.TalosCeta-168"><span class="linenos">168</span></a><span class="sd">        * Alternative image sizes = integer multiples possible due to binning.</span>
+</span><span id="MicCalibrations.TalosCeta-169"><a href="#MicCalibrations.TalosCeta-169"><span class="linenos">169</span></a><span class="sd">        * Binning does not influence real-width-of-image and calibration const.</span>
+</span><span id="MicCalibrations.TalosCeta-170"><a href="#MicCalibrations.TalosCeta-170"><span class="linenos">170</span></a><span class="sd">        &#39;&#39;&#39;</span>
+</span><span id="MicCalibrations.TalosCeta-171"><a href="#MicCalibrations.TalosCeta-171"><span class="linenos">171</span></a>        <span class="n">description</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;TEM Talos L120C, Ceta camera&#39;</span>
+</span><span id="MicCalibrations.TalosCeta-172"><a href="#MicCalibrations.TalosCeta-172"><span class="linenos">172</span></a>        <span class="n">const</span>       <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">59.295</span>   <span class="c1"># const = rwi * mag (rwi = const/mag)</span>
+</span><span id="MicCalibrations.TalosCeta-173"><a href="#MicCalibrations.TalosCeta-173"><span class="linenos">173</span></a>        <span class="n">units</span>       <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;mm&#39;</span>       <span class="c1"># const units</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Calibration of Talos L120C microscope with Ceta camera.</p>
 
 <ul>
 <li>Typical image size = [1024x1024]pix</li>
@@ -756,57 +827,57 @@ for given microscope, const = rwi of image at mag=1x</li>
 
     </div>
     <a class="headerlink" href="#MicDescriptionFiles"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MicDescriptionFiles-163"><a href="#MicDescriptionFiles-163"><span class="linenos">163</span></a><span class="nd">@dataclass</span>
-</span><span id="MicDescriptionFiles-164"><a href="#MicDescriptionFiles-164"><span class="linenos">164</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MicDescriptionFiles</span><span class="p">:</span>
-</span><span id="MicDescriptionFiles-165"><a href="#MicDescriptionFiles-165"><span class="linenos">165</span></a><span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="MicDescriptionFiles-166"><a href="#MicDescriptionFiles-166"><span class="linenos">166</span></a><span class="sd">    Microscope description files.</span>
-</span><span id="MicDescriptionFiles-167"><a href="#MicDescriptionFiles-167"><span class="linenos">167</span></a><span class="sd">    </span>
-</span><span id="MicDescriptionFiles-168"><a href="#MicDescriptionFiles-168"><span class="linenos">168</span></a><span class="sd">    * Some microscopes yield micrographs *with* text description files.</span>
-</span><span id="MicDescriptionFiles-169"><a href="#MicDescriptionFiles-169"><span class="linenos">169</span></a><span class="sd">    * The description file contains additional info about the micrograph.</span>
-</span><span id="MicDescriptionFiles-170"><a href="#MicDescriptionFiles-170"><span class="linenos">170</span></a><span class="sd">        - the filename is usually similar to the micrograph/image file</span>
-</span><span id="MicDescriptionFiles-171"><a href="#MicDescriptionFiles-171"><span class="linenos">171</span></a><span class="sd">        - the description file contains information about the pixel size</span>
-</span><span id="MicDescriptionFiles-172"><a href="#MicDescriptionFiles-172"><span class="linenos">172</span></a><span class="sd">        - therefore, a description file can be used</span>
-</span><span id="MicDescriptionFiles-173"><a href="#MicDescriptionFiles-173"><span class="linenos">173</span></a><span class="sd">          for the micrograph calibration</span>
-</span><span id="MicDescriptionFiles-174"><a href="#MicDescriptionFiles-174"><span class="linenos">174</span></a><span class="sd">    &#39;&#39;&#39;</span>
-</span><span id="MicDescriptionFiles-175"><a href="#MicDescriptionFiles-175"><span class="linenos">175</span></a>    
-</span><span id="MicDescriptionFiles-176"><a href="#MicDescriptionFiles-176"><span class="linenos">176</span></a>    <span class="c1"># MicroscopeDescrFiles = microscopes with description files</span>
-</span><span id="MicDescriptionFiles-177"><a href="#MicDescriptionFiles-177"><span class="linenos">177</span></a>    <span class="c1"># (description file is a text file containing pixelsize</span>
-</span><span id="MicDescriptionFiles-178"><a href="#MicDescriptionFiles-178"><span class="linenos">178</span></a>    <span class="c1"># (for some microscopes, decription files are saved together with images</span>
-</span><span id="MicDescriptionFiles-179"><a href="#MicDescriptionFiles-179"><span class="linenos">179</span></a>    <span class="c1"># (each microscope below = dictionary containing the following elements</span>
-</span><span id="MicDescriptionFiles-180"><a href="#MicDescriptionFiles-180"><span class="linenos">180</span></a>    <span class="c1"># (...filename = name of descr.file; * = name of img.file, ? = any char</span>
-</span><span id="MicDescriptionFiles-181"><a href="#MicDescriptionFiles-181"><span class="linenos">181</span></a>    <span class="c1"># (...pixsize_line = regular expression describing line with pixelsize</span>
-</span><span id="MicDescriptionFiles-182"><a href="#MicDescriptionFiles-182"><span class="linenos">182</span></a>    <span class="c1"># (   the paretheses () within the regexp should catch the pixelsize number</span>
-</span><span id="MicDescriptionFiles-183"><a href="#MicDescriptionFiles-183"><span class="linenos">183</span></a>    <span class="c1"># (...pixsize_units = units, in which the pixelsize is given</span>
-</span><span id="MicDescriptionFiles-184"><a href="#MicDescriptionFiles-184"><span class="linenos">184</span></a>
-</span><span id="MicDescriptionFiles-185"><a href="#MicDescriptionFiles-185"><span class="linenos">185</span></a>    
-</span><span id="MicDescriptionFiles-186"><a href="#MicDescriptionFiles-186"><span class="linenos">186</span></a>    <span class="nd">@dataclass</span>
-</span><span id="MicDescriptionFiles-187"><a href="#MicDescriptionFiles-187"><span class="linenos">187</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">MAIA</span><span class="p">:</span>
-</span><span id="MicDescriptionFiles-188"><a href="#MicDescriptionFiles-188"><span class="linenos">188</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="MicDescriptionFiles-189"><a href="#MicDescriptionFiles-189"><span class="linenos">189</span></a><span class="sd">        Desription files produced by an SEM microscope MAIA.</span>
-</span><span id="MicDescriptionFiles-190"><a href="#MicDescriptionFiles-190"><span class="linenos">190</span></a><span class="sd">        &#39;&#39;&#39;</span>
-</span><span id="MicDescriptionFiles-191"><a href="#MicDescriptionFiles-191"><span class="linenos">191</span></a>        <span class="n">filename</span>     <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;*-???.hdr&#39;</span>
-</span><span id="MicDescriptionFiles-192"><a href="#MicDescriptionFiles-192"><span class="linenos">192</span></a>        <span class="n">pixsize_line</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;^PixelSizeX=(.*)&#39;</span>
-</span><span id="MicDescriptionFiles-193"><a href="#MicDescriptionFiles-193"><span class="linenos">193</span></a>        <span class="n">pixsize_units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;m&#39;</span>
-</span><span id="MicDescriptionFiles-194"><a href="#MicDescriptionFiles-194"><span class="linenos">194</span></a>
-</span><span id="MicDescriptionFiles-195"><a href="#MicDescriptionFiles-195"><span class="linenos">195</span></a>    
-</span><span id="MicDescriptionFiles-196"><a href="#MicDescriptionFiles-196"><span class="linenos">196</span></a>    <span class="nd">@dataclass</span>
-</span><span id="MicDescriptionFiles-197"><a href="#MicDescriptionFiles-197"><span class="linenos">197</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">VEGA</span><span class="p">:</span>
-</span><span id="MicDescriptionFiles-198"><a href="#MicDescriptionFiles-198"><span class="linenos">198</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="MicDescriptionFiles-199"><a href="#MicDescriptionFiles-199"><span class="linenos">199</span></a><span class="sd">        Description files produced by an SEM microscope VEGA.</span>
-</span><span id="MicDescriptionFiles-200"><a href="#MicDescriptionFiles-200"><span class="linenos">200</span></a><span class="sd">        &#39;&#39;&#39;</span>
-</span><span id="MicDescriptionFiles-201"><a href="#MicDescriptionFiles-201"><span class="linenos">201</span></a>        <span class="n">filename</span>     <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;*.bhd&#39;</span>
-</span><span id="MicDescriptionFiles-202"><a href="#MicDescriptionFiles-202"><span class="linenos">202</span></a>        <span class="n">pixsize_line</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;^Pix=(.*)&#39;</span>
-</span><span id="MicDescriptionFiles-203"><a href="#MicDescriptionFiles-203"><span class="linenos">203</span></a>        <span class="n">pixsize_units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;um&#39;</span>
-</span><span id="MicDescriptionFiles-204"><a href="#MicDescriptionFiles-204"><span class="linenos">204</span></a>
-</span><span id="MicDescriptionFiles-205"><a href="#MicDescriptionFiles-205"><span class="linenos">205</span></a>
-</span><span id="MicDescriptionFiles-206"><a href="#MicDescriptionFiles-206"><span class="linenos">206</span></a>    <span class="nd">@dataclass</span>
-</span><span id="MicDescriptionFiles-207"><a href="#MicDescriptionFiles-207"><span class="linenos">207</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">JEOL</span><span class="p">:</span>
-</span><span id="MicDescriptionFiles-208"><a href="#MicDescriptionFiles-208"><span class="linenos">208</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="MicDescriptionFiles-209"><a href="#MicDescriptionFiles-209"><span class="linenos">209</span></a><span class="sd">        Description files produced by an SEM microscope JEOL.</span>
-</span><span id="MicDescriptionFiles-210"><a href="#MicDescriptionFiles-210"><span class="linenos">210</span></a><span class="sd">        &#39;&#39;&#39;</span>
-</span><span id="MicDescriptionFiles-211"><a href="#MicDescriptionFiles-211"><span class="linenos">211</span></a>        <span class="n">filename</span>     <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;*.hdr&#39;</span>
-</span><span id="MicDescriptionFiles-212"><a href="#MicDescriptionFiles-212"><span class="linenos">212</span></a>        <span class="n">pixsize_line</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;^Pix: (\S+)&#39;</span>
-</span><span id="MicDescriptionFiles-213"><a href="#MicDescriptionFiles-213"><span class="linenos">213</span></a>        <span class="n">pixsize_units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;um&#39;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MicDescriptionFiles-176"><a href="#MicDescriptionFiles-176"><span class="linenos">176</span></a><span class="nd">@dataclass</span>
+</span><span id="MicDescriptionFiles-177"><a href="#MicDescriptionFiles-177"><span class="linenos">177</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MicDescriptionFiles</span><span class="p">:</span>
+</span><span id="MicDescriptionFiles-178"><a href="#MicDescriptionFiles-178"><span class="linenos">178</span></a><span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="MicDescriptionFiles-179"><a href="#MicDescriptionFiles-179"><span class="linenos">179</span></a><span class="sd">    Microscope description files.</span>
+</span><span id="MicDescriptionFiles-180"><a href="#MicDescriptionFiles-180"><span class="linenos">180</span></a><span class="sd">    </span>
+</span><span id="MicDescriptionFiles-181"><a href="#MicDescriptionFiles-181"><span class="linenos">181</span></a><span class="sd">    * Some microscopes yield micrographs *with* text description files.</span>
+</span><span id="MicDescriptionFiles-182"><a href="#MicDescriptionFiles-182"><span class="linenos">182</span></a><span class="sd">    * The description file contains additional info about the micrograph.</span>
+</span><span id="MicDescriptionFiles-183"><a href="#MicDescriptionFiles-183"><span class="linenos">183</span></a><span class="sd">        - the filename is usually similar to the micrograph/image file</span>
+</span><span id="MicDescriptionFiles-184"><a href="#MicDescriptionFiles-184"><span class="linenos">184</span></a><span class="sd">        - the description file contains information about the pixel size</span>
+</span><span id="MicDescriptionFiles-185"><a href="#MicDescriptionFiles-185"><span class="linenos">185</span></a><span class="sd">        - therefore, a description file can be used</span>
+</span><span id="MicDescriptionFiles-186"><a href="#MicDescriptionFiles-186"><span class="linenos">186</span></a><span class="sd">          for the micrograph calibration</span>
+</span><span id="MicDescriptionFiles-187"><a href="#MicDescriptionFiles-187"><span class="linenos">187</span></a><span class="sd">    &#39;&#39;&#39;</span>
+</span><span id="MicDescriptionFiles-188"><a href="#MicDescriptionFiles-188"><span class="linenos">188</span></a>    
+</span><span id="MicDescriptionFiles-189"><a href="#MicDescriptionFiles-189"><span class="linenos">189</span></a>    <span class="c1"># MicroscopeDescrFiles = microscopes with description files</span>
+</span><span id="MicDescriptionFiles-190"><a href="#MicDescriptionFiles-190"><span class="linenos">190</span></a>    <span class="c1"># (description file is a text file containing pixelsize</span>
+</span><span id="MicDescriptionFiles-191"><a href="#MicDescriptionFiles-191"><span class="linenos">191</span></a>    <span class="c1"># (for some microscopes, decription files are saved together with images</span>
+</span><span id="MicDescriptionFiles-192"><a href="#MicDescriptionFiles-192"><span class="linenos">192</span></a>    <span class="c1"># (each microscope below = dictionary containing the following elements</span>
+</span><span id="MicDescriptionFiles-193"><a href="#MicDescriptionFiles-193"><span class="linenos">193</span></a>    <span class="c1"># (...filename = name of descr.file; * = name of img.file, ? = any char</span>
+</span><span id="MicDescriptionFiles-194"><a href="#MicDescriptionFiles-194"><span class="linenos">194</span></a>    <span class="c1"># (...pixsize_line = regular expression describing line with pixelsize</span>
+</span><span id="MicDescriptionFiles-195"><a href="#MicDescriptionFiles-195"><span class="linenos">195</span></a>    <span class="c1"># (   the paretheses () within the regexp should catch the pixelsize number</span>
+</span><span id="MicDescriptionFiles-196"><a href="#MicDescriptionFiles-196"><span class="linenos">196</span></a>    <span class="c1"># (...pixsize_units = units, in which the pixelsize is given</span>
+</span><span id="MicDescriptionFiles-197"><a href="#MicDescriptionFiles-197"><span class="linenos">197</span></a>
+</span><span id="MicDescriptionFiles-198"><a href="#MicDescriptionFiles-198"><span class="linenos">198</span></a>    
+</span><span id="MicDescriptionFiles-199"><a href="#MicDescriptionFiles-199"><span class="linenos">199</span></a>    <span class="nd">@dataclass</span>
+</span><span id="MicDescriptionFiles-200"><a href="#MicDescriptionFiles-200"><span class="linenos">200</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">MAIA</span><span class="p">:</span>
+</span><span id="MicDescriptionFiles-201"><a href="#MicDescriptionFiles-201"><span class="linenos">201</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="MicDescriptionFiles-202"><a href="#MicDescriptionFiles-202"><span class="linenos">202</span></a><span class="sd">        Desription files produced by an SEM microscope MAIA.</span>
+</span><span id="MicDescriptionFiles-203"><a href="#MicDescriptionFiles-203"><span class="linenos">203</span></a><span class="sd">        &#39;&#39;&#39;</span>
+</span><span id="MicDescriptionFiles-204"><a href="#MicDescriptionFiles-204"><span class="linenos">204</span></a>        <span class="n">filename</span>     <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;*-???.hdr&#39;</span>
+</span><span id="MicDescriptionFiles-205"><a href="#MicDescriptionFiles-205"><span class="linenos">205</span></a>        <span class="n">pixsize_line</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;^PixelSizeX=(.*)&#39;</span>
+</span><span id="MicDescriptionFiles-206"><a href="#MicDescriptionFiles-206"><span class="linenos">206</span></a>        <span class="n">pixsize_units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;m&#39;</span>
+</span><span id="MicDescriptionFiles-207"><a href="#MicDescriptionFiles-207"><span class="linenos">207</span></a>
+</span><span id="MicDescriptionFiles-208"><a href="#MicDescriptionFiles-208"><span class="linenos">208</span></a>    
+</span><span id="MicDescriptionFiles-209"><a href="#MicDescriptionFiles-209"><span class="linenos">209</span></a>    <span class="nd">@dataclass</span>
+</span><span id="MicDescriptionFiles-210"><a href="#MicDescriptionFiles-210"><span class="linenos">210</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">VEGA</span><span class="p">:</span>
+</span><span id="MicDescriptionFiles-211"><a href="#MicDescriptionFiles-211"><span class="linenos">211</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="MicDescriptionFiles-212"><a href="#MicDescriptionFiles-212"><span class="linenos">212</span></a><span class="sd">        Description files produced by an SEM microscope VEGA.</span>
+</span><span id="MicDescriptionFiles-213"><a href="#MicDescriptionFiles-213"><span class="linenos">213</span></a><span class="sd">        &#39;&#39;&#39;</span>
+</span><span id="MicDescriptionFiles-214"><a href="#MicDescriptionFiles-214"><span class="linenos">214</span></a>        <span class="n">filename</span>     <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;*.bhd&#39;</span>
+</span><span id="MicDescriptionFiles-215"><a href="#MicDescriptionFiles-215"><span class="linenos">215</span></a>        <span class="n">pixsize_line</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;^Pix=(.*)&#39;</span>
+</span><span id="MicDescriptionFiles-216"><a href="#MicDescriptionFiles-216"><span class="linenos">216</span></a>        <span class="n">pixsize_units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;um&#39;</span>
+</span><span id="MicDescriptionFiles-217"><a href="#MicDescriptionFiles-217"><span class="linenos">217</span></a>
+</span><span id="MicDescriptionFiles-218"><a href="#MicDescriptionFiles-218"><span class="linenos">218</span></a>
+</span><span id="MicDescriptionFiles-219"><a href="#MicDescriptionFiles-219"><span class="linenos">219</span></a>    <span class="nd">@dataclass</span>
+</span><span id="MicDescriptionFiles-220"><a href="#MicDescriptionFiles-220"><span class="linenos">220</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">JEOL</span><span class="p">:</span>
+</span><span id="MicDescriptionFiles-221"><a href="#MicDescriptionFiles-221"><span class="linenos">221</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="MicDescriptionFiles-222"><a href="#MicDescriptionFiles-222"><span class="linenos">222</span></a><span class="sd">        Description files produced by an SEM microscope JEOL.</span>
+</span><span id="MicDescriptionFiles-223"><a href="#MicDescriptionFiles-223"><span class="linenos">223</span></a><span class="sd">        &#39;&#39;&#39;</span>
+</span><span id="MicDescriptionFiles-224"><a href="#MicDescriptionFiles-224"><span class="linenos">224</span></a>        <span class="n">filename</span>     <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;*.hdr&#39;</span>
+</span><span id="MicDescriptionFiles-225"><a href="#MicDescriptionFiles-225"><span class="linenos">225</span></a>        <span class="n">pixsize_line</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;^Pix: (\S+)&#39;</span>
+</span><span id="MicDescriptionFiles-226"><a href="#MicDescriptionFiles-226"><span class="linenos">226</span></a>        <span class="n">pixsize_units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;um&#39;</span>
 </span></pre></div>
 
 
@@ -838,14 +909,14 @@ for the micrograph calibration</li>
 
     </div>
     <a class="headerlink" href="#MicDescriptionFiles.MAIA"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MicDescriptionFiles.MAIA-186"><a href="#MicDescriptionFiles.MAIA-186"><span class="linenos">186</span></a>    <span class="nd">@dataclass</span>
-</span><span id="MicDescriptionFiles.MAIA-187"><a href="#MicDescriptionFiles.MAIA-187"><span class="linenos">187</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">MAIA</span><span class="p">:</span>
-</span><span id="MicDescriptionFiles.MAIA-188"><a href="#MicDescriptionFiles.MAIA-188"><span class="linenos">188</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="MicDescriptionFiles.MAIA-189"><a href="#MicDescriptionFiles.MAIA-189"><span class="linenos">189</span></a><span class="sd">        Desription files produced by an SEM microscope MAIA.</span>
-</span><span id="MicDescriptionFiles.MAIA-190"><a href="#MicDescriptionFiles.MAIA-190"><span class="linenos">190</span></a><span class="sd">        &#39;&#39;&#39;</span>
-</span><span id="MicDescriptionFiles.MAIA-191"><a href="#MicDescriptionFiles.MAIA-191"><span class="linenos">191</span></a>        <span class="n">filename</span>     <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;*-???.hdr&#39;</span>
-</span><span id="MicDescriptionFiles.MAIA-192"><a href="#MicDescriptionFiles.MAIA-192"><span class="linenos">192</span></a>        <span class="n">pixsize_line</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;^PixelSizeX=(.*)&#39;</span>
-</span><span id="MicDescriptionFiles.MAIA-193"><a href="#MicDescriptionFiles.MAIA-193"><span class="linenos">193</span></a>        <span class="n">pixsize_units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;m&#39;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MicDescriptionFiles.MAIA-199"><a href="#MicDescriptionFiles.MAIA-199"><span class="linenos">199</span></a>    <span class="nd">@dataclass</span>
+</span><span id="MicDescriptionFiles.MAIA-200"><a href="#MicDescriptionFiles.MAIA-200"><span class="linenos">200</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">MAIA</span><span class="p">:</span>
+</span><span id="MicDescriptionFiles.MAIA-201"><a href="#MicDescriptionFiles.MAIA-201"><span class="linenos">201</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="MicDescriptionFiles.MAIA-202"><a href="#MicDescriptionFiles.MAIA-202"><span class="linenos">202</span></a><span class="sd">        Desription files produced by an SEM microscope MAIA.</span>
+</span><span id="MicDescriptionFiles.MAIA-203"><a href="#MicDescriptionFiles.MAIA-203"><span class="linenos">203</span></a><span class="sd">        &#39;&#39;&#39;</span>
+</span><span id="MicDescriptionFiles.MAIA-204"><a href="#MicDescriptionFiles.MAIA-204"><span class="linenos">204</span></a>        <span class="n">filename</span>     <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;*-???.hdr&#39;</span>
+</span><span id="MicDescriptionFiles.MAIA-205"><a href="#MicDescriptionFiles.MAIA-205"><span class="linenos">205</span></a>        <span class="n">pixsize_line</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;^PixelSizeX=(.*)&#39;</span>
+</span><span id="MicDescriptionFiles.MAIA-206"><a href="#MicDescriptionFiles.MAIA-206"><span class="linenos">206</span></a>        <span class="n">pixsize_units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;m&#39;</span>
 </span></pre></div>
 
 
@@ -866,14 +937,14 @@ for the micrograph calibration</li>
 
     </div>
     <a class="headerlink" href="#MicDescriptionFiles.VEGA"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MicDescriptionFiles.VEGA-196"><a href="#MicDescriptionFiles.VEGA-196"><span class="linenos">196</span></a>    <span class="nd">@dataclass</span>
-</span><span id="MicDescriptionFiles.VEGA-197"><a href="#MicDescriptionFiles.VEGA-197"><span class="linenos">197</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">VEGA</span><span class="p">:</span>
-</span><span id="MicDescriptionFiles.VEGA-198"><a href="#MicDescriptionFiles.VEGA-198"><span class="linenos">198</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="MicDescriptionFiles.VEGA-199"><a href="#MicDescriptionFiles.VEGA-199"><span class="linenos">199</span></a><span class="sd">        Description files produced by an SEM microscope VEGA.</span>
-</span><span id="MicDescriptionFiles.VEGA-200"><a href="#MicDescriptionFiles.VEGA-200"><span class="linenos">200</span></a><span class="sd">        &#39;&#39;&#39;</span>
-</span><span id="MicDescriptionFiles.VEGA-201"><a href="#MicDescriptionFiles.VEGA-201"><span class="linenos">201</span></a>        <span class="n">filename</span>     <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;*.bhd&#39;</span>
-</span><span id="MicDescriptionFiles.VEGA-202"><a href="#MicDescriptionFiles.VEGA-202"><span class="linenos">202</span></a>        <span class="n">pixsize_line</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;^Pix=(.*)&#39;</span>
-</span><span id="MicDescriptionFiles.VEGA-203"><a href="#MicDescriptionFiles.VEGA-203"><span class="linenos">203</span></a>        <span class="n">pixsize_units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;um&#39;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MicDescriptionFiles.VEGA-209"><a href="#MicDescriptionFiles.VEGA-209"><span class="linenos">209</span></a>    <span class="nd">@dataclass</span>
+</span><span id="MicDescriptionFiles.VEGA-210"><a href="#MicDescriptionFiles.VEGA-210"><span class="linenos">210</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">VEGA</span><span class="p">:</span>
+</span><span id="MicDescriptionFiles.VEGA-211"><a href="#MicDescriptionFiles.VEGA-211"><span class="linenos">211</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="MicDescriptionFiles.VEGA-212"><a href="#MicDescriptionFiles.VEGA-212"><span class="linenos">212</span></a><span class="sd">        Description files produced by an SEM microscope VEGA.</span>
+</span><span id="MicDescriptionFiles.VEGA-213"><a href="#MicDescriptionFiles.VEGA-213"><span class="linenos">213</span></a><span class="sd">        &#39;&#39;&#39;</span>
+</span><span id="MicDescriptionFiles.VEGA-214"><a href="#MicDescriptionFiles.VEGA-214"><span class="linenos">214</span></a>        <span class="n">filename</span>     <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;*.bhd&#39;</span>
+</span><span id="MicDescriptionFiles.VEGA-215"><a href="#MicDescriptionFiles.VEGA-215"><span class="linenos">215</span></a>        <span class="n">pixsize_line</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;^Pix=(.*)&#39;</span>
+</span><span id="MicDescriptionFiles.VEGA-216"><a href="#MicDescriptionFiles.VEGA-216"><span class="linenos">216</span></a>        <span class="n">pixsize_units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;um&#39;</span>
 </span></pre></div>
 
 
@@ -894,14 +965,14 @@ for the micrograph calibration</li>
 
     </div>
     <a class="headerlink" href="#MicDescriptionFiles.JEOL"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MicDescriptionFiles.JEOL-206"><a href="#MicDescriptionFiles.JEOL-206"><span class="linenos">206</span></a>    <span class="nd">@dataclass</span>
-</span><span id="MicDescriptionFiles.JEOL-207"><a href="#MicDescriptionFiles.JEOL-207"><span class="linenos">207</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">JEOL</span><span class="p">:</span>
-</span><span id="MicDescriptionFiles.JEOL-208"><a href="#MicDescriptionFiles.JEOL-208"><span class="linenos">208</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="MicDescriptionFiles.JEOL-209"><a href="#MicDescriptionFiles.JEOL-209"><span class="linenos">209</span></a><span class="sd">        Description files produced by an SEM microscope JEOL.</span>
-</span><span id="MicDescriptionFiles.JEOL-210"><a href="#MicDescriptionFiles.JEOL-210"><span class="linenos">210</span></a><span class="sd">        &#39;&#39;&#39;</span>
-</span><span id="MicDescriptionFiles.JEOL-211"><a href="#MicDescriptionFiles.JEOL-211"><span class="linenos">211</span></a>        <span class="n">filename</span>     <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;*.hdr&#39;</span>
-</span><span id="MicDescriptionFiles.JEOL-212"><a href="#MicDescriptionFiles.JEOL-212"><span class="linenos">212</span></a>        <span class="n">pixsize_line</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;^Pix: (\S+)&#39;</span>
-</span><span id="MicDescriptionFiles.JEOL-213"><a href="#MicDescriptionFiles.JEOL-213"><span class="linenos">213</span></a>        <span class="n">pixsize_units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;um&#39;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MicDescriptionFiles.JEOL-219"><a href="#MicDescriptionFiles.JEOL-219"><span class="linenos">219</span></a>    <span class="nd">@dataclass</span>
+</span><span id="MicDescriptionFiles.JEOL-220"><a href="#MicDescriptionFiles.JEOL-220"><span class="linenos">220</span></a>    <span class="k">class</span><span class="w"> </span><span class="nc">JEOL</span><span class="p">:</span>
+</span><span id="MicDescriptionFiles.JEOL-221"><a href="#MicDescriptionFiles.JEOL-221"><span class="linenos">221</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="MicDescriptionFiles.JEOL-222"><a href="#MicDescriptionFiles.JEOL-222"><span class="linenos">222</span></a><span class="sd">        Description files produced by an SEM microscope JEOL.</span>
+</span><span id="MicDescriptionFiles.JEOL-223"><a href="#MicDescriptionFiles.JEOL-223"><span class="linenos">223</span></a><span class="sd">        &#39;&#39;&#39;</span>
+</span><span id="MicDescriptionFiles.JEOL-224"><a href="#MicDescriptionFiles.JEOL-224"><span class="linenos">224</span></a>        <span class="n">filename</span>     <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;*.hdr&#39;</span>
+</span><span id="MicDescriptionFiles.JEOL-225"><a href="#MicDescriptionFiles.JEOL-225"><span class="linenos">225</span></a>        <span class="n">pixsize_line</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;^Pix: (\S+)&#39;</span>
+</span><span id="MicDescriptionFiles.JEOL-226"><a href="#MicDescriptionFiles.JEOL-226"><span class="linenos">226</span></a>        <span class="n">pixsize_units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;um&#39;</span>
 </span></pre></div>
 
 

@@ -1073,7 +1073,7 @@ class MyReport:
         
         # Process self.itypes
         # 1) Check image types
-        #    (the only allowed image types are 'rgb' and 'gray'.
+        #    (the only allowed image types are 'rgb' and 'gray'
         # 2) Define additional parameters for montage:
         #    (the additional parameters will be saved within the self object
         self._check_image_types()
@@ -1195,6 +1195,7 @@ class MyReport:
         if not(the_same_dimensions):
             print('MyReport: error during initialization!')
             print('The images do not have the same dimensions.')
+            print(f'List of image dimensions: {img_sizes}')
             sys.exit()
                 
         # (2) Additional adjustment for all grayscale images
