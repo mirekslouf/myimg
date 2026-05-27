@@ -26,8 +26,8 @@ __version__ = '0.5.7'
 # * myimg.apps = sub-package containing additional tools and/or applications
 #     - myimg.apps = list of available additional applications
 #     - myimg.api.Apps = practical access to additional applications
-# * myimg.plots = simple module with auxiliary functions for plotting
-# * myimg.utils = sub-package with code for specific/more complex utils in *MyImg*
+# * myimg.plots = auxiliary funcs for plotting
+# * myimg.utils = auxiliary funcs for more complex utils in *MyImg*
 # * myimg.settings = default settings employed by *MyImg* objects
 
 
