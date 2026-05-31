@@ -22,7 +22,7 @@ from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits import axes_grid1  # to add nice colorbars
-
+from scipy import interpolate
 
 # Define classes --------------------------------------------------------------
 
@@ -786,18 +786,15 @@ class RadialProfile:
 
     Parameters
     ----------
-    img : FFT | np.ndarray | MyImage | str | Path
+    img : FFT2D | np.ndarray | MyImage | str | Path
         Input data for radial profile calculation:
-        - FFT object → uses FFT.intensity or FFT.phase
+        - FFT2D object → uses FFT amplitude
         - numpy array → used directly
         - MyImage object → converted to array
         - str / Path → image file
         center : tuple (row, col), optional
         Center of radial profile in pixels. Default = image center.
         
-    what : str, optional
-        Used only if img is FFT object.
-        'intensity' (default) or 'phase'
 
     Attributes
     ----------
@@ -822,8 +819,6 @@ class RadialProfile:
             Input image data or object.
             yc, xc = center, optional
             Center of the profile in pixels. Default = image center.
-        what : str, optional
-            If img is FFT object, choose 'intensity' or 'phase'.
 
         Returns
         -------
@@ -920,8 +915,10 @@ class RadialProfile:
         return R, I
 
     
-    def show(self,  icut=None, title=None, xlim=None, ylim=None,
-             out_file=None, out_dpi=300):
+    def show(self, icut=None, title=None, xlim=None, ylim=None,
+         out_file=None, out_dpi=300,
+         normalize=False,
+         smooth=False):
         '''
         Display the radial profile.
 
@@ -930,42 +927,88 @@ class RadialProfile:
         freq : bool, optional, default is False
             If {freq} = True, convert X-axis units
             from {pixels} to {spatial frequency}.
+        normalize : bool, optional
+            Normalize intensity to max(I)=1.
+
+        smooth : bool, optional
+            Apply spline smoothing.
         
         Returns
         -------
         None
            The plot is shown on the screen.
         '''
-        
-        # Basic plot
-        plt.plot(self.R, self.I, lw=2)
+        # (1) Create figure
+        plt.figure()
+    
+        # (2) Prepare data
+        R = self.R
+        I = self.I.copy()
+    
+        # --- normalization ---
+        if normalize:
+            I = I / np.max(I)
+    
+        # --- smoothing ---
+        if smooth:
+            w = np.ones_like(R)
+            spl = interpolate.UnivariateSpline(R, I, w=w, s=0.1)
+            I_smooth = spl(R)
+    
+        # (3) Plot measured data
+        plt.plot(
+            R, I,
+            'o',
+            markerfacecolor='white',
+            markeredgecolor='black',
+            label='measured'
+        )
+    
+        # (4) Plot smoothed curve
+        if smooth:
+            plt.plot(R, I_smooth, 'r-', lw=2, label='smoothed')
+        else:
+            plt.plot(R, I, 'r-', lw=2)
+    
         plt.xlabel("R [pixel]")
-        plt.ylabel("Intensity")
-        
+    
+        if normalize:
+            plt.ylabel("Normalized intensity")
+        else:
+            plt.ylabel("Intensity")
+    
         # Optional parameters
-        if icut is not None: plt.ylim(0,icut)
-        if title is not None: plt.title(title)
-        if xlim is not None: plt.xlim(xlim)
-        if ylim is not None: plt.ylim(ylim)
-        
+        if icut is not None:
+            plt.ylim(0, icut)
+    
+        if title is not None:
+            plt.title(title)
+    
+        if xlim is not None:
+            plt.xlim(xlim)
+    
+        if ylim is not None:
+            plt.ylim(ylim)
+    
         # Finalization
         plt.grid()
+        plt.legend()
         plt.tight_layout()
-        
-        # Save the plot to {out_file} if requested
-        if out_file is not None: plt.savefig(out_file, dpi=out_dpi)
-        
-        # Show the plot
+    
+        # Save
+        if out_file is not None:
+            plt.savefig(out_file, dpi=out_dpi)
+    
         plt.show()
 
 
-    def save(self, filename="radial_profile.csv"):
+    def save(self, out_file="radial_profile.csv"):
         '''
         Save the radial profile as a CSV file.
 
         Parameters
         ----------
-        filename : str, optional
+        out_file : str, optional
             Name of the output CSV file. Default = "radial_profile.csv".
 
         Returns
@@ -981,8 +1024,8 @@ class RadialProfile:
         import pandas as pd
         df = pd.DataFrame({"Radius_px": self.R,
                            "MeanIntensity": self.I})
-        df.to_csv(filename, index=False)
-        print(f"Radial profile saved to {filename}")
+        df.to_csv(out_file, index=False)
+        print(f"Radial profile saved to {out_file}")
 
 
 class AzimuthalProfile:
@@ -1000,7 +1043,7 @@ class AzimuthalProfile:
     ----------
     img : FFT | np.ndarray | MyImage | str | Path
         Input data for azimuthal profile calculation:
-        - FFT object → uses FFT.intensity or FFT.phase
+        - FFT object → uses FFT amplitude
         - numpy array → used directly
         - MyImage object → converted to array
         - str / Path → image file
@@ -1008,7 +1051,6 @@ class AzimuthalProfile:
         Center of azimuthal profile in pixels. Default = image center.
     bins : int, optional
         Number of angular bins between 0 and 360 degrees.
-    what : str, optional
         Used only if img is FFT object.
         'intensity' (default) or 'phase'
     
@@ -1021,9 +1063,12 @@ class AzimuthalProfile:
     
     Notes
     -----
-    AzimuthalProfile supports binary and grayscale images only. The
-    calculation uses uniform angular binning over the full 360-degree
-    range.   
+    Angular bins are centered around their nominal angle.
+    For example, with bins=360, the bin at 0° corresponds to:
+    
+        -0.5° <= theta < +0.5°
+    
+    The coordinate system is FFT-shift compatible.   
     '''
 
     def __init__(self, img, radius, center=None, width=1, bins=360):
@@ -1036,7 +1081,7 @@ class AzimuthalProfile:
             Input data used to calculate the azimuthal profile.
 
             * FFT object:
-                Uses FFT.intensity or FFT.phase depending on {what}.
+               Uses FFT amplitude.
             * numpy.ndarray:
                 Used directly as a 2D array.
             * MyImage:
@@ -1052,7 +1097,7 @@ class AzimuthalProfile:
             If None, image center is used.
 
         width : int, optional, default is 1
-            Thickness of the ring,
+            Half-thickness of the ring,
             within which the intensities are calculated.        
         bins : int, optional, default is 360
             Number of angular bins between 0 and 360 degrees.
@@ -1094,14 +1139,14 @@ class AzimuthalProfile:
         Theta, I = AzimuthalProfile.calc_azimuthal(
             arr,
             radius=radius,
-            center=(xc, yc),
+            center=(yc, xc),
             bins=bins,
             width=width)
         self.Theta = Theta
         self.I = I
         self.radius = radius
         self.width = width
-        self.center = (xc, yc)
+        self.center = (yc, xc)
 
     
     @staticmethod
@@ -1119,9 +1164,11 @@ class AzimuthalProfile:
             Center of the pattern. If None, FFT center is used.
         bins : int, optional
             Number of angular bins (default 360).
-        dr : float, optional
-            Half-width of radial detection window in pixels.
-            Default dr=1.5 gives a 3-pixel thick ring.
+        width : float, optional
+            Half-thickness of the radial ring in pixels.
+            Pixels are included if:
+
+            radius - width <= R <= radius + width
     
         Returns
         -------
@@ -1161,7 +1208,12 @@ class AzimuthalProfile:
         ring_mask = (radius-width <= Rmap) & (Rmap <= radius+width)
     
         # (5) Angular bins
-        angle_bins = np.linspace(0, 360, bins + 1)
+        dtheta = 360.0 / bins
+        angle_bins = np.linspace(
+            -dtheta/2,
+            360 - dtheta/2,
+            bins + 1
+            )
         I = np.zeros(bins)
         
         # (6) Calculate radial profile = intensities along the ring_masks
@@ -1175,54 +1227,141 @@ class AzimuthalProfile:
         
         # (7) Calculate Theta
         # (np-trick: average of 1st/2nd, 2nd/3rd ....
-        Theta = 0.5 * (angle_bins[:-1] + angle_bins[1:])
+        Theta = angle_bins[:-1] + dtheta/2
+        Theta = Theta % 360
         
         # (8) Return the calculated values
         return Theta, I
 
-    
     def show(self, icut=None, title=None, xlim=None, ylim=None,
-             out_file=None, out_dpi=300):
+         out_file=None, out_dpi=300, endpoint=True,
+         normalize=False, smooth=False):
         '''
         Show azimuthal profile plot.
-
+    
         Parameters
         ----------
         icut : float, optional, default is None
             Intensity cut;
             if {icut}=100, the y-range of the plot is from (0,100).
-
+    
+        endpoint : bool, optional, default is True
+            If True, append the 360° endpoint to the plot
+            using the same intensity as at 0°.
+    
+        normalize : bool, optional
+            Normalize intensity to max(I)=1.
+    
+        smooth : bool, optional
+            Apply spline smoothing.
+    
         Returns
         -------
         None
             The plot is shown on the screen.
-        '''        
-        # Basic plot
-        plt.plot(self.Theta, self.I, lw=2)
-        plt.xlim(-10,370)
+        '''
+    
+        # (1) Prepare data
+        Theta = self.Theta.copy()
+        I = self.I.copy()
+    
+        # Add 360° endpoint for continuous periodic plot
+        if endpoint:
+            Theta = np.append(Theta, 360.0)
+            I = np.append(I, I[0])
+    
+        # --- normalization ---
+        if normalize:
+            I = I / np.max(I)
+    
+        # --- smoothing ---
+        if smooth:
+            w = np.ones_like(Theta)
+    
+            spl = interpolate.UnivariateSpline(
+                Theta,
+                I,
+                w=w,
+                s=0.1
+            )
+    
+            I_smooth = spl(Theta)
+    
+        # (2) Create figure
+        plt.figure()
+    
+        # (3) Plot measured data
+        plt.plot(
+            Theta,
+            I,
+            'o',
+            markerfacecolor='white',
+            markeredgecolor='black',
+            label='measured'
+        )
+    
+        # (4) Plot smoothed curve
+        if smooth:
+            plt.plot(
+                Theta,
+                I_smooth,
+                'r-',
+                lw=2,
+                label='smoothed'
+            )
+        else:
+            plt.plot(
+                Theta,
+                I,
+                'r-',
+                lw=2
+            )
+    
+        # (5) Labels
         plt.xlabel('Angle [deg]')
-        plt.ylabel('Intensity')
-        plt.gca().xaxis.set_major_locator(plt.MultipleLocator(90))
-        plt.gca().xaxis.set_minor_locator(plt.MultipleLocator(45))
-        
-        # Optional parameters
-        if icut is not None: plt.ylim(0,icut)
-        if title is not None: plt.title(title)
-        if xlim is not None: plt.xlim(xlim)
-        if ylim is not None: plt.ylim(ylim)
-        
-        # Finalization
+    
+        if normalize:
+            plt.ylabel('Normalized intensity')
+        else:
+            plt.ylabel('Intensity')
+    
+        # (6) Axis limits
+        plt.xlim(-10, 370)
+    
+        if icut is not None:
+            plt.ylim(0, icut)
+    
+        if title is not None:
+            plt.title(title)
+    
+        if xlim is not None:
+            plt.xlim(xlim)
+    
+        if ylim is not None:
+            plt.ylim(ylim)
+    
+        # (7) Ticks
+        plt.gca().xaxis.set_major_locator(
+            plt.MultipleLocator(90)
+        )
+    
+        plt.gca().xaxis.set_minor_locator(
+            plt.MultipleLocator(45)
+        )
+    
+        # (8) Finalization
         plt.grid()
+        plt.legend()
         plt.tight_layout()
-        
-        # Save the plot to {out_file} if requested
-        if out_file is not None: plt.savefig(out_file, dpi=out_dpi)
-        
-        # Show the plot
+    
+        # (9) Save
+        if out_file is not None:
+            plt.savefig(out_file, dpi=out_dpi)
+    
+        # (10) Show
         plt.show()
-    
-    
-    def save(self, filename="azimuthal_profile.csv"):
+  
+    def save(self, out_file="azimuthal_profile.csv"):
         '''
         Save azimuthal profile as CSV file.
 
@@ -1239,5 +1378,5 @@ class AzimuthalProfile:
         import pandas as pd
         df = pd.DataFrame({"Angle_deg": self.Theta,
                            "MeanIntensity": self.I})
-        df.to_csv(filename, index=False)
-        print(f"Azimuthal profile saved to {filename}")        
+        df.to_csv(out_file, index=False)
+        print(f"Azimuthal profile saved to {out_file}")        
