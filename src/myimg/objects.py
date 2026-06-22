@@ -1187,9 +1187,9 @@ class MyReport:
                 img_sizes.append(self.images[i].shape)
         
         # (1c) Check if all image sizes are the same
-        # Trick (a bit thorny, but verified): All-list-elements-are-the-same
-        #  if the number of the occurrences of the 1st (or 2nd, 3rd..) element
-        #  equals to the total number of elements in the list.
+        # Trick: all-list-elements-are-the-same if ...
+        # ...the number of the occurrences of the 1st (or 2nd, 3rd..) element
+        # ...equals to the total number of elements in the list.
         the_same_dimensions = img_sizes.count(img_sizes[0]) == len(img_sizes)
         # Now the final check
         if not(the_same_dimensions):

@@ -266,7 +266,40 @@ class EMDobject:
             print(f'Apertures : {self.apertures}')
         if verbose >= 3:
             print(f'Scale     : {self.scale()}')
+    
+    
+    def signal1d_load(self):
+        X = self.hsObject.axes_manager.signal_axes[0].axis
+        Y = self.hsObject.data.compute()
+        return np.vstack((X,Y))
 
+
+    def signal1d_axes_labels(self):
+        axis = self.hsObject.axes_manager.signal_axes[0]
+        Xlabel = f'{axis.name} ({axis.units})' 
+        Ylabel = 'Intensity'
+        return Xlabel, Ylabel
+
+
+    def signal1d_show(self, out_file=None, out_dpi=300, grid=True):
+        X,Y = self.signal1d_load()
+        Xlabel,Ylabel = self.signal1d_axes_labels()
+        plt.plot(X,Y)
+        plt.xlabel(Xlabel)
+        plt.ylabel(Ylabel)
+        if grid is True: plt.grid()
+        plt.tight_layout()
+        if out_file is not None: plt.savefig(out_file, dpi=out_dpi)
+        plt.show()
+
+
+    def signal1d_save(self, out_file):
+        data = self.signal1d_load()
+        Xlabel,Ylabel = self.signal1d_axes_labels()
+        np.savetxt(out_file, data.transpose(),
+                   header=f'{Xlabel}\t{Ylabel}',
+                   fmt='%.6e')
+                
 
     def signal2d_show(self, out_file=None, out_dpi=300, item=None, **kwargs):
         '''

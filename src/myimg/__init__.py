@@ -14,7 +14,7 @@ Key components:
 * myimg.apps = a subpackage providing access to the additional tools
 '''
 
-__version__ = '0.5.7'
+__version__ = '0.5.8'
 
 
 # More complete list of objects, modules, and sub-packages:
