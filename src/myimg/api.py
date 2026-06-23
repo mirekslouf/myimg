@@ -31,18 +31,18 @@ More examples are spread all over the documentation.
 
 
 # Import modules
-# --------------
-# (1) Basic MyImage objects
-# (myimg.objects are used within myimg.api
-# >>> import myimg.api as mi        # standard myimg.api import
-# >>> img = mi.MyImage('some.png')  # read image as mi.MyImage object
+#---------------
+# (1) two modules, whose objects/functions are used directly in myimg.api
+#  => from myimg.objects, we import MyImage and MyReport classes/objects
+#  => from myimg.plots, we import Plots class for setting global plot params
 import myimg.objects
-# (2) Auxiliary myimg module for plotting
-# myimg.plots is used directly = imported to myimg.api + used for function calls
-# >>> import myimg.api as mi          # standard myimg import
-# >>> mi.plots.set_plot_parameters()  # direct call of myimg.plots function
-import myimg.plots   # this imports plots module to myimg.api
-plots = myimg.plots  # this makes it accesible as myimg.api.plots
+import myimg.plots
+#-----
+# (2) the third module:
+#  => myimg.settings - imported below in myimg.api.Settings class
+#-----
+# (3) application/plug-in modules:
+#  => imported by user if needed, withing myimg.api.Apps class
 
 
 class MyImage(myimg.objects.MyImage):
@@ -328,15 +328,30 @@ class Apps:
         return iLabels
 
 
+class Plots(myimg.plots.Plots):
+    '''
+    Functions for plotting in MyImg package.
+    
+    * This class (myimg.api.Plots) just inherits from myimg.plots.Plots.
+    * It provides functions for plotting of graphs(1D-data) images(2D-data).
+    
+    >>> # Simple use of Plots class
+    >>> # (the Plots class typically sets/saves/restores global plot params
+    >>> import myimg.api as mi
+    >>> mi.Plots.set_plot_params(size=(8,6), dpi=300)
+    '''
+    pass
+
+    
 class Settings:
     '''
     Settings for myimg package.
     
-    * This class (myimg.Settings)
+    * This class (myimg.api.Settings)
       imports all dataclasses from myimg.settings.
     * Thanks to this import, we can use Settings myimg.api as follows:
             
-    >>> # Sample usage of Settings class
+    >>> # Simple use of Settings class
     >>> # (this is NOT a typical usage of Settings dataclasses
     >>> # (the settings are usually not changed and just used in myimg funcs
     >>> import myimg.api as mi

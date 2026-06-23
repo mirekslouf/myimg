@@ -36,7 +36,22 @@
             <h2>API Documentation</h2>
                 <ul class="memberlist">
             <li>
-                    <a class="function" href="#set_plot_parameters">set_plot_parameters</a>
+                    <a class="class" href="#Plots">Plots</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#Plots.set_plot_params">set_plot_params</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Plots.save_plot_params">save_plot_params</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Plots.restore_previous_params">restore_previous_params</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Plots.restore_saved_params">restore_saved_params</a>
+                        </li>
+                </ul>
+
             </li>
     </ul>
 
@@ -56,13 +71,13 @@
 
                         <div class="docstring"><h2 id="module-myimgplots">Module: <a href="">myimg.plots</a></h2>
 
-<p>Auxiliary myimg module with functions for plotting</p>
+<p>Auxiliary module with functions for plotting.</p>
 
 <div class="pdoc-code codehilite">
 <pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Simple example how to employ <a href="">myimg.plots</a></span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># (the module is imported and used within <a href="api.html">myimg.api</a></span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn"><a href="api.html">myimg.api</a></span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mi</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mi</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">set_plot_parameters</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">8</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mi</span><span class="o">.</span><span class="n">Plots</span><span class="o">.</span><span class="n">set_plot_parameters</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">8</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 </code></pre>
 </div>
 </div>
@@ -71,131 +86,426 @@
 
                         <label class="view-source-button" for="mod-plots-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="sd">Module: myimg.plots</span>
-</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="sd">-------------------</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>
-</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="sd">Auxiliary myimg module with functions for plotting</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="sd">&gt;&gt;&gt; # Simple example how to employ myimg.plots</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="sd">&gt;&gt;&gt; # (the module is imported and used within myimg.api</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="sd">&gt;&gt;&gt; import myimg.api as mi</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="sd">&gt;&gt;&gt; mi.plots.set_plot_parameters(size=(8,8), dpi=100)</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="k">def</span><span class="w"> </span><span class="nf">set_plot_parameters</span><span class="p">(</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>        <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">my_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">my_rcParams</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="sd">    Set global plot parameters (this is useful for repeated plotting).</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="sd">    Parameters</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="sd">    ----------</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="sd">    size : tuple of two floats, optional, the default is (8,6)</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">        Size of the figure (width, height) in [cm].</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="sd">    dpi : int, optional, the defalut is 100</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">        DPI of the figure.</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">    fontsize : int, optional, the default is 8</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="sd">        Size of the font used in figure labels etc.</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="sd">    my_defaults : bool, optional, default is True</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="sd">        If True, some reasonable additional defaults are set,</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="sd">        namely line widths and formats.</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">    my_rcParams : dict, optional, default is None</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="sd">        Dictionary in plt.rcParams format</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="sd">        containing any other allowed matplotlib parameters = rcParams.</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="sd">    Returns</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="sd">    -------</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="sd">    None</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="sd">        The result is a modification of the global plt.rcParams variable.</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a><span class="sd">    &#39;&#39;&#39;</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>    <span class="c1"># (1) Basic arguments -------------------------------------------------</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>    <span class="k">if</span> <span class="n">size</span><span class="p">:</span>  <span class="c1"># Figure size</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>        <span class="c1"># Convert size in [cm] to required size in [inch]</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>        <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mf">2.54</span><span class="p">,</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mf">2.54</span><span class="p">)</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;figure.figsize&#39;</span> <span class="p">:</span> <span class="n">size</span><span class="p">})</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>    <span class="k">if</span> <span class="n">dpi</span><span class="p">:</span>  <span class="c1"># Figure dpi</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;figure.dpi&#39;</span> <span class="p">:</span> <span class="n">dpi</span><span class="p">})</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>    <span class="k">if</span> <span class="n">fontsize</span><span class="p">:</span>  <span class="c1"># Global font size</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;font.size&#39;</span> <span class="p">:</span> <span class="n">fontsize</span><span class="p">})</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>    <span class="c1"># (2) Additional default parameters -----------------------------------</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>    <span class="k">if</span> <span class="n">my_defaults</span><span class="p">:</span>  <span class="c1"># Default rcParams (if not my_defaults==False)</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>            <span class="s1">&#39;lines.linewidth&#39;</span>    <span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>            <span class="s1">&#39;axes.linewidth&#39;</span>     <span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>            <span class="s1">&#39;xtick.major.width&#39;</span>  <span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>            <span class="s1">&#39;ytick.major.width&#39;</span>  <span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>            <span class="s1">&#39;grid.linewidth&#39;</span>     <span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>            <span class="s1">&#39;grid.linestyle&#39;</span>     <span class="p">:</span> <span class="s1">&#39;:&#39;</span><span class="p">})</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>    <span class="c1"># (3) Further user-defined parameter in rcParams format ---------------</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>    <span class="k">if</span> <span class="n">my_rcParams</span><span class="p">:</span>  <span class="c1"># Other possible rcParams in the form of dictionary</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">my_rcParams</span><span class="p">)</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="sd">Module: myimg.plots</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">-------------------</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="sd">Auxiliary module with functions for plotting.</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="sd">&gt;&gt;&gt; # Simple example how to employ myimg.plots</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="sd">&gt;&gt;&gt; # (the module is imported and used within myimg.api</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="sd">&gt;&gt;&gt; import myimg.api as mi</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="sd">&gt;&gt;&gt; mi.Plots.set_plot_parameters(size=(8,8), dpi=100)</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>
+</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Plots</span><span class="p">:</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="sd">    This (non-OO) class collects several useful functions for plotting.</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="sd">    </span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="sd">    The 1st group of functions = setting/restoring global plot parameters:</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="sd">    </span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="sd">    * set_plot_params, save_plot_params = setting/saving the plot params</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="sd">    * restore_previous_params, restore_saved_params = restoring plot params</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="sd">    </span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="sd">    The 2nd group of functions = specific plots for ELD/XRD processing:</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="sd">        </span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="sd">    * plot_final_eld_and_xrd</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="sd">      = usual final plot in package EDIFF</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="sd">    * plot_radial_distributions</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a><span class="sd">      = optional final plot for sister package STEMDIFF</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="sd">      </span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="sd">    Moreover the class employs two (private) class variables:</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a><span class="sd">        </span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="sd">    * _previous_rcParams = employed in restore_previous_params</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="sd">    * _saved_rcParams    = employed in restore_saved_params</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="sd">    &#39;&#39;&#39;</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>
+</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>    <span class="n">_previous_rcParams</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>    <span class="n">_saved_rcParams</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>
+</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>    <span class="nd">@staticmethod</span>    
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_plot_params</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> 
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>            <span class="n">my_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">my_rcParams</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="sd">        Set global plot parameters (mostly for plotting in Jupyter).</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="sd">    </span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="sd">        Parameters</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="sd">        ----------</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="sd">        size : tuple of two floats, optional, the default is (8,6)</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="sd">            Size of the figure (width, height) in [cm].</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="sd">        dpi : int, optional, the defalut is 100</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="sd">            DPI of the figure.</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="sd">        fontsize : int, optional, the default is 8</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="sd">            Size of the font used in figure labels etc.</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="sd">        my_defaults : bool, optional, default is True</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="sd">            If True, some reasonable additional defaults are set,</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="sd">            namely line widths and formats.</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="sd">        my_rcParams : dict, optional, default is None</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="sd">            Dictionary in plt.rcParams format</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">            containing any other allowed global plot parameters.</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="sd">    </span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="sd">        Returns</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="sd">        -------</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="sd">        None</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="sd">            The result is a modification of the global plt.rcParams variable.</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a><span class="sd">        &#39;&#39;&#39;</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>        <span class="c1"># (0) Save current plot params</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>        <span class="c1"># (to be eventually restored by Plots.restore_previous_params()</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>        <span class="n">Plots</span><span class="o">.</span><span class="n">_previous_rcParams</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>        
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>        <span class="c1"># (1) Basic arguments -------------------------------------------------</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>        <span class="k">if</span> <span class="n">size</span><span class="p">:</span>  <span class="c1"># Figure size</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>            <span class="c1"># Convert size in [cm] to required size in [inch]</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>            <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mf">2.54</span><span class="p">,</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mf">2.54</span><span class="p">)</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>            <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;figure.figsize&#39;</span> <span class="p">:</span> <span class="n">size</span><span class="p">})</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>        <span class="k">if</span> <span class="n">dpi</span><span class="p">:</span>  <span class="c1"># Figure dpi</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>            <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;figure.dpi&#39;</span> <span class="p">:</span> <span class="n">dpi</span><span class="p">})</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>        <span class="k">if</span> <span class="n">fontsize</span><span class="p">:</span>  <span class="c1"># Global font size</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>            <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;font.size&#39;</span> <span class="p">:</span> <span class="n">fontsize</span><span class="p">})</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>        
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>        <span class="c1"># (2) Additional default parameters -----------------------------------</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>        <span class="k">if</span> <span class="n">my_defaults</span><span class="p">:</span>  <span class="c1"># Defaults =&gt; if not forbidden by my_defaults=False</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>            <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>                <span class="s1">&#39;lines.linewidth&#39;</span>    <span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>                <span class="s1">&#39;axes.linewidth&#39;</span>     <span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>                <span class="s1">&#39;xtick.major.width&#39;</span>  <span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>                <span class="s1">&#39;ytick.major.width&#39;</span>  <span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>                <span class="s1">&#39;grid.linewidth&#39;</span>     <span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>                <span class="s1">&#39;grid.linestyle&#39;</span>     <span class="p">:</span> <span class="s1">&#39;:&#39;</span><span class="p">})</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>        
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>        <span class="c1"># (3) Further user-defined parameter in rcParams format ---------------</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>        <span class="k">if</span> <span class="n">my_rcParams</span><span class="p">:</span>  <span class="c1"># Other possible rcParams in the form of dictionary</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>            <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">my_rcParams</span><span class="p">)</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>    
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">save_plot_params</span><span class="p">():</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="sd">        Save global plot parameters.</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="sd">        </span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="sd">        * This function saves all global plot parameters (plt.rcParams).</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">        * The parameters can be restored by calling Plot.restore_saved_params.</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="sd">        Returns</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="sd">        -------</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="sd">        None</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="sd">            The function just saves current plot parameters.</span>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="sd">            </span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">        Technical note</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="sd">        --------------</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="sd">        The parameters are saved/copied</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">        to class variable Plots._saved_rcParams.</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="sd">        &#39;&#39;&#39;</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>        <span class="n">Plots</span><span class="o">.</span><span class="n">_saved_rcParams</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">restore_previous_params</span><span class="p">():</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">        Restore previous global plot parameters.</span>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">        </span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="sd">        * The global plot parameters (plt.rcParams)</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="sd">          are auto-saved when calling function Plots.set_plot_params.</span>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">        * This function restores the auto-saved params</span>
+</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="sd">          to the previous/original state (before set_plot_params was called).</span>
+</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a><span class="sd">        Returns</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a><span class="sd">        -------</span>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a><span class="sd">        None</span>
+</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a><span class="sd">            The function just restores the previous plt.rcParams.</span>
+</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a><span class="sd">            </span>
+</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a><span class="sd">        Technical note</span>
+</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a><span class="sd">        --------------</span>
+</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a><span class="sd">        The params are saved class variable in Plots._previous_rcParams</span>
+</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a><span class="sd">        &#39;&#39;&#39;</span>
+</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>        <span class="k">if</span> <span class="n">Plots</span><span class="o">.</span><span class="n">_previous_rcParams</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>            <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">Plots</span><span class="o">.</span><span class="n">_previous_rcParams</span><span class="p">)</span>
+</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>
+</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>    
+</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">restore_saved_params</span><span class="p">():</span>
+</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a><span class="sd">        Restore saved global plot parameters.</span>
+</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a><span class="sd">        </span>
+</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a><span class="sd">        * The global plot parameters (plt.rcParams)</span>
+</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a><span class="sd">          are saved when calling function Plots.save_plot_params.</span>
+</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a><span class="sd">        * This function restores the saved params,</span>
+</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a><span class="sd">          which were saved at the last call of save_plot_params function.</span>
+</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>
+</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a><span class="sd">        Returns</span>
+</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a><span class="sd">        -------</span>
+</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a><span class="sd">        None</span>
+</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a><span class="sd">            The function just restores the saved plt.rcParams.</span>
+</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a><span class="sd">            </span>
+</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="sd">        Technical note</span>
+</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a><span class="sd">        --------------</span>
+</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a><span class="sd">        The params are saved class variable in Plots._saved_rcParams</span>
+</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a><span class="sd">        &#39;&#39;&#39;</span>
+</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>  
+</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>        <span class="k">if</span> <span class="n">Plots</span><span class="o">.</span><span class="n">_saved_rcParams</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>            <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">Plots</span><span class="o">.</span><span class="n">_saved_rcParams</span><span class="p">)</span>
 </span></pre></div>
 
 
             </section>
-                <section id="set_plot_parameters">
-                            <input id="set_plot_parameters-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
+                <section id="Plots">
+                            <input id="Plots-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
             
-        <span class="def">def</span>
-        <span class="name">set_plot_parameters</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>,</span><span class="param">	<span class="n">dpi</span><span class="o">=</span><span class="mi">100</span>,</span><span class="param">	<span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span>,</span><span class="param">	<span class="n">my_defaults</span><span class="o">=</span><span class="kc">True</span>,</span><span class="param">	<span class="n">my_rcParams</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
+    <span class="def">class</span>
+    <span class="name">Plots</span>:
 
-                <label class="view-source-button" for="set_plot_parameters-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="Plots-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#set_plot_parameters"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="set_plot_parameters-16"><a href="#set_plot_parameters-16"><span class="linenos">16</span></a><span class="k">def</span><span class="w"> </span><span class="nf">set_plot_parameters</span><span class="p">(</span>
-</span><span id="set_plot_parameters-17"><a href="#set_plot_parameters-17"><span class="linenos">17</span></a>        <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">my_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">my_rcParams</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="set_plot_parameters-18"><a href="#set_plot_parameters-18"><span class="linenos">18</span></a><span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
-</span><span id="set_plot_parameters-19"><a href="#set_plot_parameters-19"><span class="linenos">19</span></a><span class="sd">    Set global plot parameters (this is useful for repeated plotting).</span>
-</span><span id="set_plot_parameters-20"><a href="#set_plot_parameters-20"><span class="linenos">20</span></a>
-</span><span id="set_plot_parameters-21"><a href="#set_plot_parameters-21"><span class="linenos">21</span></a><span class="sd">    Parameters</span>
-</span><span id="set_plot_parameters-22"><a href="#set_plot_parameters-22"><span class="linenos">22</span></a><span class="sd">    ----------</span>
-</span><span id="set_plot_parameters-23"><a href="#set_plot_parameters-23"><span class="linenos">23</span></a><span class="sd">    size : tuple of two floats, optional, the default is (8,6)</span>
-</span><span id="set_plot_parameters-24"><a href="#set_plot_parameters-24"><span class="linenos">24</span></a><span class="sd">        Size of the figure (width, height) in [cm].</span>
-</span><span id="set_plot_parameters-25"><a href="#set_plot_parameters-25"><span class="linenos">25</span></a><span class="sd">    dpi : int, optional, the defalut is 100</span>
-</span><span id="set_plot_parameters-26"><a href="#set_plot_parameters-26"><span class="linenos">26</span></a><span class="sd">        DPI of the figure.</span>
-</span><span id="set_plot_parameters-27"><a href="#set_plot_parameters-27"><span class="linenos">27</span></a><span class="sd">    fontsize : int, optional, the default is 8</span>
-</span><span id="set_plot_parameters-28"><a href="#set_plot_parameters-28"><span class="linenos">28</span></a><span class="sd">        Size of the font used in figure labels etc.</span>
-</span><span id="set_plot_parameters-29"><a href="#set_plot_parameters-29"><span class="linenos">29</span></a><span class="sd">    my_defaults : bool, optional, default is True</span>
-</span><span id="set_plot_parameters-30"><a href="#set_plot_parameters-30"><span class="linenos">30</span></a><span class="sd">        If True, some reasonable additional defaults are set,</span>
-</span><span id="set_plot_parameters-31"><a href="#set_plot_parameters-31"><span class="linenos">31</span></a><span class="sd">        namely line widths and formats.</span>
-</span><span id="set_plot_parameters-32"><a href="#set_plot_parameters-32"><span class="linenos">32</span></a><span class="sd">    my_rcParams : dict, optional, default is None</span>
-</span><span id="set_plot_parameters-33"><a href="#set_plot_parameters-33"><span class="linenos">33</span></a><span class="sd">        Dictionary in plt.rcParams format</span>
-</span><span id="set_plot_parameters-34"><a href="#set_plot_parameters-34"><span class="linenos">34</span></a><span class="sd">        containing any other allowed matplotlib parameters = rcParams.</span>
-</span><span id="set_plot_parameters-35"><a href="#set_plot_parameters-35"><span class="linenos">35</span></a>
-</span><span id="set_plot_parameters-36"><a href="#set_plot_parameters-36"><span class="linenos">36</span></a><span class="sd">    Returns</span>
-</span><span id="set_plot_parameters-37"><a href="#set_plot_parameters-37"><span class="linenos">37</span></a><span class="sd">    -------</span>
-</span><span id="set_plot_parameters-38"><a href="#set_plot_parameters-38"><span class="linenos">38</span></a><span class="sd">    None</span>
-</span><span id="set_plot_parameters-39"><a href="#set_plot_parameters-39"><span class="linenos">39</span></a><span class="sd">        The result is a modification of the global plt.rcParams variable.</span>
-</span><span id="set_plot_parameters-40"><a href="#set_plot_parameters-40"><span class="linenos">40</span></a><span class="sd">    &#39;&#39;&#39;</span>
-</span><span id="set_plot_parameters-41"><a href="#set_plot_parameters-41"><span class="linenos">41</span></a>    <span class="c1"># (1) Basic arguments -------------------------------------------------</span>
-</span><span id="set_plot_parameters-42"><a href="#set_plot_parameters-42"><span class="linenos">42</span></a>    <span class="k">if</span> <span class="n">size</span><span class="p">:</span>  <span class="c1"># Figure size</span>
-</span><span id="set_plot_parameters-43"><a href="#set_plot_parameters-43"><span class="linenos">43</span></a>        <span class="c1"># Convert size in [cm] to required size in [inch]</span>
-</span><span id="set_plot_parameters-44"><a href="#set_plot_parameters-44"><span class="linenos">44</span></a>        <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mf">2.54</span><span class="p">,</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mf">2.54</span><span class="p">)</span>
-</span><span id="set_plot_parameters-45"><a href="#set_plot_parameters-45"><span class="linenos">45</span></a>        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;figure.figsize&#39;</span> <span class="p">:</span> <span class="n">size</span><span class="p">})</span>
-</span><span id="set_plot_parameters-46"><a href="#set_plot_parameters-46"><span class="linenos">46</span></a>    <span class="k">if</span> <span class="n">dpi</span><span class="p">:</span>  <span class="c1"># Figure dpi</span>
-</span><span id="set_plot_parameters-47"><a href="#set_plot_parameters-47"><span class="linenos">47</span></a>        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;figure.dpi&#39;</span> <span class="p">:</span> <span class="n">dpi</span><span class="p">})</span>
-</span><span id="set_plot_parameters-48"><a href="#set_plot_parameters-48"><span class="linenos">48</span></a>    <span class="k">if</span> <span class="n">fontsize</span><span class="p">:</span>  <span class="c1"># Global font size</span>
-</span><span id="set_plot_parameters-49"><a href="#set_plot_parameters-49"><span class="linenos">49</span></a>        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;font.size&#39;</span> <span class="p">:</span> <span class="n">fontsize</span><span class="p">})</span>
-</span><span id="set_plot_parameters-50"><a href="#set_plot_parameters-50"><span class="linenos">50</span></a>    <span class="c1"># (2) Additional default parameters -----------------------------------</span>
-</span><span id="set_plot_parameters-51"><a href="#set_plot_parameters-51"><span class="linenos">51</span></a>    <span class="k">if</span> <span class="n">my_defaults</span><span class="p">:</span>  <span class="c1"># Default rcParams (if not my_defaults==False)</span>
-</span><span id="set_plot_parameters-52"><a href="#set_plot_parameters-52"><span class="linenos">52</span></a>        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-</span><span id="set_plot_parameters-53"><a href="#set_plot_parameters-53"><span class="linenos">53</span></a>            <span class="s1">&#39;lines.linewidth&#39;</span>    <span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
-</span><span id="set_plot_parameters-54"><a href="#set_plot_parameters-54"><span class="linenos">54</span></a>            <span class="s1">&#39;axes.linewidth&#39;</span>     <span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
-</span><span id="set_plot_parameters-55"><a href="#set_plot_parameters-55"><span class="linenos">55</span></a>            <span class="s1">&#39;xtick.major.width&#39;</span>  <span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
-</span><span id="set_plot_parameters-56"><a href="#set_plot_parameters-56"><span class="linenos">56</span></a>            <span class="s1">&#39;ytick.major.width&#39;</span>  <span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
-</span><span id="set_plot_parameters-57"><a href="#set_plot_parameters-57"><span class="linenos">57</span></a>            <span class="s1">&#39;grid.linewidth&#39;</span>     <span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
-</span><span id="set_plot_parameters-58"><a href="#set_plot_parameters-58"><span class="linenos">58</span></a>            <span class="s1">&#39;grid.linestyle&#39;</span>     <span class="p">:</span> <span class="s1">&#39;:&#39;</span><span class="p">})</span>
-</span><span id="set_plot_parameters-59"><a href="#set_plot_parameters-59"><span class="linenos">59</span></a>    <span class="c1"># (3) Further user-defined parameter in rcParams format ---------------</span>
-</span><span id="set_plot_parameters-60"><a href="#set_plot_parameters-60"><span class="linenos">60</span></a>    <span class="k">if</span> <span class="n">my_rcParams</span><span class="p">:</span>  <span class="c1"># Other possible rcParams in the form of dictionary</span>
-</span><span id="set_plot_parameters-61"><a href="#set_plot_parameters-61"><span class="linenos">61</span></a>        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">my_rcParams</span><span class="p">)</span>
+    <a class="headerlink" href="#Plots"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Plots-16"><a href="#Plots-16"><span class="linenos"> 16</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Plots</span><span class="p">:</span>
+</span><span id="Plots-17"><a href="#Plots-17"><span class="linenos"> 17</span></a><span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="Plots-18"><a href="#Plots-18"><span class="linenos"> 18</span></a><span class="sd">    This (non-OO) class collects several useful functions for plotting.</span>
+</span><span id="Plots-19"><a href="#Plots-19"><span class="linenos"> 19</span></a><span class="sd">    </span>
+</span><span id="Plots-20"><a href="#Plots-20"><span class="linenos"> 20</span></a><span class="sd">    The 1st group of functions = setting/restoring global plot parameters:</span>
+</span><span id="Plots-21"><a href="#Plots-21"><span class="linenos"> 21</span></a><span class="sd">    </span>
+</span><span id="Plots-22"><a href="#Plots-22"><span class="linenos"> 22</span></a><span class="sd">    * set_plot_params, save_plot_params = setting/saving the plot params</span>
+</span><span id="Plots-23"><a href="#Plots-23"><span class="linenos"> 23</span></a><span class="sd">    * restore_previous_params, restore_saved_params = restoring plot params</span>
+</span><span id="Plots-24"><a href="#Plots-24"><span class="linenos"> 24</span></a><span class="sd">    </span>
+</span><span id="Plots-25"><a href="#Plots-25"><span class="linenos"> 25</span></a><span class="sd">    The 2nd group of functions = specific plots for ELD/XRD processing:</span>
+</span><span id="Plots-26"><a href="#Plots-26"><span class="linenos"> 26</span></a><span class="sd">        </span>
+</span><span id="Plots-27"><a href="#Plots-27"><span class="linenos"> 27</span></a><span class="sd">    * plot_final_eld_and_xrd</span>
+</span><span id="Plots-28"><a href="#Plots-28"><span class="linenos"> 28</span></a><span class="sd">      = usual final plot in package EDIFF</span>
+</span><span id="Plots-29"><a href="#Plots-29"><span class="linenos"> 29</span></a><span class="sd">    * plot_radial_distributions</span>
+</span><span id="Plots-30"><a href="#Plots-30"><span class="linenos"> 30</span></a><span class="sd">      = optional final plot for sister package STEMDIFF</span>
+</span><span id="Plots-31"><a href="#Plots-31"><span class="linenos"> 31</span></a><span class="sd">      </span>
+</span><span id="Plots-32"><a href="#Plots-32"><span class="linenos"> 32</span></a><span class="sd">    Moreover the class employs two (private) class variables:</span>
+</span><span id="Plots-33"><a href="#Plots-33"><span class="linenos"> 33</span></a><span class="sd">        </span>
+</span><span id="Plots-34"><a href="#Plots-34"><span class="linenos"> 34</span></a><span class="sd">    * _previous_rcParams = employed in restore_previous_params</span>
+</span><span id="Plots-35"><a href="#Plots-35"><span class="linenos"> 35</span></a><span class="sd">    * _saved_rcParams    = employed in restore_saved_params</span>
+</span><span id="Plots-36"><a href="#Plots-36"><span class="linenos"> 36</span></a><span class="sd">    &#39;&#39;&#39;</span>
+</span><span id="Plots-37"><a href="#Plots-37"><span class="linenos"> 37</span></a>
+</span><span id="Plots-38"><a href="#Plots-38"><span class="linenos"> 38</span></a>    <span class="n">_previous_rcParams</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Plots-39"><a href="#Plots-39"><span class="linenos"> 39</span></a>    <span class="n">_saved_rcParams</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Plots-40"><a href="#Plots-40"><span class="linenos"> 40</span></a>
+</span><span id="Plots-41"><a href="#Plots-41"><span class="linenos"> 41</span></a>    <span class="nd">@staticmethod</span>    
+</span><span id="Plots-42"><a href="#Plots-42"><span class="linenos"> 42</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_plot_params</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> 
+</span><span id="Plots-43"><a href="#Plots-43"><span class="linenos"> 43</span></a>            <span class="n">my_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">my_rcParams</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="Plots-44"><a href="#Plots-44"><span class="linenos"> 44</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="Plots-45"><a href="#Plots-45"><span class="linenos"> 45</span></a><span class="sd">        Set global plot parameters (mostly for plotting in Jupyter).</span>
+</span><span id="Plots-46"><a href="#Plots-46"><span class="linenos"> 46</span></a><span class="sd">    </span>
+</span><span id="Plots-47"><a href="#Plots-47"><span class="linenos"> 47</span></a><span class="sd">        Parameters</span>
+</span><span id="Plots-48"><a href="#Plots-48"><span class="linenos"> 48</span></a><span class="sd">        ----------</span>
+</span><span id="Plots-49"><a href="#Plots-49"><span class="linenos"> 49</span></a><span class="sd">        size : tuple of two floats, optional, the default is (8,6)</span>
+</span><span id="Plots-50"><a href="#Plots-50"><span class="linenos"> 50</span></a><span class="sd">            Size of the figure (width, height) in [cm].</span>
+</span><span id="Plots-51"><a href="#Plots-51"><span class="linenos"> 51</span></a><span class="sd">        dpi : int, optional, the defalut is 100</span>
+</span><span id="Plots-52"><a href="#Plots-52"><span class="linenos"> 52</span></a><span class="sd">            DPI of the figure.</span>
+</span><span id="Plots-53"><a href="#Plots-53"><span class="linenos"> 53</span></a><span class="sd">        fontsize : int, optional, the default is 8</span>
+</span><span id="Plots-54"><a href="#Plots-54"><span class="linenos"> 54</span></a><span class="sd">            Size of the font used in figure labels etc.</span>
+</span><span id="Plots-55"><a href="#Plots-55"><span class="linenos"> 55</span></a><span class="sd">        my_defaults : bool, optional, default is True</span>
+</span><span id="Plots-56"><a href="#Plots-56"><span class="linenos"> 56</span></a><span class="sd">            If True, some reasonable additional defaults are set,</span>
+</span><span id="Plots-57"><a href="#Plots-57"><span class="linenos"> 57</span></a><span class="sd">            namely line widths and formats.</span>
+</span><span id="Plots-58"><a href="#Plots-58"><span class="linenos"> 58</span></a><span class="sd">        my_rcParams : dict, optional, default is None</span>
+</span><span id="Plots-59"><a href="#Plots-59"><span class="linenos"> 59</span></a><span class="sd">            Dictionary in plt.rcParams format</span>
+</span><span id="Plots-60"><a href="#Plots-60"><span class="linenos"> 60</span></a><span class="sd">            containing any other allowed global plot parameters.</span>
+</span><span id="Plots-61"><a href="#Plots-61"><span class="linenos"> 61</span></a><span class="sd">    </span>
+</span><span id="Plots-62"><a href="#Plots-62"><span class="linenos"> 62</span></a><span class="sd">        Returns</span>
+</span><span id="Plots-63"><a href="#Plots-63"><span class="linenos"> 63</span></a><span class="sd">        -------</span>
+</span><span id="Plots-64"><a href="#Plots-64"><span class="linenos"> 64</span></a><span class="sd">        None</span>
+</span><span id="Plots-65"><a href="#Plots-65"><span class="linenos"> 65</span></a><span class="sd">            The result is a modification of the global plt.rcParams variable.</span>
+</span><span id="Plots-66"><a href="#Plots-66"><span class="linenos"> 66</span></a><span class="sd">        &#39;&#39;&#39;</span>
+</span><span id="Plots-67"><a href="#Plots-67"><span class="linenos"> 67</span></a>        <span class="c1"># (0) Save current plot params</span>
+</span><span id="Plots-68"><a href="#Plots-68"><span class="linenos"> 68</span></a>        <span class="c1"># (to be eventually restored by Plots.restore_previous_params()</span>
+</span><span id="Plots-69"><a href="#Plots-69"><span class="linenos"> 69</span></a>        <span class="n">Plots</span><span class="o">.</span><span class="n">_previous_rcParams</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</span><span id="Plots-70"><a href="#Plots-70"><span class="linenos"> 70</span></a>        
+</span><span id="Plots-71"><a href="#Plots-71"><span class="linenos"> 71</span></a>        <span class="c1"># (1) Basic arguments -------------------------------------------------</span>
+</span><span id="Plots-72"><a href="#Plots-72"><span class="linenos"> 72</span></a>        <span class="k">if</span> <span class="n">size</span><span class="p">:</span>  <span class="c1"># Figure size</span>
+</span><span id="Plots-73"><a href="#Plots-73"><span class="linenos"> 73</span></a>            <span class="c1"># Convert size in [cm] to required size in [inch]</span>
+</span><span id="Plots-74"><a href="#Plots-74"><span class="linenos"> 74</span></a>            <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mf">2.54</span><span class="p">,</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mf">2.54</span><span class="p">)</span>
+</span><span id="Plots-75"><a href="#Plots-75"><span class="linenos"> 75</span></a>            <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;figure.figsize&#39;</span> <span class="p">:</span> <span class="n">size</span><span class="p">})</span>
+</span><span id="Plots-76"><a href="#Plots-76"><span class="linenos"> 76</span></a>        <span class="k">if</span> <span class="n">dpi</span><span class="p">:</span>  <span class="c1"># Figure dpi</span>
+</span><span id="Plots-77"><a href="#Plots-77"><span class="linenos"> 77</span></a>            <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;figure.dpi&#39;</span> <span class="p">:</span> <span class="n">dpi</span><span class="p">})</span>
+</span><span id="Plots-78"><a href="#Plots-78"><span class="linenos"> 78</span></a>        <span class="k">if</span> <span class="n">fontsize</span><span class="p">:</span>  <span class="c1"># Global font size</span>
+</span><span id="Plots-79"><a href="#Plots-79"><span class="linenos"> 79</span></a>            <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;font.size&#39;</span> <span class="p">:</span> <span class="n">fontsize</span><span class="p">})</span>
+</span><span id="Plots-80"><a href="#Plots-80"><span class="linenos"> 80</span></a>        
+</span><span id="Plots-81"><a href="#Plots-81"><span class="linenos"> 81</span></a>        <span class="c1"># (2) Additional default parameters -----------------------------------</span>
+</span><span id="Plots-82"><a href="#Plots-82"><span class="linenos"> 82</span></a>        <span class="k">if</span> <span class="n">my_defaults</span><span class="p">:</span>  <span class="c1"># Defaults =&gt; if not forbidden by my_defaults=False</span>
+</span><span id="Plots-83"><a href="#Plots-83"><span class="linenos"> 83</span></a>            <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+</span><span id="Plots-84"><a href="#Plots-84"><span class="linenos"> 84</span></a>                <span class="s1">&#39;lines.linewidth&#39;</span>    <span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
+</span><span id="Plots-85"><a href="#Plots-85"><span class="linenos"> 85</span></a>                <span class="s1">&#39;axes.linewidth&#39;</span>     <span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
+</span><span id="Plots-86"><a href="#Plots-86"><span class="linenos"> 86</span></a>                <span class="s1">&#39;xtick.major.width&#39;</span>  <span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
+</span><span id="Plots-87"><a href="#Plots-87"><span class="linenos"> 87</span></a>                <span class="s1">&#39;ytick.major.width&#39;</span>  <span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
+</span><span id="Plots-88"><a href="#Plots-88"><span class="linenos"> 88</span></a>                <span class="s1">&#39;grid.linewidth&#39;</span>     <span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
+</span><span id="Plots-89"><a href="#Plots-89"><span class="linenos"> 89</span></a>                <span class="s1">&#39;grid.linestyle&#39;</span>     <span class="p">:</span> <span class="s1">&#39;:&#39;</span><span class="p">})</span>
+</span><span id="Plots-90"><a href="#Plots-90"><span class="linenos"> 90</span></a>        
+</span><span id="Plots-91"><a href="#Plots-91"><span class="linenos"> 91</span></a>        <span class="c1"># (3) Further user-defined parameter in rcParams format ---------------</span>
+</span><span id="Plots-92"><a href="#Plots-92"><span class="linenos"> 92</span></a>        <span class="k">if</span> <span class="n">my_rcParams</span><span class="p">:</span>  <span class="c1"># Other possible rcParams in the form of dictionary</span>
+</span><span id="Plots-93"><a href="#Plots-93"><span class="linenos"> 93</span></a>            <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">my_rcParams</span><span class="p">)</span>
+</span><span id="Plots-94"><a href="#Plots-94"><span class="linenos"> 94</span></a>
+</span><span id="Plots-95"><a href="#Plots-95"><span class="linenos"> 95</span></a>    
+</span><span id="Plots-96"><a href="#Plots-96"><span class="linenos"> 96</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="Plots-97"><a href="#Plots-97"><span class="linenos"> 97</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">save_plot_params</span><span class="p">():</span>
+</span><span id="Plots-98"><a href="#Plots-98"><span class="linenos"> 98</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="Plots-99"><a href="#Plots-99"><span class="linenos"> 99</span></a><span class="sd">        Save global plot parameters.</span>
+</span><span id="Plots-100"><a href="#Plots-100"><span class="linenos">100</span></a><span class="sd">        </span>
+</span><span id="Plots-101"><a href="#Plots-101"><span class="linenos">101</span></a><span class="sd">        * This function saves all global plot parameters (plt.rcParams).</span>
+</span><span id="Plots-102"><a href="#Plots-102"><span class="linenos">102</span></a><span class="sd">        * The parameters can be restored by calling Plot.restore_saved_params.</span>
+</span><span id="Plots-103"><a href="#Plots-103"><span class="linenos">103</span></a>
+</span><span id="Plots-104"><a href="#Plots-104"><span class="linenos">104</span></a><span class="sd">        Returns</span>
+</span><span id="Plots-105"><a href="#Plots-105"><span class="linenos">105</span></a><span class="sd">        -------</span>
+</span><span id="Plots-106"><a href="#Plots-106"><span class="linenos">106</span></a><span class="sd">        None</span>
+</span><span id="Plots-107"><a href="#Plots-107"><span class="linenos">107</span></a><span class="sd">            The function just saves current plot parameters.</span>
+</span><span id="Plots-108"><a href="#Plots-108"><span class="linenos">108</span></a><span class="sd">            </span>
+</span><span id="Plots-109"><a href="#Plots-109"><span class="linenos">109</span></a><span class="sd">        Technical note</span>
+</span><span id="Plots-110"><a href="#Plots-110"><span class="linenos">110</span></a><span class="sd">        --------------</span>
+</span><span id="Plots-111"><a href="#Plots-111"><span class="linenos">111</span></a><span class="sd">        The parameters are saved/copied</span>
+</span><span id="Plots-112"><a href="#Plots-112"><span class="linenos">112</span></a><span class="sd">        to class variable Plots._saved_rcParams.</span>
+</span><span id="Plots-113"><a href="#Plots-113"><span class="linenos">113</span></a><span class="sd">        &#39;&#39;&#39;</span>
+</span><span id="Plots-114"><a href="#Plots-114"><span class="linenos">114</span></a>        <span class="n">Plots</span><span class="o">.</span><span class="n">_saved_rcParams</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</span><span id="Plots-115"><a href="#Plots-115"><span class="linenos">115</span></a>
+</span><span id="Plots-116"><a href="#Plots-116"><span class="linenos">116</span></a>
+</span><span id="Plots-117"><a href="#Plots-117"><span class="linenos">117</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="Plots-118"><a href="#Plots-118"><span class="linenos">118</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">restore_previous_params</span><span class="p">():</span>
+</span><span id="Plots-119"><a href="#Plots-119"><span class="linenos">119</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="Plots-120"><a href="#Plots-120"><span class="linenos">120</span></a><span class="sd">        Restore previous global plot parameters.</span>
+</span><span id="Plots-121"><a href="#Plots-121"><span class="linenos">121</span></a><span class="sd">        </span>
+</span><span id="Plots-122"><a href="#Plots-122"><span class="linenos">122</span></a><span class="sd">        * The global plot parameters (plt.rcParams)</span>
+</span><span id="Plots-123"><a href="#Plots-123"><span class="linenos">123</span></a><span class="sd">          are auto-saved when calling function Plots.set_plot_params.</span>
+</span><span id="Plots-124"><a href="#Plots-124"><span class="linenos">124</span></a><span class="sd">        * This function restores the auto-saved params</span>
+</span><span id="Plots-125"><a href="#Plots-125"><span class="linenos">125</span></a><span class="sd">          to the previous/original state (before set_plot_params was called).</span>
+</span><span id="Plots-126"><a href="#Plots-126"><span class="linenos">126</span></a>
+</span><span id="Plots-127"><a href="#Plots-127"><span class="linenos">127</span></a><span class="sd">        Returns</span>
+</span><span id="Plots-128"><a href="#Plots-128"><span class="linenos">128</span></a><span class="sd">        -------</span>
+</span><span id="Plots-129"><a href="#Plots-129"><span class="linenos">129</span></a><span class="sd">        None</span>
+</span><span id="Plots-130"><a href="#Plots-130"><span class="linenos">130</span></a><span class="sd">            The function just restores the previous plt.rcParams.</span>
+</span><span id="Plots-131"><a href="#Plots-131"><span class="linenos">131</span></a><span class="sd">            </span>
+</span><span id="Plots-132"><a href="#Plots-132"><span class="linenos">132</span></a><span class="sd">        Technical note</span>
+</span><span id="Plots-133"><a href="#Plots-133"><span class="linenos">133</span></a><span class="sd">        --------------</span>
+</span><span id="Plots-134"><a href="#Plots-134"><span class="linenos">134</span></a><span class="sd">        The params are saved class variable in Plots._previous_rcParams</span>
+</span><span id="Plots-135"><a href="#Plots-135"><span class="linenos">135</span></a><span class="sd">        &#39;&#39;&#39;</span>
+</span><span id="Plots-136"><a href="#Plots-136"><span class="linenos">136</span></a>        <span class="k">if</span> <span class="n">Plots</span><span class="o">.</span><span class="n">_previous_rcParams</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Plots-137"><a href="#Plots-137"><span class="linenos">137</span></a>            <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">Plots</span><span class="o">.</span><span class="n">_previous_rcParams</span><span class="p">)</span>
+</span><span id="Plots-138"><a href="#Plots-138"><span class="linenos">138</span></a>
+</span><span id="Plots-139"><a href="#Plots-139"><span class="linenos">139</span></a>    
+</span><span id="Plots-140"><a href="#Plots-140"><span class="linenos">140</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="Plots-141"><a href="#Plots-141"><span class="linenos">141</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">restore_saved_params</span><span class="p">():</span>
+</span><span id="Plots-142"><a href="#Plots-142"><span class="linenos">142</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="Plots-143"><a href="#Plots-143"><span class="linenos">143</span></a><span class="sd">        Restore saved global plot parameters.</span>
+</span><span id="Plots-144"><a href="#Plots-144"><span class="linenos">144</span></a><span class="sd">        </span>
+</span><span id="Plots-145"><a href="#Plots-145"><span class="linenos">145</span></a><span class="sd">        * The global plot parameters (plt.rcParams)</span>
+</span><span id="Plots-146"><a href="#Plots-146"><span class="linenos">146</span></a><span class="sd">          are saved when calling function Plots.save_plot_params.</span>
+</span><span id="Plots-147"><a href="#Plots-147"><span class="linenos">147</span></a><span class="sd">        * This function restores the saved params,</span>
+</span><span id="Plots-148"><a href="#Plots-148"><span class="linenos">148</span></a><span class="sd">          which were saved at the last call of save_plot_params function.</span>
+</span><span id="Plots-149"><a href="#Plots-149"><span class="linenos">149</span></a>
+</span><span id="Plots-150"><a href="#Plots-150"><span class="linenos">150</span></a><span class="sd">        Returns</span>
+</span><span id="Plots-151"><a href="#Plots-151"><span class="linenos">151</span></a><span class="sd">        -------</span>
+</span><span id="Plots-152"><a href="#Plots-152"><span class="linenos">152</span></a><span class="sd">        None</span>
+</span><span id="Plots-153"><a href="#Plots-153"><span class="linenos">153</span></a><span class="sd">            The function just restores the saved plt.rcParams.</span>
+</span><span id="Plots-154"><a href="#Plots-154"><span class="linenos">154</span></a><span class="sd">            </span>
+</span><span id="Plots-155"><a href="#Plots-155"><span class="linenos">155</span></a><span class="sd">        Technical note</span>
+</span><span id="Plots-156"><a href="#Plots-156"><span class="linenos">156</span></a><span class="sd">        --------------</span>
+</span><span id="Plots-157"><a href="#Plots-157"><span class="linenos">157</span></a><span class="sd">        The params are saved class variable in Plots._saved_rcParams</span>
+</span><span id="Plots-158"><a href="#Plots-158"><span class="linenos">158</span></a><span class="sd">        &#39;&#39;&#39;</span>
+</span><span id="Plots-159"><a href="#Plots-159"><span class="linenos">159</span></a>  
+</span><span id="Plots-160"><a href="#Plots-160"><span class="linenos">160</span></a>        <span class="k">if</span> <span class="n">Plots</span><span class="o">.</span><span class="n">_saved_rcParams</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Plots-161"><a href="#Plots-161"><span class="linenos">161</span></a>            <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">Plots</span><span class="o">.</span><span class="n">_saved_rcParams</span><span class="p">)</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Set global plot parameters (this is useful for repeated plotting).</p>
+            <div class="docstring"><p>This (non-OO) class collects several useful functions for plotting.</p>
+
+<p>The 1st group of functions = setting/restoring global plot parameters:</p>
+
+<ul>
+<li>set_plot_params, save_plot_params = setting/saving the plot params</li>
+<li>restore_previous_params, restore_saved_params = restoring plot params</li>
+</ul>
+
+<p>The 2nd group of functions = specific plots for ELD/XRD processing:</p>
+
+<ul>
+<li>plot_final_eld_and_xrd
+= usual final plot in package EDIFF</li>
+<li>plot_radial_distributions
+= optional final plot for sister package STEMDIFF</li>
+</ul>
+
+<p>Moreover the class employs two (private) class variables:</p>
+
+<ul>
+<li>_previous_rcParams = employed in restore_previous_params</li>
+<li>_saved_rcParams    = employed in restore_saved_params</li>
+</ul>
+</div>
+
+
+                            <div id="Plots.set_plot_params" class="classattr">
+                                        <input id="Plots.set_plot_params-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+                    <div class="decorator decorator-staticmethod">@staticmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">set_plot_params</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>, </span><span class="param"><span class="n">dpi</span><span class="o">=</span><span class="mi">100</span>, </span><span class="param"><span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span>, </span><span class="param"><span class="n">my_defaults</span><span class="o">=</span><span class="kc">True</span>, </span><span class="param"><span class="n">my_rcParams</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="Plots.set_plot_params-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#Plots.set_plot_params"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Plots.set_plot_params-41"><a href="#Plots.set_plot_params-41"><span class="linenos">41</span></a>    <span class="nd">@staticmethod</span>    
+</span><span id="Plots.set_plot_params-42"><a href="#Plots.set_plot_params-42"><span class="linenos">42</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_plot_params</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> 
+</span><span id="Plots.set_plot_params-43"><a href="#Plots.set_plot_params-43"><span class="linenos">43</span></a>            <span class="n">my_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">my_rcParams</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="Plots.set_plot_params-44"><a href="#Plots.set_plot_params-44"><span class="linenos">44</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="Plots.set_plot_params-45"><a href="#Plots.set_plot_params-45"><span class="linenos">45</span></a><span class="sd">        Set global plot parameters (mostly for plotting in Jupyter).</span>
+</span><span id="Plots.set_plot_params-46"><a href="#Plots.set_plot_params-46"><span class="linenos">46</span></a><span class="sd">    </span>
+</span><span id="Plots.set_plot_params-47"><a href="#Plots.set_plot_params-47"><span class="linenos">47</span></a><span class="sd">        Parameters</span>
+</span><span id="Plots.set_plot_params-48"><a href="#Plots.set_plot_params-48"><span class="linenos">48</span></a><span class="sd">        ----------</span>
+</span><span id="Plots.set_plot_params-49"><a href="#Plots.set_plot_params-49"><span class="linenos">49</span></a><span class="sd">        size : tuple of two floats, optional, the default is (8,6)</span>
+</span><span id="Plots.set_plot_params-50"><a href="#Plots.set_plot_params-50"><span class="linenos">50</span></a><span class="sd">            Size of the figure (width, height) in [cm].</span>
+</span><span id="Plots.set_plot_params-51"><a href="#Plots.set_plot_params-51"><span class="linenos">51</span></a><span class="sd">        dpi : int, optional, the defalut is 100</span>
+</span><span id="Plots.set_plot_params-52"><a href="#Plots.set_plot_params-52"><span class="linenos">52</span></a><span class="sd">            DPI of the figure.</span>
+</span><span id="Plots.set_plot_params-53"><a href="#Plots.set_plot_params-53"><span class="linenos">53</span></a><span class="sd">        fontsize : int, optional, the default is 8</span>
+</span><span id="Plots.set_plot_params-54"><a href="#Plots.set_plot_params-54"><span class="linenos">54</span></a><span class="sd">            Size of the font used in figure labels etc.</span>
+</span><span id="Plots.set_plot_params-55"><a href="#Plots.set_plot_params-55"><span class="linenos">55</span></a><span class="sd">        my_defaults : bool, optional, default is True</span>
+</span><span id="Plots.set_plot_params-56"><a href="#Plots.set_plot_params-56"><span class="linenos">56</span></a><span class="sd">            If True, some reasonable additional defaults are set,</span>
+</span><span id="Plots.set_plot_params-57"><a href="#Plots.set_plot_params-57"><span class="linenos">57</span></a><span class="sd">            namely line widths and formats.</span>
+</span><span id="Plots.set_plot_params-58"><a href="#Plots.set_plot_params-58"><span class="linenos">58</span></a><span class="sd">        my_rcParams : dict, optional, default is None</span>
+</span><span id="Plots.set_plot_params-59"><a href="#Plots.set_plot_params-59"><span class="linenos">59</span></a><span class="sd">            Dictionary in plt.rcParams format</span>
+</span><span id="Plots.set_plot_params-60"><a href="#Plots.set_plot_params-60"><span class="linenos">60</span></a><span class="sd">            containing any other allowed global plot parameters.</span>
+</span><span id="Plots.set_plot_params-61"><a href="#Plots.set_plot_params-61"><span class="linenos">61</span></a><span class="sd">    </span>
+</span><span id="Plots.set_plot_params-62"><a href="#Plots.set_plot_params-62"><span class="linenos">62</span></a><span class="sd">        Returns</span>
+</span><span id="Plots.set_plot_params-63"><a href="#Plots.set_plot_params-63"><span class="linenos">63</span></a><span class="sd">        -------</span>
+</span><span id="Plots.set_plot_params-64"><a href="#Plots.set_plot_params-64"><span class="linenos">64</span></a><span class="sd">        None</span>
+</span><span id="Plots.set_plot_params-65"><a href="#Plots.set_plot_params-65"><span class="linenos">65</span></a><span class="sd">            The result is a modification of the global plt.rcParams variable.</span>
+</span><span id="Plots.set_plot_params-66"><a href="#Plots.set_plot_params-66"><span class="linenos">66</span></a><span class="sd">        &#39;&#39;&#39;</span>
+</span><span id="Plots.set_plot_params-67"><a href="#Plots.set_plot_params-67"><span class="linenos">67</span></a>        <span class="c1"># (0) Save current plot params</span>
+</span><span id="Plots.set_plot_params-68"><a href="#Plots.set_plot_params-68"><span class="linenos">68</span></a>        <span class="c1"># (to be eventually restored by Plots.restore_previous_params()</span>
+</span><span id="Plots.set_plot_params-69"><a href="#Plots.set_plot_params-69"><span class="linenos">69</span></a>        <span class="n">Plots</span><span class="o">.</span><span class="n">_previous_rcParams</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</span><span id="Plots.set_plot_params-70"><a href="#Plots.set_plot_params-70"><span class="linenos">70</span></a>        
+</span><span id="Plots.set_plot_params-71"><a href="#Plots.set_plot_params-71"><span class="linenos">71</span></a>        <span class="c1"># (1) Basic arguments -------------------------------------------------</span>
+</span><span id="Plots.set_plot_params-72"><a href="#Plots.set_plot_params-72"><span class="linenos">72</span></a>        <span class="k">if</span> <span class="n">size</span><span class="p">:</span>  <span class="c1"># Figure size</span>
+</span><span id="Plots.set_plot_params-73"><a href="#Plots.set_plot_params-73"><span class="linenos">73</span></a>            <span class="c1"># Convert size in [cm] to required size in [inch]</span>
+</span><span id="Plots.set_plot_params-74"><a href="#Plots.set_plot_params-74"><span class="linenos">74</span></a>            <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mf">2.54</span><span class="p">,</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mf">2.54</span><span class="p">)</span>
+</span><span id="Plots.set_plot_params-75"><a href="#Plots.set_plot_params-75"><span class="linenos">75</span></a>            <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;figure.figsize&#39;</span> <span class="p">:</span> <span class="n">size</span><span class="p">})</span>
+</span><span id="Plots.set_plot_params-76"><a href="#Plots.set_plot_params-76"><span class="linenos">76</span></a>        <span class="k">if</span> <span class="n">dpi</span><span class="p">:</span>  <span class="c1"># Figure dpi</span>
+</span><span id="Plots.set_plot_params-77"><a href="#Plots.set_plot_params-77"><span class="linenos">77</span></a>            <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;figure.dpi&#39;</span> <span class="p">:</span> <span class="n">dpi</span><span class="p">})</span>
+</span><span id="Plots.set_plot_params-78"><a href="#Plots.set_plot_params-78"><span class="linenos">78</span></a>        <span class="k">if</span> <span class="n">fontsize</span><span class="p">:</span>  <span class="c1"># Global font size</span>
+</span><span id="Plots.set_plot_params-79"><a href="#Plots.set_plot_params-79"><span class="linenos">79</span></a>            <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;font.size&#39;</span> <span class="p">:</span> <span class="n">fontsize</span><span class="p">})</span>
+</span><span id="Plots.set_plot_params-80"><a href="#Plots.set_plot_params-80"><span class="linenos">80</span></a>        
+</span><span id="Plots.set_plot_params-81"><a href="#Plots.set_plot_params-81"><span class="linenos">81</span></a>        <span class="c1"># (2) Additional default parameters -----------------------------------</span>
+</span><span id="Plots.set_plot_params-82"><a href="#Plots.set_plot_params-82"><span class="linenos">82</span></a>        <span class="k">if</span> <span class="n">my_defaults</span><span class="p">:</span>  <span class="c1"># Defaults =&gt; if not forbidden by my_defaults=False</span>
+</span><span id="Plots.set_plot_params-83"><a href="#Plots.set_plot_params-83"><span class="linenos">83</span></a>            <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+</span><span id="Plots.set_plot_params-84"><a href="#Plots.set_plot_params-84"><span class="linenos">84</span></a>                <span class="s1">&#39;lines.linewidth&#39;</span>    <span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
+</span><span id="Plots.set_plot_params-85"><a href="#Plots.set_plot_params-85"><span class="linenos">85</span></a>                <span class="s1">&#39;axes.linewidth&#39;</span>     <span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
+</span><span id="Plots.set_plot_params-86"><a href="#Plots.set_plot_params-86"><span class="linenos">86</span></a>                <span class="s1">&#39;xtick.major.width&#39;</span>  <span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
+</span><span id="Plots.set_plot_params-87"><a href="#Plots.set_plot_params-87"><span class="linenos">87</span></a>                <span class="s1">&#39;ytick.major.width&#39;</span>  <span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
+</span><span id="Plots.set_plot_params-88"><a href="#Plots.set_plot_params-88"><span class="linenos">88</span></a>                <span class="s1">&#39;grid.linewidth&#39;</span>     <span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
+</span><span id="Plots.set_plot_params-89"><a href="#Plots.set_plot_params-89"><span class="linenos">89</span></a>                <span class="s1">&#39;grid.linestyle&#39;</span>     <span class="p">:</span> <span class="s1">&#39;:&#39;</span><span class="p">})</span>
+</span><span id="Plots.set_plot_params-90"><a href="#Plots.set_plot_params-90"><span class="linenos">90</span></a>        
+</span><span id="Plots.set_plot_params-91"><a href="#Plots.set_plot_params-91"><span class="linenos">91</span></a>        <span class="c1"># (3) Further user-defined parameter in rcParams format ---------------</span>
+</span><span id="Plots.set_plot_params-92"><a href="#Plots.set_plot_params-92"><span class="linenos">92</span></a>        <span class="k">if</span> <span class="n">my_rcParams</span><span class="p">:</span>  <span class="c1"># Other possible rcParams in the form of dictionary</span>
+</span><span id="Plots.set_plot_params-93"><a href="#Plots.set_plot_params-93"><span class="linenos">93</span></a>            <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">my_rcParams</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Set global plot parameters (mostly for plotting in Jupyter).</p>
 
 <h6 id="parameters">Parameters</h6>
 
@@ -211,7 +521,7 @@ If True, some reasonable additional defaults are set,
 namely line widths and formats.</li>
 <li><strong>my_rcParams</strong> (dict, optional, default is None):
 Dictionary in plt.rcParams format
-containing any other allowed matplotlib parameters = rcParams.</li>
+containing any other allowed global plot parameters.</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
@@ -222,6 +532,179 @@ containing any other allowed matplotlib parameters = rcParams.</li>
 </div>
 
 
+                            </div>
+                            <div id="Plots.save_plot_params" class="classattr">
+                                        <input id="Plots.save_plot_params-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+                    <div class="decorator decorator-staticmethod">@staticmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">save_plot_params</span><span class="signature pdoc-code condensed">(<span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="Plots.save_plot_params-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#Plots.save_plot_params"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Plots.save_plot_params-96"><a href="#Plots.save_plot_params-96"><span class="linenos"> 96</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="Plots.save_plot_params-97"><a href="#Plots.save_plot_params-97"><span class="linenos"> 97</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">save_plot_params</span><span class="p">():</span>
+</span><span id="Plots.save_plot_params-98"><a href="#Plots.save_plot_params-98"><span class="linenos"> 98</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="Plots.save_plot_params-99"><a href="#Plots.save_plot_params-99"><span class="linenos"> 99</span></a><span class="sd">        Save global plot parameters.</span>
+</span><span id="Plots.save_plot_params-100"><a href="#Plots.save_plot_params-100"><span class="linenos">100</span></a><span class="sd">        </span>
+</span><span id="Plots.save_plot_params-101"><a href="#Plots.save_plot_params-101"><span class="linenos">101</span></a><span class="sd">        * This function saves all global plot parameters (plt.rcParams).</span>
+</span><span id="Plots.save_plot_params-102"><a href="#Plots.save_plot_params-102"><span class="linenos">102</span></a><span class="sd">        * The parameters can be restored by calling Plot.restore_saved_params.</span>
+</span><span id="Plots.save_plot_params-103"><a href="#Plots.save_plot_params-103"><span class="linenos">103</span></a>
+</span><span id="Plots.save_plot_params-104"><a href="#Plots.save_plot_params-104"><span class="linenos">104</span></a><span class="sd">        Returns</span>
+</span><span id="Plots.save_plot_params-105"><a href="#Plots.save_plot_params-105"><span class="linenos">105</span></a><span class="sd">        -------</span>
+</span><span id="Plots.save_plot_params-106"><a href="#Plots.save_plot_params-106"><span class="linenos">106</span></a><span class="sd">        None</span>
+</span><span id="Plots.save_plot_params-107"><a href="#Plots.save_plot_params-107"><span class="linenos">107</span></a><span class="sd">            The function just saves current plot parameters.</span>
+</span><span id="Plots.save_plot_params-108"><a href="#Plots.save_plot_params-108"><span class="linenos">108</span></a><span class="sd">            </span>
+</span><span id="Plots.save_plot_params-109"><a href="#Plots.save_plot_params-109"><span class="linenos">109</span></a><span class="sd">        Technical note</span>
+</span><span id="Plots.save_plot_params-110"><a href="#Plots.save_plot_params-110"><span class="linenos">110</span></a><span class="sd">        --------------</span>
+</span><span id="Plots.save_plot_params-111"><a href="#Plots.save_plot_params-111"><span class="linenos">111</span></a><span class="sd">        The parameters are saved/copied</span>
+</span><span id="Plots.save_plot_params-112"><a href="#Plots.save_plot_params-112"><span class="linenos">112</span></a><span class="sd">        to class variable Plots._saved_rcParams.</span>
+</span><span id="Plots.save_plot_params-113"><a href="#Plots.save_plot_params-113"><span class="linenos">113</span></a><span class="sd">        &#39;&#39;&#39;</span>
+</span><span id="Plots.save_plot_params-114"><a href="#Plots.save_plot_params-114"><span class="linenos">114</span></a>        <span class="n">Plots</span><span class="o">.</span><span class="n">_saved_rcParams</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Save global plot parameters.</p>
+
+<ul>
+<li>This function saves all global plot parameters (plt.rcParams).</li>
+<li>The parameters can be restored by calling Plot.restore_saved_params.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<ul>
+<li><strong>None</strong>: The function just saves current plot parameters.</li>
+</ul>
+
+<h6 id="technical-note">Technical note</h6>
+
+<p>The parameters are saved/copied
+to class variable Plots._saved_rcParams.</p>
+</div>
+
+
+                            </div>
+                            <div id="Plots.restore_previous_params" class="classattr">
+                                        <input id="Plots.restore_previous_params-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+                    <div class="decorator decorator-staticmethod">@staticmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">restore_previous_params</span><span class="signature pdoc-code condensed">(<span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="Plots.restore_previous_params-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#Plots.restore_previous_params"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Plots.restore_previous_params-117"><a href="#Plots.restore_previous_params-117"><span class="linenos">117</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="Plots.restore_previous_params-118"><a href="#Plots.restore_previous_params-118"><span class="linenos">118</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">restore_previous_params</span><span class="p">():</span>
+</span><span id="Plots.restore_previous_params-119"><a href="#Plots.restore_previous_params-119"><span class="linenos">119</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="Plots.restore_previous_params-120"><a href="#Plots.restore_previous_params-120"><span class="linenos">120</span></a><span class="sd">        Restore previous global plot parameters.</span>
+</span><span id="Plots.restore_previous_params-121"><a href="#Plots.restore_previous_params-121"><span class="linenos">121</span></a><span class="sd">        </span>
+</span><span id="Plots.restore_previous_params-122"><a href="#Plots.restore_previous_params-122"><span class="linenos">122</span></a><span class="sd">        * The global plot parameters (plt.rcParams)</span>
+</span><span id="Plots.restore_previous_params-123"><a href="#Plots.restore_previous_params-123"><span class="linenos">123</span></a><span class="sd">          are auto-saved when calling function Plots.set_plot_params.</span>
+</span><span id="Plots.restore_previous_params-124"><a href="#Plots.restore_previous_params-124"><span class="linenos">124</span></a><span class="sd">        * This function restores the auto-saved params</span>
+</span><span id="Plots.restore_previous_params-125"><a href="#Plots.restore_previous_params-125"><span class="linenos">125</span></a><span class="sd">          to the previous/original state (before set_plot_params was called).</span>
+</span><span id="Plots.restore_previous_params-126"><a href="#Plots.restore_previous_params-126"><span class="linenos">126</span></a>
+</span><span id="Plots.restore_previous_params-127"><a href="#Plots.restore_previous_params-127"><span class="linenos">127</span></a><span class="sd">        Returns</span>
+</span><span id="Plots.restore_previous_params-128"><a href="#Plots.restore_previous_params-128"><span class="linenos">128</span></a><span class="sd">        -------</span>
+</span><span id="Plots.restore_previous_params-129"><a href="#Plots.restore_previous_params-129"><span class="linenos">129</span></a><span class="sd">        None</span>
+</span><span id="Plots.restore_previous_params-130"><a href="#Plots.restore_previous_params-130"><span class="linenos">130</span></a><span class="sd">            The function just restores the previous plt.rcParams.</span>
+</span><span id="Plots.restore_previous_params-131"><a href="#Plots.restore_previous_params-131"><span class="linenos">131</span></a><span class="sd">            </span>
+</span><span id="Plots.restore_previous_params-132"><a href="#Plots.restore_previous_params-132"><span class="linenos">132</span></a><span class="sd">        Technical note</span>
+</span><span id="Plots.restore_previous_params-133"><a href="#Plots.restore_previous_params-133"><span class="linenos">133</span></a><span class="sd">        --------------</span>
+</span><span id="Plots.restore_previous_params-134"><a href="#Plots.restore_previous_params-134"><span class="linenos">134</span></a><span class="sd">        The params are saved class variable in Plots._previous_rcParams</span>
+</span><span id="Plots.restore_previous_params-135"><a href="#Plots.restore_previous_params-135"><span class="linenos">135</span></a><span class="sd">        &#39;&#39;&#39;</span>
+</span><span id="Plots.restore_previous_params-136"><a href="#Plots.restore_previous_params-136"><span class="linenos">136</span></a>        <span class="k">if</span> <span class="n">Plots</span><span class="o">.</span><span class="n">_previous_rcParams</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Plots.restore_previous_params-137"><a href="#Plots.restore_previous_params-137"><span class="linenos">137</span></a>            <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">Plots</span><span class="o">.</span><span class="n">_previous_rcParams</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Restore previous global plot parameters.</p>
+
+<ul>
+<li>The global plot parameters (plt.rcParams)
+are auto-saved when calling function <a href="#Plots.set_plot_params">Plots.set_plot_params</a>.</li>
+<li>This function restores the auto-saved params
+to the previous/original state (before set_plot_params was called).</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<ul>
+<li><strong>None</strong>: The function just restores the previous plt.rcParams.</li>
+</ul>
+
+<h6 id="technical-note">Technical note</h6>
+
+<p>The params are saved class variable in Plots._previous_rcParams</p>
+</div>
+
+
+                            </div>
+                            <div id="Plots.restore_saved_params" class="classattr">
+                                        <input id="Plots.restore_saved_params-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+                    <div class="decorator decorator-staticmethod">@staticmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">restore_saved_params</span><span class="signature pdoc-code condensed">(<span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="Plots.restore_saved_params-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#Plots.restore_saved_params"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Plots.restore_saved_params-140"><a href="#Plots.restore_saved_params-140"><span class="linenos">140</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="Plots.restore_saved_params-141"><a href="#Plots.restore_saved_params-141"><span class="linenos">141</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">restore_saved_params</span><span class="p">():</span>
+</span><span id="Plots.restore_saved_params-142"><a href="#Plots.restore_saved_params-142"><span class="linenos">142</span></a><span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+</span><span id="Plots.restore_saved_params-143"><a href="#Plots.restore_saved_params-143"><span class="linenos">143</span></a><span class="sd">        Restore saved global plot parameters.</span>
+</span><span id="Plots.restore_saved_params-144"><a href="#Plots.restore_saved_params-144"><span class="linenos">144</span></a><span class="sd">        </span>
+</span><span id="Plots.restore_saved_params-145"><a href="#Plots.restore_saved_params-145"><span class="linenos">145</span></a><span class="sd">        * The global plot parameters (plt.rcParams)</span>
+</span><span id="Plots.restore_saved_params-146"><a href="#Plots.restore_saved_params-146"><span class="linenos">146</span></a><span class="sd">          are saved when calling function Plots.save_plot_params.</span>
+</span><span id="Plots.restore_saved_params-147"><a href="#Plots.restore_saved_params-147"><span class="linenos">147</span></a><span class="sd">        * This function restores the saved params,</span>
+</span><span id="Plots.restore_saved_params-148"><a href="#Plots.restore_saved_params-148"><span class="linenos">148</span></a><span class="sd">          which were saved at the last call of save_plot_params function.</span>
+</span><span id="Plots.restore_saved_params-149"><a href="#Plots.restore_saved_params-149"><span class="linenos">149</span></a>
+</span><span id="Plots.restore_saved_params-150"><a href="#Plots.restore_saved_params-150"><span class="linenos">150</span></a><span class="sd">        Returns</span>
+</span><span id="Plots.restore_saved_params-151"><a href="#Plots.restore_saved_params-151"><span class="linenos">151</span></a><span class="sd">        -------</span>
+</span><span id="Plots.restore_saved_params-152"><a href="#Plots.restore_saved_params-152"><span class="linenos">152</span></a><span class="sd">        None</span>
+</span><span id="Plots.restore_saved_params-153"><a href="#Plots.restore_saved_params-153"><span class="linenos">153</span></a><span class="sd">            The function just restores the saved plt.rcParams.</span>
+</span><span id="Plots.restore_saved_params-154"><a href="#Plots.restore_saved_params-154"><span class="linenos">154</span></a><span class="sd">            </span>
+</span><span id="Plots.restore_saved_params-155"><a href="#Plots.restore_saved_params-155"><span class="linenos">155</span></a><span class="sd">        Technical note</span>
+</span><span id="Plots.restore_saved_params-156"><a href="#Plots.restore_saved_params-156"><span class="linenos">156</span></a><span class="sd">        --------------</span>
+</span><span id="Plots.restore_saved_params-157"><a href="#Plots.restore_saved_params-157"><span class="linenos">157</span></a><span class="sd">        The params are saved class variable in Plots._saved_rcParams</span>
+</span><span id="Plots.restore_saved_params-158"><a href="#Plots.restore_saved_params-158"><span class="linenos">158</span></a><span class="sd">        &#39;&#39;&#39;</span>
+</span><span id="Plots.restore_saved_params-159"><a href="#Plots.restore_saved_params-159"><span class="linenos">159</span></a>  
+</span><span id="Plots.restore_saved_params-160"><a href="#Plots.restore_saved_params-160"><span class="linenos">160</span></a>        <span class="k">if</span> <span class="n">Plots</span><span class="o">.</span><span class="n">_saved_rcParams</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Plots.restore_saved_params-161"><a href="#Plots.restore_saved_params-161"><span class="linenos">161</span></a>            <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">Plots</span><span class="o">.</span><span class="n">_saved_rcParams</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Restore saved global plot parameters.</p>
+
+<ul>
+<li>The global plot parameters (plt.rcParams)
+are saved when calling function <a href="#Plots.save_plot_params">Plots.save_plot_params</a>.</li>
+<li>This function restores the saved params,
+which were saved at the last call of save_plot_params function.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<ul>
+<li><strong>None</strong>: The function just restores the saved plt.rcParams.</li>
+</ul>
+
+<h6 id="technical-note">Technical note</h6>
+
+<p>The params are saved class variable in Plots._saved_rcParams</p>
+</div>
+
+
+                            </div>
                 </section>
     </main>
 <script>

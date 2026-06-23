@@ -268,11 +268,54 @@ class EMDobject:
             print(f'Scale     : {self.scale()}')
     
     
-    def signal1d_load(self):
+    def signal1d_load(self, remove_zero_peak=False):
+        '''
+        Load 1D-signal from the Velox EMD file.
+
+        Parameters
+        ----------
+        remove_zero_peak : bool or numeric, optional, default is False
+            If {remove_zero_peak} is True,
+            the zero-peak intensity in EDX spectra is removed
+            up to default value of 0.12 keV (value used in Velox SW).
+            If {remove_zero peak} is a numeric_value,
+            the zero-peak intensity is removed up to this value.
+
+        Returns
+        -------
+        data: np.array
+            The {data} = XY-data = signal1D from the Velox EMD file.
+            
+        Technical notew
+        ---------------
+        * Typical signal1D data in Velox EMD files are EDX spectra.
+        * Nevertheless, the function can work for any other 1D data
+          in Velox format.
+        '''
+        
+        # (1) Read X,Y axes and combine them into XY-data
         X = self.hsObject.axes_manager.signal_axes[0].axis
         Y = self.hsObject.data.compute()
-        return np.vstack((X,Y))
-
+        data = np.vstack((X,Y))
+        
+        # (2) Optional removal of zero peak in EDX spectrum
+        if remove_zero_peak is not False:
+            # True => default threshold = remove zero peak up to 0.12 keV.
+            if remove_zero_peak is True:
+                threshold = 0.12
+            # Numeric_value => remove zero peak up to given numeric value.
+            elif isinstance(remove_zero_peak,(int,float)):
+                threshold = float(remove_zero_peak)
+            # Anyghing else => raise an error
+            else:
+                msg = ("Argument {remove_zero_peak} must be bool or numeric!")
+                raise TypeError(msg)
+            # Removal of the zero peak (using the threshold defined above).
+            data[1] = np.where(data[0] < threshold, 0, data[1])
+        
+        # (3) Return final data (including the optional zero peak removal)
+        return(data)
+        
 
     def signal1d_axes_labels(self):
         axis = self.hsObject.axes_manager.signal_axes[0]
