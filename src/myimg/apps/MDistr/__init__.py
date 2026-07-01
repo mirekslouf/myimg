@@ -9,12 +9,22 @@ Calculation of distributions/histograms from various input data.
 * MDistr simplifies the calculation/plotting of various distributions types. 
 '''
 
-import importlib
+from myimg.apps.MDistr.data import (
+    FileInfo,
+    PandasReadOptions,
+    CombinedData,
+    Statistics,
+    Histogram)
 
-__all__ = ['read','calc','plot']
+from myimg.apps.MDistr.plots import (
+    Plots,
+    Templates)
 
-def __getattr__(name):
-    if name in __all__:
-        return importlib.import_module(f"{__name__}.{name}")
-    else:
-        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+__all__ = [
+    "FileInfo",
+    "PandasReadOptions",
+    "CombinedData",
+    "Statistics",
+    "Histogram",
+    "Plots",
+    "Templates"]

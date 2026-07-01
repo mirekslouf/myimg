@@ -270,9 +270,9 @@ class Apps:
         >>> MDistr = mi.Apps.import_MDistr()  # ... 2nd way to access iLabels
         >>> MDistr.something(...)
         '''
-        # Import iLabels into the *local function namespace*.
+        # Import MDistr into the *local function namespace*.
         # (The package is loaded once and cached in sys.modules by Python;
-        # (the name `iLabels` is local to this func unless we store return it.        
+        # (the name `MDistr` is local to this func unless we store/return it.        
         import myimg.apps.MDistr as MDistr
 
         # Save iLabels as a *class attribute*.

@@ -32,12 +32,16 @@
 </ul>
 
 
-            <h2>Submodules</h2>
-            <ul>
-                    <li><a href="MDistr/read.html">read</a></li>
-                    <li><a href="MDistr/calc.html">calc</a></li>
-                    <li><a href="MDistr/plot.html">plot</a></li>
-            </ul>
+
+            <h2>API Documentation</h2>
+                <ul class="memberlist">
+            <li>
+                    <a class="class" href="#Plots">Plots</a>
+                            <ul class="memberlist">
+                </ul>
+
+            </li>
+    </ul>
 
 
 
@@ -79,19 +83,187 @@
 </span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="sd">* MDistr simplifies the calculation/plotting of various distributions types. </span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="sd">&#39;&#39;&#39;</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;read&#39;</span><span class="p">,</span><span class="s1">&#39;calc&#39;</span><span class="p">,</span><span class="s1">&#39;plot&#39;</span><span class="p">]</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>    <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">__all__</span><span class="p">:</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>        <span class="k">return</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;module </span><span class="si">{</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2"> has no attribute </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">myimg.apps.MDistr.data</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>    <span class="n">FileInfo</span><span class="p">,</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>    <span class="n">PandasReadOptions</span><span class="p">,</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>    <span class="n">CombinedData</span><span class="p">,</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>    <span class="n">Statistics</span><span class="p">,</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>    <span class="n">Histogram</span><span class="p">)</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">myimg.apps.MDistr.plots</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="n">Plots</span><span class="p">,</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>    <span class="n">Templates</span><span class="p">)</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>    <span class="s2">&quot;FileInfo&quot;</span><span class="p">,</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>    <span class="s2">&quot;PandasReadOptions&quot;</span><span class="p">,</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>    <span class="s2">&quot;CombinedData&quot;</span><span class="p">,</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>    <span class="s2">&quot;Statistics&quot;</span><span class="p">,</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>    <span class="s2">&quot;Histogram&quot;</span><span class="p">,</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>    <span class="s2">&quot;Plots&quot;</span><span class="p">,</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>    <span class="s2">&quot;Templates&quot;</span><span class="p">]</span>
 </span></pre></div>
 
 
             </section>
+                <section id="Plots">
+                            <input id="Plots-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">Plots</span><wbr>(<span class="base"><a href="../api.html#Plots">myimg.api.Plots</a></span>):
+
+                <label class="view-source-button" for="Plots-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#Plots"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Plots-16"><a href="#Plots-16"><span class="linenos"> 16</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Plots</span><span class="p">(</span><span class="n">mi</span><span class="o">.</span><span class="n">Plots</span><span class="p">):</span>
+</span><span id="Plots-17"><a href="#Plots-17"><span class="linenos"> 17</span></a>
+</span><span id="Plots-18"><a href="#Plots-18"><span class="linenos"> 18</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="Plots-19"><a href="#Plots-19"><span class="linenos"> 19</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">histogram</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">distribution</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+</span><span id="Plots-20"><a href="#Plots-20"><span class="linenos"> 20</span></a>                  <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C0&quot;</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="Plots-21"><a href="#Plots-21"><span class="linenos"> 21</span></a>                  <span class="n">xlim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xtics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mxtics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="Plots-22"><a href="#Plots-22"><span class="linenos"> 22</span></a>                  <span class="n">ylim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ytics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mytics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="Plots-23"><a href="#Plots-23"><span class="linenos"> 23</span></a>                  <span class="n">out_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">out_dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">):</span>
+</span><span id="Plots-24"><a href="#Plots-24"><span class="linenos"> 24</span></a>
+</span><span id="Plots-25"><a href="#Plots-25"><span class="linenos"> 25</span></a>        <span class="c1"># Create new fig,ax =&gt; if ax argument was not specified</span>
+</span><span id="Plots-26"><a href="#Plots-26"><span class="linenos"> 26</span></a>        <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+</span><span id="Plots-27"><a href="#Plots-27"><span class="linenos"> 27</span></a>
+</span><span id="Plots-28"><a href="#Plots-28"><span class="linenos"> 28</span></a>        <span class="c1"># Define X,Y values        </span>
+</span><span id="Plots-29"><a href="#Plots-29"><span class="linenos"> 29</span></a>        <span class="n">x</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Center&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+</span><span id="Plots-30"><a href="#Plots-30"><span class="linenos"> 30</span></a>        <span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">distribution</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+</span><span id="Plots-31"><a href="#Plots-31"><span class="linenos"> 31</span></a>
+</span><span id="Plots-32"><a href="#Plots-32"><span class="linenos"> 32</span></a>        <span class="c1"># Basic plot (zorder to get bars in front of optional grid)</span>
+</span><span id="Plots-33"><a href="#Plots-33"><span class="linenos"> 33</span></a>        <span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+</span><span id="Plots-34"><a href="#Plots-34"><span class="linenos"> 34</span></a>        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
+</span><span id="Plots-35"><a href="#Plots-35"><span class="linenos"> 35</span></a>        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+</span><span id="Plots-36"><a href="#Plots-36"><span class="linenos"> 36</span></a>        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+</span><span id="Plots-37"><a href="#Plots-37"><span class="linenos"> 37</span></a>        
+</span><span id="Plots-38"><a href="#Plots-38"><span class="linenos"> 38</span></a>        <span class="c1"># Adjust X-axis</span>
+</span><span id="Plots-39"><a href="#Plots-39"><span class="linenos"> 39</span></a>        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xlim</span><span class="p">)</span>
+</span><span id="Plots-40"><a href="#Plots-40"><span class="linenos"> 40</span></a>        <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">MultipleLocator</span><span class="p">(</span><span class="n">xtics</span><span class="p">))</span>
+</span><span id="Plots-41"><a href="#Plots-41"><span class="linenos"> 41</span></a>        <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_minor_locator</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">MultipleLocator</span><span class="p">(</span><span class="n">mxtics</span><span class="p">))</span>
+</span><span id="Plots-42"><a href="#Plots-42"><span class="linenos"> 42</span></a>        
+</span><span id="Plots-43"><a href="#Plots-43"><span class="linenos"> 43</span></a>        <span class="c1"># Adjust Y-axis</span>
+</span><span id="Plots-44"><a href="#Plots-44"><span class="linenos"> 44</span></a>        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ylim</span><span class="p">)</span>
+</span><span id="Plots-45"><a href="#Plots-45"><span class="linenos"> 45</span></a>        <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">MultipleLocator</span><span class="p">(</span><span class="n">ytics</span><span class="p">))</span>
+</span><span id="Plots-46"><a href="#Plots-46"><span class="linenos"> 46</span></a>        <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_minor_locator</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">MultipleLocator</span><span class="p">(</span><span class="n">mytics</span><span class="p">))</span>
+</span><span id="Plots-47"><a href="#Plots-47"><span class="linenos"> 47</span></a>        
+</span><span id="Plots-48"><a href="#Plots-48"><span class="linenos"> 48</span></a>        <span class="c1"># Final adjustments</span>
+</span><span id="Plots-49"><a href="#Plots-49"><span class="linenos"> 49</span></a>        <span class="k">if</span> <span class="n">grid</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span> <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
+</span><span id="Plots-50"><a href="#Plots-50"><span class="linenos"> 50</span></a>        <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</span><span id="Plots-51"><a href="#Plots-51"><span class="linenos"> 51</span></a>        
+</span><span id="Plots-52"><a href="#Plots-52"><span class="linenos"> 52</span></a>        <span class="c1"># Save file if requested</span>
+</span><span id="Plots-53"><a href="#Plots-53"><span class="linenos"> 53</span></a>        <span class="k">if</span> <span class="n">out_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Plots-54"><a href="#Plots-54"><span class="linenos"> 54</span></a>            <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">out_file</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">out_dpi</span><span class="p">)</span>
+</span><span id="Plots-55"><a href="#Plots-55"><span class="linenos"> 55</span></a>
+</span><span id="Plots-56"><a href="#Plots-56"><span class="linenos"> 56</span></a>        <span class="c1"># Return the plot/axes</span>
+</span><span id="Plots-57"><a href="#Plots-57"><span class="linenos"> 57</span></a>        <span class="c1"># (this will also draw the figure in Spyder</span>
+</span><span id="Plots-58"><a href="#Plots-58"><span class="linenos"> 58</span></a>        <span class="k">return</span> <span class="n">ax</span>
+</span><span id="Plots-59"><a href="#Plots-59"><span class="linenos"> 59</span></a>
+</span><span id="Plots-60"><a href="#Plots-60"><span class="linenos"> 60</span></a>
+</span><span id="Plots-61"><a href="#Plots-61"><span class="linenos"> 61</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="Plots-62"><a href="#Plots-62"><span class="linenos"> 62</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">histogram_NV</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="Plots-63"><a href="#Plots-63"><span class="linenos"> 63</span></a>                     <span class="n">ptype</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span> <span class="n">shift</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+</span><span id="Plots-64"><a href="#Plots-64"><span class="linenos"> 64</span></a>                     <span class="n">colors</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;C0&quot;</span><span class="p">,</span> <span class="s2">&quot;C1&quot;</span><span class="p">),</span> <span class="n">grid</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="Plots-65"><a href="#Plots-65"><span class="linenos"> 65</span></a>                     <span class="n">xlabel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xtics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mxtics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="Plots-66"><a href="#Plots-66"><span class="linenos"> 66</span></a>                     <span class="n">ylabel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ytics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mytics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="Plots-67"><a href="#Plots-67"><span class="linenos"> 67</span></a>                     <span class="n">out_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">out_dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">):</span>
+</span><span id="Plots-68"><a href="#Plots-68"><span class="linenos"> 68</span></a>
+</span><span id="Plots-69"><a href="#Plots-69"><span class="linenos"> 69</span></a>        <span class="c1"># Create new fig, ax if not provided</span>
+</span><span id="Plots-70"><a href="#Plots-70"><span class="linenos"> 70</span></a>        <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Plots-71"><a href="#Plots-71"><span class="linenos"> 71</span></a>            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+</span><span id="Plots-72"><a href="#Plots-72"><span class="linenos"> 72</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="Plots-73"><a href="#Plots-73"><span class="linenos"> 73</span></a>            <span class="n">fig</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">figure</span>
+</span><span id="Plots-74"><a href="#Plots-74"><span class="linenos"> 74</span></a>            
+</span><span id="Plots-75"><a href="#Plots-75"><span class="linenos"> 75</span></a>        <span class="c1"># Calculate bin_width, width, shift</span>
+</span><span id="Plots-76"><a href="#Plots-76"><span class="linenos"> 76</span></a>        <span class="c1"># (width and shift parameters should be relative to bin_width</span>
+</span><span id="Plots-77"><a href="#Plots-77"><span class="linenos"> 77</span></a>        <span class="n">bin_width</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Min</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="n">df</span><span class="o">.</span><span class="n">Min</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span><span id="Plots-78"><a href="#Plots-78"><span class="linenos"> 78</span></a>        <span class="n">width</span> <span class="o">=</span> <span class="n">bin_width</span> <span class="o">*</span> <span class="n">width</span>
+</span><span id="Plots-79"><a href="#Plots-79"><span class="linenos"> 79</span></a>        <span class="n">shift</span> <span class="o">=</span> <span class="n">bin_width</span> <span class="o">*</span> <span class="n">shift</span>
+</span><span id="Plots-80"><a href="#Plots-80"><span class="linenos"> 80</span></a>
+</span><span id="Plots-81"><a href="#Plots-81"><span class="linenos"> 81</span></a>        <span class="c1"># X values</span>
+</span><span id="Plots-82"><a href="#Plots-82"><span class="linenos"> 82</span></a>        <span class="n">x</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Center&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+</span><span id="Plots-83"><a href="#Plots-83"><span class="linenos"> 83</span></a>
+</span><span id="Plots-84"><a href="#Plots-84"><span class="linenos"> 84</span></a>        <span class="c1"># Plot</span>
+</span><span id="Plots-85"><a href="#Plots-85"><span class="linenos"> 85</span></a>        <span class="k">if</span> <span class="n">ptype</span> <span class="o">==</span> <span class="s1">&#39;bar&#39;</span><span class="p">:</span>
+</span><span id="Plots-86"><a href="#Plots-86"><span class="linenos"> 86</span></a>            <span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">width</span><span class="o">/</span><span class="mi">2</span> <span class="o">-</span> <span class="n">shift</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;N%&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+</span><span id="Plots-87"><a href="#Plots-87"><span class="linenos"> 87</span></a>               <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;2dN%&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+</span><span id="Plots-88"><a href="#Plots-88"><span class="linenos"> 88</span></a>            <span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">width</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="n">shift</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;V%&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+</span><span id="Plots-89"><a href="#Plots-89"><span class="linenos"> 89</span></a>               <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;2dV%&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+</span><span id="Plots-90"><a href="#Plots-90"><span class="linenos"> 90</span></a>        <span class="k">elif</span> <span class="n">ptype</span> <span class="o">==</span> <span class="s1">&#39;vlines&#39;</span><span class="p">:</span>
+</span><span id="Plots-91"><a href="#Plots-91"><span class="linenos"> 91</span></a>            <span class="n">ax</span><span class="o">.</span><span class="n">vlines</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">shift</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;N%&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+</span><span id="Plots-92"><a href="#Plots-92"><span class="linenos"> 92</span></a>               <span class="n">linewidth</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;N%&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+</span><span id="Plots-93"><a href="#Plots-93"><span class="linenos"> 93</span></a>            <span class="n">ax</span><span class="o">.</span><span class="n">vlines</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">shift</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;V%&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+</span><span id="Plots-94"><a href="#Plots-94"><span class="linenos"> 94</span></a>               <span class="n">linewidth</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;V%&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+</span><span id="Plots-95"><a href="#Plots-95"><span class="linenos"> 95</span></a>
+</span><span id="Plots-96"><a href="#Plots-96"><span class="linenos"> 96</span></a>        <span class="c1"># Labels / title</span>
+</span><span id="Plots-97"><a href="#Plots-97"><span class="linenos"> 97</span></a>        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
+</span><span id="Plots-98"><a href="#Plots-98"><span class="linenos"> 98</span></a>        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+</span><span id="Plots-99"><a href="#Plots-99"><span class="linenos"> 99</span></a>        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+</span><span id="Plots-100"><a href="#Plots-100"><span class="linenos">100</span></a>
+</span><span id="Plots-101"><a href="#Plots-101"><span class="linenos">101</span></a>        <span class="c1"># X-axis control</span>
+</span><span id="Plots-102"><a href="#Plots-102"><span class="linenos">102</span></a>        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xlim</span><span class="p">)</span>
+</span><span id="Plots-103"><a href="#Plots-103"><span class="linenos">103</span></a>        <span class="k">if</span> <span class="n">xtics</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Plots-104"><a href="#Plots-104"><span class="linenos">104</span></a>            <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">MultipleLocator</span><span class="p">(</span><span class="n">xtics</span><span class="p">))</span>
+</span><span id="Plots-105"><a href="#Plots-105"><span class="linenos">105</span></a>        <span class="k">if</span> <span class="n">mxtics</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Plots-106"><a href="#Plots-106"><span class="linenos">106</span></a>            <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_minor_locator</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">MultipleLocator</span><span class="p">(</span><span class="n">mxtics</span><span class="p">))</span>
+</span><span id="Plots-107"><a href="#Plots-107"><span class="linenos">107</span></a>
+</span><span id="Plots-108"><a href="#Plots-108"><span class="linenos">108</span></a>        <span class="c1"># Y-axis control</span>
+</span><span id="Plots-109"><a href="#Plots-109"><span class="linenos">109</span></a>        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ylim</span><span class="p">)</span>
+</span><span id="Plots-110"><a href="#Plots-110"><span class="linenos">110</span></a>        <span class="k">if</span> <span class="n">ytics</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Plots-111"><a href="#Plots-111"><span class="linenos">111</span></a>            <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">MultipleLocator</span><span class="p">(</span><span class="n">ytics</span><span class="p">))</span>
+</span><span id="Plots-112"><a href="#Plots-112"><span class="linenos">112</span></a>        <span class="k">if</span> <span class="n">mytics</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Plots-113"><a href="#Plots-113"><span class="linenos">113</span></a>            <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_minor_locator</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">MultipleLocator</span><span class="p">(</span><span class="n">mytics</span><span class="p">))</span>
+</span><span id="Plots-114"><a href="#Plots-114"><span class="linenos">114</span></a>
+</span><span id="Plots-115"><a href="#Plots-115"><span class="linenos">115</span></a>        <span class="c1"># Grid</span>
+</span><span id="Plots-116"><a href="#Plots-116"><span class="linenos">116</span></a>        <span class="k">if</span> <span class="n">grid</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+</span><span id="Plots-117"><a href="#Plots-117"><span class="linenos">117</span></a>            <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
+</span><span id="Plots-118"><a href="#Plots-118"><span class="linenos">118</span></a>
+</span><span id="Plots-119"><a href="#Plots-119"><span class="linenos">119</span></a>        <span class="c1"># Legend (important difference vs single histogram)</span>
+</span><span id="Plots-120"><a href="#Plots-120"><span class="linenos">120</span></a>        <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handlelength</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+</span><span id="Plots-121"><a href="#Plots-121"><span class="linenos">121</span></a>
+</span><span id="Plots-122"><a href="#Plots-122"><span class="linenos">122</span></a>        <span class="c1"># Layout</span>
+</span><span id="Plots-123"><a href="#Plots-123"><span class="linenos">123</span></a>        <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</span><span id="Plots-124"><a href="#Plots-124"><span class="linenos">124</span></a>
+</span><span id="Plots-125"><a href="#Plots-125"><span class="linenos">125</span></a>        <span class="c1"># Save if requested</span>
+</span><span id="Plots-126"><a href="#Plots-126"><span class="linenos">126</span></a>        <span class="k">if</span> <span class="n">out_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Plots-127"><a href="#Plots-127"><span class="linenos">127</span></a>            <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">out_file</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">out_dpi</span><span class="p">)</span>
+</span><span id="Plots-128"><a href="#Plots-128"><span class="linenos">128</span></a>
+</span><span id="Plots-129"><a href="#Plots-129"><span class="linenos">129</span></a>        <span class="k">return</span> <span class="n">ax</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Functions for plotting in MyImg package.</p>
+
+<ul>
+<li>This class (<a href="../api.html#Plots">myimg.api.Plots</a>) just inherits from <a href="../plots.html#Plots">myimg.plots.Plots</a>.</li>
+<li>It provides functions for plotting of graphs(1D-data) images(2D-data).</li>
+</ul>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Simple use of Plots class</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># (the Plots class typically sets/saves/restores global plot params</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn"><a href="../api.html">myimg.api</a></span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mi</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mi</span><span class="o">.</span><span class="n">Plots</span><span class="o">.</span><span class="n">set_plot_params</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+</code></pre>
+</div>
+</div>
+
+
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="../plots.html#Plots">myimg.plots.Plots</a></dt>
+                                <dd id="Plots.set_plot_params" class="function"><a href="../plots.html#Plots.set_plot_params">set_plot_params</a></dd>
+                <dd id="Plots.save_plot_params" class="function"><a href="../plots.html#Plots.save_plot_params">save_plot_params</a></dd>
+                <dd id="Plots.restore_previous_params" class="function"><a href="../plots.html#Plots.restore_previous_params">restore_previous_params</a></dd>
+                <dd id="Plots.restore_saved_params" class="function"><a href="../plots.html#Plots.restore_saved_params">restore_saved_params</a></dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
     </main>
 <script>
     function escapeHTML(html) {

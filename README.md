@@ -23,7 +23,7 @@ Installation
 ------------
 
 * *MyImg* installation: `pip install myimg` 
-* *MyImg* additional packages, which are auto-installed if not present: 
+* *MyImg* installs the following packages, if not present: 
 	- `numpy`, `matplotlib`, `pandas`
 	- `scikig-image`, `hyperspy[all]`, `exspy[all]`, `tabulate`
 
@@ -58,4 +58,5 @@ Versions of MyImg
 * Version 0.3 = objects: MyImage, MyReport; apps: FFT, iLabels (semi-finished)
 * Version 0.4 = apps.velox: utilities to process Velox EMD files
 * Version 0.5 = better Apps interface + improved Apps + updated documentation
-* Version 0.6 = TODO: finalize apps.fft_utils, apps.iLabels
+* Version 0.6 = apps.mdistr: distributions from multiple images with various mag
+* Version 0.7 = TODO: finalize/document apps: fft_utils, MDistr, iLabels
