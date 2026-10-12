@@ -7,7 +7,7 @@ Auxiliary module with functions for plotting.
 >>> # Simple example how to employ myimg.plots
 >>> # (the module is imported and used within myimg.api
 >>> import myimg.api as mi
->>> mi.Plots.set_plot_parameters(size=(8,8), dpi=100)
+>>> mi.Plots.set_plot_params(size=(8,8), dpi=100)
 '''
 
 import matplotlib.pyplot as plt

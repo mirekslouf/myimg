@@ -176,6 +176,85 @@ class Apps:
     * More help and examples can be found in the subclasses below.
     '''
     
+    
+    @classmethod 
+    def import_MDistr(cls):
+        '''
+        Import MDistr package = calculate and plot particle distributions.
+
+        * The function gives access to myimg.apps.MDistr package.
+        * https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg/apps.html
+        
+        The function can be called and used in two ways:
+            
+        >>> import myimg.api as mi  # ............. standard import of MyImg
+        >>>
+        >>> mi.Apps.import_MDistr()  # ............ 1st way to access MDistr
+        >>> mi.Apps.MDistr.something(...)
+        >>>
+        >>> MDistr = mi.Apps.import_MDistr()  # ... 2nd way to access Mdistr
+        >>> MDistr.something(...)
+        '''
+        
+        # Import MDistr into the *local function namespace*.
+        # (The package is loaded once and cached in sys.modules by Python;
+        # (the name `MDistr` is local to this func unless we store/return it.        
+        import myimg.apps.MDistr as MDistr
+
+        # Save iLabels as a *class attribute*.
+        # (This enables the following usage:
+        # >>> import myimg.api as mi
+        # >>> mi.Apps.import_iLabels()
+        # >>> mi.Apps.iLabels.something(...)        
+        cls.MDistr = MDistr
+        
+        # Return the iLabels package.
+        # (This additionally enables:
+        # >>> import myimg.api as mi
+        # >>> iLabels = mi.Apps.import_iLabels()
+        # >>> iLabels.something(...)                
+        return MDistr
+
+    
+    @classmethod 
+    def import_Morpho(cls):
+        '''
+        Import morpho package = mathematical morphology operations.
+
+        * The function gives access to myimg.apps.morpho package.
+        * https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg/apps.html
+        
+        The function can be called and used in two ways:
+            
+        >>> import myimg.api as mi  # .............. standard import of MyImg
+        >>>
+        >>> mi.Apps.import_Morpho()  # ............. 1st way to access Morpho
+        >>> mi.Apps.Morpho.something(...)
+        >>>
+        >>> Morpho = mi.Apps.import_Morpho()  # .... 2nd way to access Morpho
+        >>> Morpho.something(...)
+        '''
+        
+        # Import MDistr into the *local function namespace*.
+        # (The package is loaded once and cached in sys.modules by Python;
+        # (the name `MDistr` is local to this func unless we store/return it.        
+        import myimg.apps.morpho as Morpho
+
+        # Save iLabels as a *class attribute*.
+        # (This enables the following usage:
+        # >>> import myimg.api as mi
+        # >>> mi.Apps.import_iLabels()
+        # >>> mi.Apps.iLabels.something(...)        
+        cls.Morpho = Morpho
+        
+        # Return the iLabels package.
+        # (This additionally enables:
+        # >>> import myimg.api as mi
+        # >>> iLabels = mi.Apps.import_iLabels()
+        # >>> iLabels.something(...)                
+        return Morpho
+
+
     @classmethod
     def import_FFT_utils(cls):
         '''
@@ -194,6 +273,7 @@ class Apps:
         >>> mf = mi.Apps.import_FFT_utils  # .... 2nd way to access FFT utils
         >>> fft = mf.FFT2D('some.png')          # (via mf object, more elegant
         '''
+        
         # Import fft_utils into the *local function namespace*.
         # (The module is loaded once and cached in sys.modules by Python;
         # (the name `mf` is local to this func unless we store/return it.
@@ -232,6 +312,7 @@ class Apps:
         >>> Velox = mi.Apps.import_Velox_utils  # .... 2nd way to access Velox
         >>> Velox.EMDfiles.describe(r'./')
         '''
+        
         # Import Velox into the *local function namespace*.
         # (The module is loaded once and cached in sys.modules by Python;
         # (the name `Velox` is local to this func unless we store return it.
@@ -251,45 +332,7 @@ class Apps:
         # >>> Velox.something(...)        
         return Velox
     
-    
-    @classmethod 
-    def import_MDistr(cls):
-        '''
-        Import iLabels package = calculate and plot particle distributions.
-
-        * The function gives access to myimg.apps.MDistr package.
-        * https://mirekslouf.github.io/myimg/docs/pdoc.html/myimg/apps.html
         
-        The function can be called and used in two ways:
-            
-        >>> import myimg.api as mi  # ............. standard import of MyImg
-        >>>
-        >>> mi.Apps.import_MDistr()  # ............ 1st way to access iLabels
-        >>> mi.Apps.MDistr.something(...)
-        >>>
-        >>> MDistr = mi.Apps.import_MDistr()  # ... 2nd way to access iLabels
-        >>> MDistr.something(...)
-        '''
-        # Import MDistr into the *local function namespace*.
-        # (The package is loaded once and cached in sys.modules by Python;
-        # (the name `MDistr` is local to this func unless we store/return it.        
-        import myimg.apps.MDistr as MDistr
-
-        # Save iLabels as a *class attribute*.
-        # (This enables the following usage:
-        # >>> import myimg.api as mi
-        # >>> mi.Apps.import_iLabels()
-        # >>> mi.Apps.iLabels.something(...)        
-        cls.MDistr = MDistr
-        
-        # Return the iLabels package.
-        # (This additionally enables:
-        # >>> import myimg.api as mi
-        # >>> iLabels = mi.Apps.import_iLabels()
-        # >>> iLabels.something(...)                
-        return MDistr
-
-    
     @classmethod
     def import_iLabels(cls):
         '''
@@ -308,6 +351,7 @@ class Apps:
         >>> iLabels = mi.Apps.import_iLabels()  # ... 2nd way to access iLabels
         >>> iLabels.something(...)
         '''
+        
         # Import iLabels into the *local function namespace*.
         # (The package is loaded once and cached in sys.modules by Python;
         # (the name `iLabels` is local to this func unless we store return it.        

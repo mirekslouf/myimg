@@ -1,6 +1,6 @@
 '''
-Module: myimg.apps.MDistr.plot
-------------------------------
+Module: myimg.apps.MDistr.plots
+-------------------------------
 
 Plot pre-calculated distributions/histograms.
 '''
@@ -20,7 +20,51 @@ class Plots(mi.Plots):
                   xlim=None, xtics=None, mxtics=None,
                   ylim=None, ytics=None, mytics=None,
                   out_file=None, out_dpi=300):
+        '''
+        Plot arbitrary single histogram
 
+        Parameters
+        ----------
+        df : TYPE
+            DESCRIPTION.
+        distribution : TYPE
+            DESCRIPTION.
+        xlabel : TYPE, optional
+            DESCRIPTION. The default is None.
+        ylabel : TYPE, optional
+            DESCRIPTION. The default is None.
+        ax : TYPE, optional
+            DESCRIPTION. The default is None.
+        title : TYPE, optional
+            DESCRIPTION. The default is None.
+        width : TYPE, optional
+            DESCRIPTION. The default is 0.6.
+        color : TYPE, optional
+            DESCRIPTION. The default is "C0".
+        grid : TYPE, optional
+            DESCRIPTION. The default is False.
+        xlim : TYPE, optional
+            DESCRIPTION. The default is None.
+        xtics : TYPE, optional
+            DESCRIPTION. The default is None.
+        mxtics : TYPE, optional
+            DESCRIPTION. The default is None.
+        ylim : TYPE, optional
+            DESCRIPTION. The default is None.
+        ytics : TYPE, optional
+            DESCRIPTION. The default is None.
+        mytics : TYPE, optional
+            DESCRIPTION. The default is None.
+        out_file : TYPE, optional
+            DESCRIPTION. The default is None.
+        out_dpi : TYPE, optional
+            DESCRIPTION. The default is 300.
+
+        Returns
+        -------
+        ax : TYPE
+            DESCRIPTION.
+        '''
         # Create new fig,ax => if ax argument was not specified
         if ax is None: fig, ax = plt.subplots()
 
