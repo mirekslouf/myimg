@@ -69,6 +69,7 @@ class EMDobject:
     #     * __iter__ = access to iteration (in case of list-of-HyperSpy objects)
     #     * __len__ = access to len func (in case of list-of-HyperSpy objects)
     # 3. Additional methods/props defined within this class, such as:
+    #     * filename = name of the original file, if available
     #     * signal, describe, get_scale, save_signal2d ...
     
     def __init__(self, source_data):
@@ -77,7 +78,7 @@ class EMDobject:
 
         Parameters
         ----------
-        source_data : str or PathLike or HyperSpy object
+        source_data : str/Path or HyperSpy object
             Source data for the {EMDobject}.
             Typically, {source_data} is a filename of existing Velox EMD file.
             Alternatively, {source_data} can be a HyperSpy object,
@@ -88,28 +89,26 @@ class EMDobject:
         EMDobject
         '''
         
-        # (1) source_data = str => filename
-        # => convert to Path and process below in step (2)
-        if isinstance(source_data, str):
-            source_data = Path(source_data)
-        
-        # (2) source_data = Path object => filename
-        # => verify if the filename exist, open and save as self.hsObject
-        if isinstance(source_data, Path):
-            filename = source_data
+        # (1) source_data = str/Path => filename
+        # => open file and save as self.hsObject (hsObject)
+        # => save also filename as self.filename (Path object)
+        if isinstance(source_data, (str, Path)):
+            filename = Path(source_data)
             if not filename.exists(): 
                 raise FileNotFoundError(f'File not found: {filename}')
+            self.filename = filename
             self.hsObject = hs.load(filename, lazy=True)
         
-        # (3) source_data = hsBaseSignals (or perhaps list of hsBaseSignals)
-        # => save as self.hsObject
-        elif isinstance(source_data, hsBaseSignal) \
-            or isinstance(source_data, list):   
+        # (2) source_data = hsBaseSignals (or perhaps list of hsBaseSignals)
+        # => save source_data as self.hsObject directly
+        # => as the source data are NOT file, self.filename will be None
+        elif isinstance(source_data, (hsBaseSignal, list)):
+            self.filename = None
             self.hsObject = source_data
-        
-        # (4) source_data is something else => error
+            
+        # (3) source_data is something else => error
         else: 
-            raise Exception(f'Unknown source data: {source_data}.')
+            raise TypeError(f'Unknown source data type: {type(source_data)}.')
 
 
     def __getattr__(self, name):
@@ -268,6 +267,23 @@ class EMDobject:
             print(f'Scale     : {self.scale()}')
     
     
+    def signal1d_axes_labels(self):
+        '''
+        Return x-axis and y-axis labels for 1D-signal from Velox EMD file.
+
+        Returns
+        -------
+        Xlabel, Ylabel : tuple of two strings
+            Xlabel/Ylabel = labels of X-axis/Y-axis,
+            which are saved in the original self.hsObject
+            (self.hsObject is created during the EMDobject initialization).
+        '''
+        axis = self.hsObject.axes_manager.signal_axes[0]
+        Xlabel = f'{axis.name} ({axis.units})' 
+        Ylabel = 'Intensity'
+        return Xlabel, Ylabel
+
+
     def signal1d_load(self, remove_zero_peak=False):
         '''
         Load 1D-signal from the Velox EMD file.
@@ -317,32 +333,100 @@ class EMDobject:
         return(data)
         
 
-    def signal1d_axes_labels(self):
-        axis = self.hsObject.axes_manager.signal_axes[0]
-        Xlabel = f'{axis.name} ({axis.units})' 
-        Ylabel = 'Intensity'
-        return Xlabel, Ylabel
+    def signal1d_show(self, out_file=None, out_dpi=300, 
+                      grid=True, remove_zero_peak=False):
+        '''
+        Show 1D-signal from the Velox EMD file.
 
+        Parameters
+        ----------
+        out_file : str, optional, default is None
+            If given, the ouput graph is saved into {out_file}.
+        out_dpi : int, optional, default is 300
+            Resolution of the output graph.
+        grid : bool, optional, default is True
+            If {True} the output graph will come with grid.
+        remove_zero_peak : bool, optional, default is False
+            If {True} remove zero peak (0 keV) from the original data.
 
-    def signal1d_show(self, out_file=None, out_dpi=300, grid=True):
-        X,Y = self.signal1d_load()
+        Returns
+        -------
+        None
+        '''
+        
+        # (1) Read XY-date (and remove zero peak if requested)
+        X,Y = self.signal1d_load(remove_zero_peak=remove_zero_peak)
+        
+        # (2) Read Xlabel/Ylabel
         Xlabel,Ylabel = self.signal1d_axes_labels()
+        
+        # (3) Plot the above-read data (and save the plot if requested)
         plt.plot(X,Y)
         plt.xlabel(Xlabel)
         plt.ylabel(Ylabel)
         if grid is True: plt.grid()
         plt.tight_layout()
+        # Save file if requested
         if out_file is not None: plt.savefig(out_file, dpi=out_dpi)
+        # Show the plot
         plt.show()
 
 
-    def signal1d_save(self, out_file):
-        data = self.signal1d_load()
+    def signal1d_save(self, out_file, remove_zero_peak=False):
+        '''
+        Save 1D-signal from the Velox EMD file.
+
+        Parameters
+        ----------
+        out_file : str
+            Name of the ouput file = TXT-file to save 1D-signal data.
+        remove_zero_peak : bool, optional, default is False
+            If {True} remove zero peak (0 keV) from the original data.
+        '''
+        data = self.signal1d_load(remove_zero_peak=remove_zero_peak)
         Xlabel,Ylabel = self.signal1d_axes_labels()
         np.savetxt(out_file, data.transpose(),
                    header=f'{Xlabel}\t{Ylabel}',
                    fmt='%.6e')
                 
+
+    def signal1d_save_with_extension(self, extension, 
+                                     current_dir=False,
+                                     remove_zero_peak=False):
+        '''
+        Save a 1D signal using the original EMD filename,
+        modified by the specified extension.
+
+        Parameters
+        ----------
+        extension : str
+            Text appended to the original filename stem,
+            including the desired output extension.
+            Example: '_g.png' converts 'some.emd' to 'some_g.png'.
+        current_dir : bool, optional, default is False
+            If {True} save the file
+            with {original_name + extension} in {current directory}.
+        remove_zero_peak : bool, optional, default is False
+            If {True} remove zero peak (0 keV) from the original data.
+        '''
+
+        # Check whether the original filename is known.
+        if self.filename is None:
+            raise ValueError(
+                'Original filename is unknown. '
+                'EMDobject was not initialized using EMD-file.')
+
+        # Construct output filename.
+        if current_dir is True:
+            # Outfile = {original name + extension} in {current directory}
+            out_file = self.filename.stem + extension
+        else:
+            # Outfile = (original name + extension) in {original directory} 
+            out_file = self.filename.with_name(self.filename.stem + extension)
+
+        # Save using the existing image-saving method.
+        self.signal1d_save(out_file)
+
 
     def signal2d_show(self, out_file=None, out_dpi=300, item=None, **kwargs):
         '''
@@ -417,6 +501,45 @@ class EMDobject:
         # (3) Convert array to image + save to {out_file}
         img = PIL.Image.fromarray(arr, mode='I;16')
         img.save(out_file)
+    
+    
+    def signal2d_save_with_extension(self, 
+                                     extension, item=None, current_dir=False):
+        '''
+        Save a 2D signal using the original EMD filename,
+        modified by the specified extension.
+
+        Parameters
+        ----------
+        extension : str
+            Text appended to the original filename stem,
+            including the desired output extension.
+            Example: '_g.png' converts 'some.emd' to 'some_g.png'.
+        item : None or int, optional
+            Index of the signal to save when the EMD file
+            contains multiple signals.
+         current_dir : bool, optional, default is False
+             If {True} save the file
+             with {original_name + extension} in {current directory}.
+        '''
+
+        # Check whether the original filename is known.
+        if self.filename is None:
+            raise ValueError(
+                'Original filename is unknown. '
+                'EMDobject was not initialized using EMD-file.')
+
+        # Construct output filename.
+        if current_dir is True:
+            # Outfile = {original name + extension} in {current directory}
+            out_file = self.filename.stem + extension
+        else:
+            # Outfile = (original name + extension) in {original directory} 
+            out_file = self.filename.with_name(self.filename.stem + extension)
+
+        # Save using the existing image-saving method.
+        self.signal2d_save(out_file, item=item)
+
 
         
     def close(self):
